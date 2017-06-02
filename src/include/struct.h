@@ -474,12 +474,3 @@ typedef struct
   int (*func) ();
 }      KeyFunc;
 
-/* itoc.011104: for BMW */
-struct BMW
-{
-  time_t chrono;
-  int recv;
-  char userid[IDLEN + 1];
-  char msg[STRLEN];
-};
-typedef struct BMW BMW;

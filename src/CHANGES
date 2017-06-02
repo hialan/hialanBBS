@@ -152,3 +152,10 @@
   1.將 struct one_key 增加 level ,判斷權限
   2.struct one_key help -> desc
   3.struct one_key int (*fptr)() -> void *fptr
+
+[2003/02/24]
+  1.修正 i_read_key 如果權限是0 無法使用的 bug
+  2.使用者可以自己加密自己的文章
+
+[2003/02/24]
+  1.將 bmw (maple 的水球回顧模式), 使用 i_read 閱讀

@@ -115,6 +115,7 @@ char *ModeTypeTable[] =
   "記帳本",			/* NoteMoney */
   "整頓名單",			/* ListMain */
   "編輯名單",			/* ListEdit */
+  "水球回顧", 			/* SEEWATER */
   "個人運勢預測",		/* FORTUNE */
   "二手交易市場",		/* TOBUY */
   NULL

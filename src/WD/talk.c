@@ -363,7 +363,6 @@ my_query(uident)
       substitute_record(fn_passwd, &cuser, sizeof(userec), usernum);
     }
     pressanykey(NULL);
-//    showplans(uident);
     return RC_FULL;
   }
   update_data();
@@ -1181,50 +1180,6 @@ talk_chhome()
   return US_PICKUP;
 }
 
-int 
-talk_broadcast(pklist, actor, uentp)
-  pickup *pklist;
-  int actor;
-  user_info *uentp;  
-{
-  char genbuf[200];
-  
-  if(HAS_PERM(PERM_SYSOP) || cuser.uflag & FRIEND_FLAG)
-  {
-    if (!getdata(0, 0, "廣播訊息:", genbuf + 1, 60, DOECHO,0)) 
-            return US_PICKUP;
-    genbuf[0] = HAS_PERM(PERM_SYSOP) ? 2 : 0;
-    if(getans2(0, 0, "確定廣播? ", 0, 2, 'y') == 'n') return US_PICKUP;
-    while (actor)
-    {
-      uentp = pklist[--actor].ui;
-      if (uentp->pid &&
-         currpid != uentp->pid &&
-         kill(uentp->pid, 0) != -1 &&
-         (HAS_PERM(PERM_SYSOP) || (uentp->pager != 3 &&
-         (uentp->pager != 4 || is_friend(uentp) & 4))))
-           my_write(uentp->pid, genbuf);
-    }
-  }
-  return US_PICKUP;
-}
-
-int 
-talk_water(pklist, actor, uentp, num)
-  pickup *pklist;
-  int actor, num;
-  user_info *uentp;  
-{
-  if ((uentp->pid != currpid) &&
-      (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
-      (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
-  {
-    cursor_show(num + 3, 0);
-    my_write(uentp->pid, "天音熱線：");
-  }
-  return US_PICKUP;
-}
-
 int
 talk_switch()  /* 顯示切換 */
 {
@@ -1262,18 +1217,6 @@ talk_switch()  /* 顯示切換 */
   return US_PICKUP;
 }
 
-int
-talk_sendmail(pklist, actor, uentp, num)
-  pickup *pklist;
-  int actor, num;
-  user_info *uentp;  
-{
-  stand_title("寄  信");
-  prints("收信人：%s", uentp->userid);
-  my_send(uentp->userid);
-  return US_PICKUP;
-}
-
 int 
 talk_sysophide()
 {
@@ -1292,9 +1235,70 @@ talk_chuser()
 }
 
 int 
-talk_query(pklist, actor, uentp, num)
+talk_chfriend()  //切換顯示好友/一般狀態
+{
+  cuser.uflag ^= FRIEND_FLAG;
+  return US_PICKUP;
+}
+
+int
+t_pager()
+{
+  currutmp->pager = (currutmp->pager + 1) % 5;
+  return US_PICKUP;
+}
+
+int
+talk_friendlist()  //編輯好友名單
+{
+  char buf[MAXPATHLEN];
+  setuserfile(buf, FN_PAL);
+  ListEdit(buf);
+  return US_PICKUP;
+}
+
+int 
+talk_broadcast(uentp, actor, pklist)
   pickup *pklist;
-  int actor, num;
+  int actor;
+  user_info *uentp;  
+{
+  char genbuf[200];
+  
+  if(HAS_PERM(PERM_SYSOP) || cuser.uflag & FRIEND_FLAG)
+  {
+    if (!getdata(0, 0, "廣播訊息:", genbuf + 1, 60, DOECHO,0)) return US_REDRAW;
+    genbuf[0] = HAS_PERM(PERM_SYSOP) ? 2 : 0;
+    if(getans2(0, 0, "確定廣播? ", 0, 2, 'y') == 'n') return US_REDRAW;
+    while (actor)
+    {
+      uentp = pklist[--actor].ui;
+      if (uentp->pid &&
+         currpid != uentp->pid &&
+         kill(uentp->pid, 0) != -1 &&
+         (HAS_PERM(PERM_SYSOP) || (uentp->pager != 3 &&
+         (uentp->pager != 4 || is_friend(uentp) & 4))))
+           my_write(uentp->pid, genbuf);
+    }
+  }
+  return US_PICKUP;
+}
+
+int 
+talk_water(uentp)
+  user_info *uentp;  
+{
+  if ((uentp->pid != currpid) &&
+      (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
+      (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
+  {
+    my_write(uentp->pid, "天音熱線：");
+  }
+  return US_PICKUP;
+}
+
+int 
+talk_query(uentp)
   user_info *uentp;  
 {
   strcpy(currauthor, uentp->userid);
@@ -1303,9 +1307,17 @@ talk_query(pklist, actor, uentp, num)
 }
 
 int
-talk_edituser(pklist, actor, uentp, num)
-  pickup *pklist;
-  int actor, num;
+talk_sendmail(uentp)
+  user_info *uentp;  
+{
+  stand_title("寄  信");
+  prints("收信人：%s", uentp->userid);
+  my_send(uentp->userid);
+  return US_PICKUP;
+}
+
+int
+talk_edituser(uentp)
   user_info *uentp;  
 {
   int id;
@@ -1322,24 +1334,8 @@ talk_edituser(pklist, actor, uentp, num)
   return US_PICKUP;
 }
 
-int 
-talk_chfriend()  //切換顯示好友/一般狀態
-{
-  cuser.uflag ^= FRIEND_FLAG;
-  return US_PICKUP;
-}
-
 int
-t_pager()
-{
-  currutmp->pager = (currutmp->pager + 1) % 5;
-  return US_PICKUP;
-}
-
-int
-talk_kick(pklist, actor, uentp, num) //踢人
-  pickup *pklist;
-  int actor, num;
+talk_kick(uentp) //踢人
   user_info *uentp;  
 {
   if (uentp->pid && (kill(uentp->pid, 0) != -1))
@@ -1352,9 +1348,7 @@ talk_kick(pklist, actor, uentp, num) //踢人
 }
 
 int 
-talk_ask(pklist, actor, uentp, num)  //要求聊天等連線事宜
-  pickup *pklist;
-  int actor, num;
+talk_ask(uentp)  //要求聊天等連線事宜
   user_info *uentp;
 {
   if (uentp->pid != currpid)
@@ -1367,18 +1361,7 @@ talk_ask(pklist, actor, uentp, num)  //要求聊天等連線事宜
 }
 
 int
-talk_friendlist()  //編輯好友名單
-{
-  char buf[MAXPATHLEN];
-  setuserfile(buf, FN_PAL);
-  ListEdit(buf);
-  return US_PICKUP;
-}
-
-int
-talk_editfriend(pklist, actor, uentp, num)
-  pickup *pklist;
-  int actor, num;
+talk_editfriend(uentp)
   user_info *uentp;
 {
   if (!pal_type(cuser.userid, uentp->userid))
@@ -1817,7 +1800,11 @@ pickup_user()
             if(talklist_key[tmp].level && !HAS_PERM(talklist_key[tmp].level))
               continue;
             if(ch == talklist_key[tmp].key && talklist_key[tmp].fptr != NULL)
-              state = (*((int (*)())talklist_key[tmp].fptr)) (pklist, actor, pklist[num].ui, num-head);
+            {
+              cursor_show(num-head + 3, 0);
+              state = (*((int (*)())talklist_key[tmp].fptr)) (pklist[num].ui, actor, pklist);
+              if(!state) state = US_PICKUP;
+            }
           }
         }
       }

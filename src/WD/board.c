@@ -451,28 +451,7 @@ static int
 search_board(num)
 {
   char genbuf[IDLEN + 2];
-/* Ptt get out
-  if (num >= 0) {
-     getdata(b_lines - 1, 0, "½Ð¿é¤J¬ÝªO¦WºÙ¡G", genbuf, IDLEN + 1, DOECHO,0);
-     move(b_lines - 1, 0);
-     clrtoeol();
-     move(b_lines, 0);
-     if (genbuf[0])
-     {
-       int n = num + 1;
-       str_lower(genbuf, genbuf);
-       while (n != num)
-       {
-         if (++n >= brdnum)        n = 0;
-         if (strstr_lower(nbrd[n].name, genbuf))
-           return n;
-         if (++n >= brdnum)
-           n = 0;
-       }
-     }
-  }
-  else {
-*/
+
      move(0,0);
      clrtoeol();
      CreateNameList();
@@ -482,9 +461,7 @@ search_board(num)
      for (num = 0; num < brdnum; num++)
         if (!strcmp(nbrd[num].name, genbuf))
            return num;
-/*
-  }
-*/
+
   return -1;
 }
 
@@ -577,9 +554,8 @@ brdlist_foot()
 [37m¼Ð°O¤wÅª/¥¼Åª  [33m(y)[33m¦C¥X%s  [33m(z)[37m¨ú®ø/­q¾\\     [m",
     yank_flag ? "­q¾\\" : "¥þ³¡");
 }
-/*
-woju
-*/
+
+int 
 have_author(char* brdname)
 {
    char dirname[100];
@@ -1278,7 +1254,8 @@ Favor()
 
 
 int
-favor_edit() {
+favor_edit() 
+{
   char fpath[80];
   int count, column, dirty;
   FILE *fp;
@@ -1315,7 +1292,8 @@ favor_edit() {
           AddNameList(genbuf);
           prints("%-13s", genbuf);
           count++;
-          if (++column > 5) {
+          if (++column > 5) 
+          {
             column = 0;
             outc('\n');
           }

@@ -151,8 +151,9 @@ enum
 #define NoteMoney	100
 #define LISTMAIN	101
 #define LISTEDIT	102
-#define FORTUNE		103
-#define TOBUY		104
+#define SEEWATER	103
+#define FORTUNE		104
+#define TOBUY		105
 
 /* ----------------------------------------------------- */
 /* menu.c ¤¤ªº¼Ò¦¡                                       */

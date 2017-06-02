@@ -1054,7 +1054,7 @@ i_read_key(rcmdlist, locmem, ch)
                移動 (上下左右鍵), tin-like read (u), 
          限制(not in mail):編修 (E), 發表 (^p)
        */
-        if(rcmdlist[i].level && HAS_PERM(rcmdlist[i].level))
+        if(!rcmdlist[i].level || HAS_PERM(rcmdlist[i].level))
         {
           return (*((int (*)())rcmdlist[i].fptr)) (locmem->crs_ln, 
                     &headers[locmem->crs_ln - locmem->top_ln], currdirect);
@@ -1289,7 +1289,7 @@ struct one_key *rcmdlist;
             if (genbuf[0] == 'n')
               list_add();
             goto return_i_read;
-          }                       
+          }
           else if (currmode & MODE_DIGEST)
           {
             board_digest(); /* Kaede */

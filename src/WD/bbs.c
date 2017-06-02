@@ -1761,7 +1761,7 @@ refusemark(ent, fhdr, direct)
 {
   char buf[256];
   
-  if (currstat != READING || !(currmode & MODE_BOARD))
+  if (currstat != READING)
     return RC_NONE;
                                                                                 
   /*自動清掉加密名單 ... hialan.020714*/
@@ -1770,7 +1770,8 @@ refusemark(ent, fhdr, direct)
   if(dashf(buf) || (fhdr->filemode & FILE_REFUSE))
     unlink(buf);
 
-  fhdr->filemode ^= FILE_REFUSE;                                                                                
+  if((currmode & MODE_BOARD) || !strcmp(fhdr->owner, cuser.userid)) 
+    fhdr->filemode ^= FILE_REFUSE;                                                                                
 
   if (currmode & MODE_SELECT)
   {

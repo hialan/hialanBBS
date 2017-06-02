@@ -102,7 +102,8 @@ my_write(pid, hint)
 
   if (isprint2(*hint))
   {
-    if (!(len = getdata(0, 0, hint, msg, 65, DOECHO,0))) {
+    if (!(len = getdata(0, 0, hint, msg, 65, DOECHO,0))) 
+    {
       pressanykey("算了! 放你一馬...");
       currutmp->chatid[0] = c0;
       currutmp->mode = mode0;
@@ -173,20 +174,22 @@ my_write(pid, hint)
       }
 /* itoc.011104: for BMW */
       {
-        BMW bmw;
-                                                                                 
-        time(&bmw.chrono);
-        strcpy(bmw.msg, msg);
+        fileheader bmw;
+        time_t now = time(0);
+        struct tm *ptime = localtime(&now);
+        
+        sprintf(bmw.date, "%02d:%02d", ptime->tm_hour, ptime->tm_min);
+        strcpy(bmw.title, msg);
                                                                                 
-        bmw.recv = 1;             /* 對方是接收端 */
-        strcpy(bmw.userid, cuser.userid);
+        bmw.savemode = 1;             /* 對方是接收端 */
+        strcpy(bmw.owner, cuser.userid);
         sethomefile(genbuf, uin->userid, FN_BMW);
-        rec_add(genbuf, &bmw, sizeof(BMW));
+        rec_add(genbuf, &bmw, sizeof(fileheader));
                                                                                 
-        bmw.recv = 0;             /* 我是傳送端 */
-        strcpy(bmw.userid, uin->userid);
+        bmw.savemode = 0;             /* 我是傳送端 */
+        strcpy(bmw.owner, uin->userid);
         sethomefile(genbuf, cuser.userid, FN_BMW);
-        rec_add(genbuf, &bmw, sizeof(BMW));
+        rec_add(genbuf, &bmw, sizeof(fileheader));
       }
       
 /* hialan.020713 for 最後一句話水球回顧*/
@@ -340,12 +343,7 @@ t_display()
          {
          case 'm':
            talk_mail2user();
-           /* shakalaca.000814: 不用 break 是因為 mail2user() 用了 f_cp, 
-              所以接著 case 'c' 將原始檔案 unlink */
-              
-           /*hialan.020702也順便將 BMW 檔案 unlink*/
-
-           break; /*talk_mail2user() 一口氣全部幹掉!! 所以用break*/
+           break; 
            
          case 'c':
            unlink(genbuf);
@@ -366,341 +364,90 @@ t_display()
 
 
 /* itoc.011104: for BMW */
+int
+bmw_water(ent, bmw, direct)
+  int ent;
+  fileheader *bmw;
+  char *direct;
+{
+  int tuid;
+  user_info *uentp;
                                                                                 
-#define XO_TALL 20
+  if ((tuid = getuser(bmw->owner)) && (uentp = (user_info *) search_ulist(cmpuids, tuid)))
+    talk_water(uentp);
+  
+  return RC_FULL;  
+}
+
+int
+bmw_refresh()
+{
+  return RC_FULL;
+}
+
+struct one_key bmwlist_key[]={
+'w' , bmw_water, PERM_PAGE, "丟水球",
+'s' , bmw_refresh,       0, "更新畫面",
+'\0', NULL, 0, NULL};
 
 void
-bmw_lightbar(row, bmw, ch, barcolor)
-   BMW bmw;
-   int ch, row;
+bmwtitle()
+{
+  char buf[256];
+  
+  sprintf(buf,"%s [線上 %d 人]",BOARDNAME, count_ulist());
+  showtitle("水球回顧", buf);
+
+  prints("[↑/↓]上下 [PgUp/PgDn]上下頁 [Home/End]首尾 [←][q]離開\n");
+  prints("\033[1;37;46m 編號 代 號       心  情  故  事"
+         "                                         時間 \033[m\n");
+}
+
+void
+bmw_lightbar(num, bmw, row, bar, barcolor)
+   fileheader *bmw;
+   int bar, row, num;
    char *barcolor;
 {
-  struct tm *ptime;
-
-  ptime = localtime(&bmw.chrono);
   move(row, 0);
   clrtoeol();
-  prints("%4d %s%-13s%s%-55.55s\033[m%02d:%02d",
-       ch + 1, (barcolor) ? barcolor : (bmw.recv) ? "\033[33m" : "\033[m", 
-       bmw.userid, (bmw.recv) ? "\033[0;33m" : "\033[m", bmw.msg,
-       ptime->tm_hour, ptime->tm_min);
+  prints("%4d %s%-13s%s%-55.55s\033[m%s",
+       num, (barcolor) ? barcolor : (bmw->savemode) ? "\033[33m" : "\033[m", 
+       bmw->owner, (bmw->savemode) ? "\033[0;33m" : "\033[m", 
+       bmw->title, bmw->date);
 }
+
                                                                                 
 int
 t_bmw()
 {
-  char fpath[128], ans[4], barcolor[50];
-  int num, pageno, pagemax, redraw;
-  int ch, pos, fd;
-  BMW bmw;
-  BMW bmwtmp[XO_TALL];
-  char *b_line_msg = "\033[1;33;44m 熱訊回顧 \033[1;37;46m (C)清除 (M)移至備忘錄 (w)水球 (s)更新 (d)刪除 (數字)跳到該項       \033[m";
-                                                                                
-  sethomefile(fpath, cuser.userid, FN_BMW);
+  char fname[80];
+  char *choose[3] = {"cC.清除","mM.移至備忘錄","rR.保留"};  
   
-  if(HAS_HABIT(HABIT_LIGHTBAR))
-    get_lightbar_color(barcolor);
-  else
-    *barcolor = 0;
-                                                                                
-  if (!dashf(fpath))
+  sethomefile(fname, cuser.userid, FN_BMW);
+  if(dashf(fname))
   {
-    pressanykey("你沒有收到任何水球喔");
-    return RC_NONE;
+    i_read(SEEWATER, fname, bmwtitle, bmw_lightbar, bmwlist_key, NULL);
+  
+    switch (getans2(b_lines, 0, "", choose, 3, 'r'))
+    {
+      case 'm':
+        talk_mail2user();
+        break;            
+    
+      case 'c':
+        unlink(fname);
+           
+        /* itoc.011104: delete BMW */
+        sethomefile(fname, cuser.userid, fn_writelog);
+        unlink(fname);
+
+      default:
+        break;
+    }
   }
-                                                                                
-  pageno = 0;
-  pos = 0;
-  redraw = 1;
-                                                                                
-  do
-  {
-    if (redraw)
-    {
-      clear();
-      sprintf(tmpbuf,"%s [線上 %d 人]",BOARDNAME, count_ulist());
-      showtitle("水球回顧", tmpbuf);
-
-      prints("[↑/↓]上下 [PgUp/PgDn]上下頁 [Home/End]首尾 [←][q]離開\n");
-      prints("\033[1;37;46m 編號 代 號       心  情  故  事"
-        "                                         時間 \033[m\n");
-                                                                                
-      num = rec_num(fpath, sizeof(BMW)) - 1;
-      pagemax = num / XO_TALL;
-                                                                                
-      ch = pageno * XO_TALL; /*本頁第一個*//* 借用 ch 及 redraw */
-      redraw = ch + XO_TALL; /*本頁最後一個*/
-                                                                                
-      if ((fd = open(fpath, O_RDONLY)) >= 0)
-      {
-        do
-        {
-          if (lseek(fd, (off_t) (sizeof(BMW) * ch), SEEK_SET) >= 0)
-          {
-            if (read(fd, &bmw, sizeof(BMW)) == sizeof(BMW))
-            {
-              /*move to bmw_lightbar by hialan*/
-              bmw_lightbar((ch % XO_TALL) + 3, bmw, ch, 0);
-              bmwtmp[ch % XO_TALL] = bmw;  /*add for lightbar*/
-              ch++;
-              continue;
-            }
-          }
-          break;
-        } while (ch < redraw);
-                                                                                
-        close(fd);
-      }
-                                                                                
-      move(b_lines, 0);
-      outs(b_line_msg);
-      redraw = 0;
-    }
-    
-    if(*barcolor != 0)
-      bmw_lightbar(3 + pos, bmwtmp[pos], (pageno * XO_TALL) + pos, barcolor);
-      
-    move(3 + pos, 0);
-    outc('>');    
-    ch = igetkey();
-
-    if(*barcolor != 0)
-      bmw_lightbar(3 + pos, bmwtmp[pos], (pageno * XO_TALL) + pos, 0);
-      
-    move(3 + pos, 0);
-    outc(' ');    
-    
-                                                                                
-    switch (ch)
-    {
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-      {
-        int number;
-        char buf[6];
-                                                                                
-        buf[0] = ch;
-        buf[1] = '\0';
-        getdata(b_lines, 0, "跳至第幾項：", buf, sizeof(buf), DOECHO, buf);
-        number = atoi(buf) - 1;
-        if (number >= 0 && number <= num)
-        {
-          if (number / XO_TALL == pageno)       /* 跳去同一頁 */
-          {
-            pos = number % XO_TALL;
-          }
-          else                                  /* 跳去不同頁 */
-          {
-            pageno = number / XO_TALL;
-            pos = number % XO_TALL;
-            redraw = 1;
-            break;
-          }
-        }
-        move(b_lines, 0);
-        clrtoeol();
-        outs(b_line_msg);
-      }
-      break;
-
-    case 'd':
-      rec_del(fpath, sizeof(BMW), pos + pageno * XO_TALL + 1, NULL, NULL);
-      redraw = 1;
-      if ((pageno == pagemax) && (pos == num % XO_TALL))
-      {  /* 剛好刪除最後一頁的最後一個，要回到上一個 */
-        if (!pos)       /* 若又剛好是唯一一個，要回到上一頁 */
-        {
-          pageno--;
-          /* yagami.011106 : bug修正 */
-          if (pageno < 0)
-          {
-            unlink(fpath);
-            sethomefile(fpath, cuser.userid, fn_writelog);
-            unlink(fpath);
-            return RC_FULL;
-          }
-          pos = XO_TALL - 1;    /* yagami.011106 : 游標位置修正 */
-        }
-        else
-        {
-          pos--;
-        }
-      }
-      break;
-    
-    case 'e':
-    case KEY_LEFT:
-      ch = 'q';
-    case 'q':
-      break;
-                                                                                
-    case KEY_PGUP:
-      if (pagemax != 0)
-      {
-        if (pageno)
-        {
-          pageno--;
-        }
-/*
-        else
-        {
-          pageno = pagemax;
-          pos = num % XO_TALL;
-        }
-*/
-        redraw = 1;
-      }
-      break;
-    
-    case ' ':                                                                            
-    case KEY_PGDN:
-      if (pagemax != 0)
-      {
-      //不要循環...@@  by hialan
-/*
-        if (pageno == pagemax)
-        {
-          //pageno = 0;
-          break;
-        }
-        else
-        {
-          pageno++;
-          if (pageno == pagemax)
-          pos = num % XO_TALL;
-        }
-        redraw = 1;
-*/
-        if (pageno != pagemax)
-        {
-          pageno++;
-          redraw = 1;
-        }
-        
-        /*加完以後還要判斷是否相同, 所以把他獨立出來擺後面 hialan*/
-        if (pageno == pagemax)
-          pos = num % XO_TALL;        
-      }
-      break;
-                                                                                
-    case KEY_UP:
-      if (pos == 0)
-      {
-        if (pageno != 0)
-        {
-          pos = XO_TALL - 1;
-          pageno = pageno - 1;
-        }
-        else
-        {
-          pos = num % XO_TALL;
-          pageno = pagemax;
-        }
-        redraw = 1;
-      }
-      else
-      {
-        pos--;
-      }
-      break;
-                                                                                
-    case KEY_DOWN:
-      if (pos == XO_TALL - 1)
-      {
-        pos = 0;
-        pageno = (pageno == pagemax) ? 0 : pageno + 1;
-        redraw = 1;
-      }
-      else if (pageno == pagemax && pos == num % XO_TALL)
-      {
-        pos = 0;
-        pageno = 0;
-        redraw = 1;
-      }
-      else
-      {
-        pos++;
-      }
-      break;
-                                                                                
-    case KEY_HOME:
-    case '0':
-        pos = 0;
-      break;
-                                                                                
-    case KEY_END:
-    case '$':
-      pos = (pageno == pagemax) ? num % XO_TALL : XO_TALL - 1;
-      break;
-                                                                                
-    case 'w':
-      if (HAS_PERM(PERM_PAGE))
-      {
-        int tuid;
-        user_info *uentp;
-                                                                                
-        if (!rec_get(fpath, &bmw, sizeof(BMW), pos + 1 + pageno * XO_TALL) &&
-          (tuid = getuser(bmw.userid)) &&
-          (uentp = (user_info *) search_ulist(cmpuids, tuid)))
-        {
-          if ((uentp->pid != currpid) &&
-            (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
-            (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4)))
-          {
-            my_write(uentp->pid, "熱線 Call-In：");
-            redraw = 1;
-          }
-        }
-      }
-      break;
-                                                                                
-    case 's':
-      redraw = 1;
-      break;
-                                                                                
-    case 'M':
-      getdata(b_lines, 0, "您是否確定要將水球記錄轉到信箱中？[N] ",
-        ans, 3, LCECHO, 0);
-      if (*ans == 'y')
-      {
-        talk_mail2user();        
-        ch = 'q';
-      }
-      else
-      {
-        move(b_lines, 0);
-        clrtoeol();
-        outs(b_line_msg);          
-      }
-      break;
-                                                                                
-    case 'C':
-      getdata(b_lines, 0, "您是否確定要清除全部的水球記錄？[N] ",
-        ans, 3, LCECHO, 0);
-      if (*ans == 'y')
-      {
-        unlink(fpath);
-        sethomefile(fpath, cuser.userid, fn_writelog);
-        unlink(fpath);
-        ch = 'q';
-      }
-      else
-      {
-        move(b_lines, 0);
-        clrtoeol();
-        outs(b_line_msg);
-      }
-      break;
-                                                                                
-    }
-  } while (ch != 'q');
-                                                                                
+  else
+    pressanykey("您尚未收到水球喔!!");
+  
   return RC_FULL;
 }
