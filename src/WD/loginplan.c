@@ -79,7 +79,7 @@ static int cmploginplan(p1, p2)
 static void loginplan_order()	//取得順序
 {
   FILE *fp;
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   char buf[512];
   int i;
   
@@ -109,7 +109,7 @@ static int save_loginplan()
 {
   FILE *fp;
   int i;
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   
   sethomefile(fpath, cuser.userid, FN_LOGINPLAN);
   
@@ -131,7 +131,7 @@ static int save_loginplan()
 int login_plan()
 {
   FILE *fp;
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   char buf[512];
   int i;
   char clean = 0; //是否需要重新去除錯誤

@@ -11,7 +11,7 @@
 
 #define KEEP_EDITING    -2
 #define SCR_WIDTH       80
-#define LOGO	fprintf(fp, "\n--\n\033[1;37m雅勒尼恩 \033[1;36mBBS\033[1;37m 站\033[1;31m《\033[1;32minfor.org\033[1;31m》\033[0m\n\033[1;36mAthenaeum\033[1;31m B\033[0;37mB\033[1;33mS\033[1;37m  From: \033[1;36m%s\033[0m@\033[1;33m%-24.24s \033[0m\n", cuser.userid, temp)
+#define LOGO	fprintf(fp, "\n--\n\033[1;37m威尼斯咖啡館 \033[1;36mBBS\033[1;37m 站\033[1;31m《\033[1;32mat.cgucccc.org\033[1;31m》\033[0m\n\033[1;36mVenice Cafe\033[1;31m B\033[0;37mB\033[1;33mS\033[1;37m  From: \033[1;36m%s\033[0m@\033[1;33m%-24.24s \033[0m\n", cuser.userid, temp)
 
 enum
 {
@@ -772,12 +772,11 @@ read_tmpbuf(int n)
      n = tmpf[4] - '0';
   }
 
-  setuserfile(fp_tmpbuf, tmpf);
+  sethomefile(fp_tmpbuf, cuser.userid, tmpf);
 
   if (n != 0 && n != 5 && more(fp_tmpbuf, NA) != -1)
-  {
      ans[0] = getans2(b_lines - 1, 0, "確定讀入嗎? ",0,2,'y');
-  }
+     
   if (*ans != 'n' && (fp = fopen(fp_tmpbuf, "r")))
   {
     prevln = currln;
@@ -799,7 +798,7 @@ write_tmpbuf()
   char fp_tmpbuf[80], ans[4];
   textline *p;
 
-  setuserfile(fp_tmpbuf, ask_tmpbuf(3));
+  sethomefile(fp_tmpbuf, cuser.userid, ask_tmpbuf(3));
   if (dashf(fp_tmpbuf))
   {
     char *choose_tmp[3]={"aA.附加","wW.覆寫","qQ.取消"};
@@ -828,7 +827,7 @@ erase_tmpbuf()
   char fp_tmpbuf[80];
   char ans[4] = "n";
 
-  setuserfile(fp_tmpbuf, ask_tmpbuf(3));
+  sethomefile(fp_tmpbuf, cuser.userid, ask_tmpbuf(3));
 
   if (more(fp_tmpbuf, NA) != -1)
      ans[0] = getans2(b_lines - 1, 0, "確定刪除嗎? ",0,2,'n');
@@ -852,7 +851,7 @@ auto_backup()
     textline *p, *v;
     char bakfile[64];
 
-    setuserfile(bakfile, fp_bak);
+    sethomefile(bakfile, cuser.userid, fp_bak);
     if (fp = fopen(bakfile, "w"))
     {
       for (p = firstline; p; p = v)
@@ -873,7 +872,7 @@ restore_backup()
 {
   char bakfile[80], buf[80];
 
-  setuserfile(bakfile, fp_bak);
+  sethomefile(bakfile, cuser.userid, fp_bak);
   if (dashf(bakfile))
   {
     char *choose_save[2] = {"sS.寫入暫存檔","qQ.算了"};
@@ -884,7 +883,7 @@ restore_backup()
     
     if (buf[0] != 'q')
     {
-      setuserfile(buf, ask_tmpbuf(3));
+      sethomefile(buf, cuser.userid, ask_tmpbuf(3));
       f_mv(bakfile, buf);
     }
     else
@@ -1235,7 +1234,7 @@ showsignature(fname)
 
   clear();
   move(2, 0);
-  setuserfile(fname, "sig.0");
+  sethomefile(fname, cuser.userid, "sig.0");
   j = strlen(fname) - 1;
 
   for (ch = '1'; ch <= '9'; ch++)
@@ -1851,7 +1850,7 @@ block_del(int hide)
       if (tmpfname[4] < '0' || tmpfname[4] > '9')
          tmpfname[4] = 'q';
       if ('1' <= tmpfname[4] && tmpfname[4] <= '9') {
-         setuserfile(fp_tmpbuf, tmpfname);
+         sethomefile(fp_tmpbuf, cuser.userid, tmpfname);
          if (tmpfname[4] != '5' && dashf(fp_tmpbuf)) 
           {
             char *choose_tmp[3] = {"aA.附加","wW.覆寫","qQ.取消"};
@@ -1916,7 +1915,7 @@ block_del(int hide)
             }
          }
 
-         setuserfile(fp_tmpbuf, tmpfname);
+         sethomefile(fp_tmpbuf, cuser.userid, tmpfname);
          if (fp = fopen(fp_tmpbuf, ans)) {
             if (begin == end && currpnt != blockpnt) {
                char buf[WRAPMARGIN + 2];

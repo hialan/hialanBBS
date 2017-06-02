@@ -748,7 +748,7 @@ haspostperm(bname)
   char *bname;
 {
   register int i;
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
 
 /*
   if (currmode & MODE_DIGEST || currmode & MODE_ETC)

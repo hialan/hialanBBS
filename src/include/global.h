@@ -88,6 +88,10 @@
 /* °T®§¦r¦ê¡G¿W¥ß¥X¨Ó¡A¥H§Q¤ä´©¦UºØ»y¨¥                  */
 /* ----------------------------------------------------- */
 
+#define MSG_CHOOSE_YES		"yY)¬O"
+#define MSG_CHOOSE_NO		"nN)§_"
+#define MSG_CHOOSE_CANCEL	"qQ)¨ú®ø"
+
 #define STR_CURSOR      ">>"
 #define STR_UNCUR       "  "
 
@@ -125,6 +129,7 @@
 
 #define MSG_SURE_NY     "½Ð±z½T©w(Y/N)¡H[N] "
 #define MSG_SURE_YN     "½Ð±z½T©w(Y/N)¡H[Y] "
+#define MSG_SURE	"½Ð±z½T©w¡H"
 
 #define MSG_BID         "½Ð¿é¤J¬ÝªO¦WºÙ¡G"
 #define MSG_UID         "½Ð¿é¤J¨Ï¥ÎªÌ¥N¸¹¡G"
@@ -150,10 +155,6 @@
 
 #define MSG_SELECT_BOARD        \
         COLOR1"[1m¡i [37m¿ï¾Ü¬ÝªO[33m ¡j[0m\n½Ð¿é¤J¬ÝªO¦WºÙ(«öªÅ¥ÕÁä¦Û°Ê·j´M)¡G"
-
-#define MSG_MAILER      \
-COLOR2"  «H«H¬Û±¤  "\
-COLOR1"[1m (R)[37m¦^«H [33m(x)[37mÂà¹F [33m(y)[37m¸s²Õ¦^«H [33m(D)[37m§R°£ [33m(c)[37m½Æ»s¤å³¹  [33m[G][37mÄ~Äò¡H    [m"
 
 #define P_BOARD "¹ï¤£°_,¦¹ªO¥u­ã¬ÝªO¦n¤Í¶i¤J,½Ð¦VªO¥D¥Ó½Ð¤J¹Ò³\\¥i"
 
@@ -197,11 +198,12 @@ char currBM[IDLEN * 3 + 10];
 char reset_color[4] = "[m";
 char margs[64] = "\0";           /*  main argv list*/
 int inmore = 0;
+char *msg_choose_cancel = MSG_CHOOSE_CANCEL;
+char *msg_choose[3]={MSG_CHOOSE_YES, MSG_CHOOSE_NO, MSG_CHOOSE_CANCEL};
 /* global string variables */
 
 
 /* filename */
-
 char *fn_passwd         = FN_PASSWD;
 char *fn_board          = FN_BOARD;
 char *fn_note_ans       = "note.ans";
@@ -220,9 +222,7 @@ char *fn_myfavorite     = FN_MYFAVORITE;
 char *fn_mandex         = "/.Names";
 
 /* message */
-
 char *msg_seperator     = MSG_SEPERATOR;
-char *msg_mailer        = MSG_MAILER;
 
 char *msg_cancel        = MSG_CANCEL;
 char *msg_usr_left      = MSG_USR_LEFT;
@@ -230,6 +230,7 @@ char *msg_nobody        = MSG_NOBODY;
 
 char *msg_sure_ny       = MSG_SURE_NY;
 char *msg_sure_yn       = MSG_SURE_YN;
+char *msg_sure		= MSG_SURE;
 
 char *msg_bid           = MSG_BID;
 char *msg_uid           = MSG_UID;
@@ -258,6 +259,7 @@ char *str_post2         = STR_POST2;
 char *BoardName         = BOARDNAME;
 char *str_dotdir        = ".DIR";
 char tmpbuf[512];
+
 #else                           /* _MAIN_C_ */
 
 
@@ -301,6 +303,8 @@ extern char currBM[];           /* BM of currently selected board */
 extern char reset_color[];
 extern char margs[];
 extern int inmore;
+extern char *msg_choose_cancel;
+extern char *msg_choose[3];
 /* global string variable */
 
 /* filename */
@@ -323,7 +327,6 @@ extern char *fn_myfavorite;
 extern char *fn_mandex;
 
 /* message */
-
 extern char *msg_seperator;
 extern char *msg_mailer;
 
@@ -333,6 +336,7 @@ extern char *msg_nobody;
 
 extern char *msg_sure_ny;
 extern char *msg_sure_yn;
+extern char *msg_sure;
 
 extern char *msg_bid;
 extern char *msg_uid;

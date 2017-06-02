@@ -11,6 +11,7 @@
 #define _STRUCT_H_
 
 
+#define PATHLEN	128		/* hialan: Length of path */
 #define STRLEN   80             /* Length of most string data */
 #define BRC_STRLEN 15           /* Length of boardname */
 #define BTLEN    48             /* Length of board title */

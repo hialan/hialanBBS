@@ -18,13 +18,11 @@
 #define IRH 1
 #define HRM 2
 
-
 struct talk_win
 {
   int curcol, curln;
   int sline, eline;
 };
-
 
 typedef struct
 {
@@ -93,7 +91,7 @@ modestring(uentp, simple)
   }
 
   else if (!mode && *uentp->chatid == 3)
-     sprintf(modestr, "¤Ñ­µ·Ç³Æ¤¤");
+     sprintf(modestr, "¤ô²y·Ç³Æ¤¤");
   else if (!mode)
     return (uentp->destuid == 6) ? uentp->chatid :
       IdleTypeTable[(0 <= uentp->destuid & uentp->destuid < 6) ?
@@ -104,12 +102,12 @@ modestring(uentp, simple)
   else if (uentp->in_chat & mode == CHATING)
     sprintf(modestr, "%s (%s)", word, uentp->chatid);
   else if (mode == TALK)
-   {
+  {
     if (is_hidden(getuserid(uentp->destuid)))    /* Leeym ¹ï¤è(µµ¦â)Áô§Î */
       sprintf(modestr, "%s", "¦Û¨¥¦Û»y¤¤"); /* Leeym ¤j®a¦Û¤vµo´§§a¡I */
     else
       sprintf(modestr, "%s %s", word, getuserid(uentp->destuid));
-   }
+  }
   else if (mode != PAGE && mode != QUERY)
     return (word);
   else
@@ -136,8 +134,7 @@ cmppids(pid, urec)
 }
 
 int     /* Leeym ±q FireBird ²¾´Ó§ï¼g¹L¨Óªº */
-is_hidden(user)
-char *user;
+is_hidden(char *user)
 {
     int tuid;
     user_info *uentp;
@@ -257,16 +254,11 @@ is_rejected(ui)
 /* ¯u¹ê°Ê§@                              */
 /* ------------------------------------- */
 
-static void
-my_kick(uentp)
-  user_info *uentp;
+static void my_kick(user_info *uentp)
 {
-  char genbuf[200];
-
-  getdata(1, 0, msg_sure_ny, genbuf, 4, LCECHO,0);
-  clrtoeol();
-  if (genbuf[0] == 'y')
+  if (getans2(1, 0, msg_sure, 0, 2, 'n') == 'y')
   {
+    char genbuf[200];  
     sprintf(genbuf, "%s (%s)", uentp->userid, uentp->username);
     log_usies("KICK ", genbuf);
     if ((kill(uentp->pid, SIGHUP) == -1) && (errno == ESRCH))
@@ -337,7 +329,7 @@ my_query(uident)
     prints("[¤W¯¸¦¸¼Æ]%-30d",muser.numlogins);
     prints("[µoªí¤å³¹]%d ½g\n",muser.numposts);
     prints("[¤H®ð«ü¼Æ]%-30d[¦n©_«ü¼Æ]%d\n",muser.bequery,muser.toquery);
-    prints("[¤Ñ­µ¶Ç±¡]¦¬ %d / µo %d \n",muser.receivemsg,muser.sendmsg);
+    prints("[¤ô²y¦¸¼Æ]¦¬ %d / µo %d \n",muser.receivemsg,muser.sendmsg);
     if(HAS_PERM(PERM_SYSOP))
       prints("[«e¦¸¬d¸ß]%-30.30s[³Q¬d¸ß]%s\n",muser.toqid,muser.beqid);
 
@@ -1037,7 +1029,7 @@ friend_delete(uident)
   sprintf(fpath, "½T©w²¾°£¦n¤Í %s ?", uident);
   if(getans2(2, 0, fpath, 0, 2, 'n') == 'n') return ;
   
-  setuserfile(fpath, FN_PAL);
+  sethomefile(fpath, cuser.userid, FN_PAL);
   pos = rec_search(fpath, &pal, sizeof(pal), cmpuname, (int) uident);
 
   if (pos)
@@ -1068,7 +1060,7 @@ friend_load()
   memset(myrejects, 0, sizeof(myrejects));
   friendcount = rejected_number = 0;
 
-  setuserfile(genbuf, FN_PAL);
+  sethomefile(genbuf, cuser.userid, FN_PAL);
   if ((fd = open(genbuf, O_RDONLY)) > 0)
   {
     ushort unum;
@@ -1099,7 +1091,7 @@ friend_descript(uident)
   int pos;
   PAL pal;
 
-  setuserfile(fpath, FN_PAL);
+  sethomefile(fpath, cuser.userid, FN_PAL);
   pos = rec_search(fpath, &pal, sizeof(pal), cmpuname, (int) uident);
 
   if (pos)
@@ -1251,8 +1243,8 @@ t_pager()
 int
 talk_friendlist()  //½s¿è¦n¤Í¦W³æ
 {
-  char buf[MAXPATHLEN];
-  setuserfile(buf, FN_PAL);
+  char buf[PATHLEN];
+  sethomefile(buf, cuser.userid, FN_PAL);
   ListEdit(buf);
   return US_PICKUP;
 }
@@ -1292,7 +1284,7 @@ talk_water(uentp)
       (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
       (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
   {
-    my_write(uentp->pid, "¤Ñ­µ¼ö½u¡G");
+    my_write(uentp->pid, "¤ô²y¼ö½u¡G");
   }
   return US_PICKUP;
 }
@@ -1353,7 +1345,7 @@ talk_ask(uentp)  //­n¨D²á¤Ñµ¥³s½u¨Æ©y
 {
   if (uentp->pid != currpid)
   {
-    char genbuf[MAXPATHLEN];
+    char genbuf[PATHLEN];
     clear();
     stand_title("²á¤Ñ¿ï¶µ");
     sethomefile(genbuf, uentp->userid, fn_plans);
@@ -1584,15 +1576,17 @@ pickup_user()
     {
       sprintf(tmpbuf,"%s [½u¤W %d ¤H]",BOARDNAME,count_ulist());
       showtitle((cuser.uflag & FRIEND_FLAG)? "¦n¤Í¦Cªí": "¥ð¶¢²á¤Ñ", tmpbuf);
-      prints(" ±Æ§Ç¡G[[1;36;44m%s[0m]     [1;32m§ÚªºªB¤Í¡G%-3d "
-        "[33m»P§Ú¬°¤Í¡G%-3d [36mªO¤Í¡G%-3d [31mÃa¤H¡G%-3d[m\n"
-        COLOR1"[1m  %sTP%c¥N¸¹         %-17s%-17s%-13s%-10s[m\n",
+      
+      prints(" ¡ö)Â÷¶}  ±Æ§Ç[[1;36;44m%s[0m] ¤W¯¸¤H¼Æ 34  [1;32m§ÚªºªB¤Í %-2d "
+        "[33m»P§Ú¬°¤Í %-2d [36mªO¤Í %-2d [31mÃa¤H %-3d[m\n",
         msg_pickup_way[pickup_way], 
 	(cuser.uflag & FRIEND_FLAG)?friends_number/2:friends_number,
 	(cuser.uflag & FRIEND_FLAG)?override_number/2:override_number,
 	(cuser.uflag & FRIEND_FLAG)?bfriends_number/2:bfriends_number,
-	badman,
-
+	badman);
+	
+      prints("%s  %sTP%c¥N¸¹         %-17s%-17s%-13s%-10s[m\n",
+	COLOR3,
 #ifdef SHOWUID
         show_uid ? "UID" :
 #endif
@@ -1661,9 +1655,10 @@ pickup_user()
     if (state == US_PICKUP)  continue;
 
     move(b_lines, 0);
-    outs(COLOR1"[1;33m (TAB/f)[37m±Æ§Ç/¦n¤Í [33m(t)[37m²á¤Ñ \
-[33m(a/d/o)[37m¥æ¤Í [33m(q)[37m¬d¸ß [33m(w)[37m¦©À³ \
-[33m(m)[37m±H«H [33m(Ctrl+Z)[37m½u¤W»²§U [m");
+    clrtoeol();
+    prints("%s  ¦n¤Í¦Cªí  %s     TAB|f)±Æ§Ç|¦n¤Í  y)§ó·s  w)¤ô²y  a|d|o)¥æ¤Í  m)±H«H  h)»¡©ú   \033[m",
+    	   COLOR2, COLOR3);
+    
     state = 0;
     while (!state)
     {

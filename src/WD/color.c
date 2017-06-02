@@ -109,10 +109,10 @@ selector_item(char *prompt, int line, int pos, char *lightbar, int def)
   int bottom, num, i;
   
   char **choose;
-  char *color[8]={"0.黑色","1.紅色","2.綠色","3.黃色","4.藍色","5.紫色","6.青色","7.白色"};
-  char *underline[2]={"0.無底線","1.底線"};
-  char *blink[2]={"0.不閃爍","1.閃爍"};
-  char *light[3]={"0.低亮度","1.高亮度","2.不設定"};
+  char *color[8]={"0)黑色","1)紅色","2)綠色","3)黃色","4)藍色","5)紫色","6)青色","7)白色"};
+  char *underline[2]={"0)無底線","1)底線"};
+  char *blink[2]={"0)不閃爍","1)閃爍"};
+  char *light[3]={"0)低亮度","1)高亮度","2)不設定"};
   
 
   switch(line)

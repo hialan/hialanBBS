@@ -574,7 +574,7 @@ setup_utmp(mode)
 #else
   uinfo.from_alias = 0;
 #endif
-  setuserfile(buf, "remoteuser");
+  sethomefile(buf, cuser.userid, "remoteuser");
   add_distinct(buf, getenv("RFC931"));
 
   if (enter_uflag & CLOAK_FLAG)
@@ -688,7 +688,7 @@ user_login()
     set_board();
     do_post();
    }
-    setuserfile(genbuf, str_badlogin);
+    sethomefile(genbuf, cuser.userid, str_badlogin);
     if (more(genbuf, NA) != -1)
     {
       char ans;

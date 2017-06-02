@@ -27,7 +27,7 @@ do_aloha(char *hello)
    PAL pal;
    char genbuf[200];
 
-   setuserfile(genbuf, FN_ALOHA);
+   sethomefile(genbuf, cuser.userid, FN_ALOHA);
    if ((fd = open(genbuf, O_RDONLY)) > 0)
    {
       user_info *uentp;
@@ -129,7 +129,7 @@ my_write(pid, hint)
     }
 
     watermode = -1;
-    sprintf(genbuf, "¥á%s¤Ñ­µ:%.40s....? ", uin->userid, msg);
+    sprintf(genbuf, "¥á%s¤ô²y:%.40s....? ", uin->userid, msg);
     if (getans2(0, 0, genbuf, 0, 2, 'y') == 'n') 
     {
       currutmp->chatid[0] = c0;
@@ -218,7 +218,7 @@ my_write(pid, hint)
       if (uin->msgcount  == 1 && kill(uin->pid, SIGUSR2) == -1 && *hint != 1)
          pressanykey("ÁV¿|! ¨S¥´¤¤! ~>_<~");
       else if (uin->msgcount == 1 && *hint != 1)
-         outz("[1m[44m¤Ñ­µ¶Ç¤W¥h¤F! *^o^Y[m");
+         outz("[1m[44m¤ô²y¥á¹L¥h¤F! *^o^Y[m");
    }
 //   clrtoeol();
 //   refresh();
@@ -302,7 +302,7 @@ talk_mail2user()
 {
   char fname[128];
 
-  setuserfile(fname, fn_writelog);
+  sethomefile(fname, cuser.userid, fn_writelog);
   mail2user(cuser.userid, "¼ö½u\033[37;41m°O¿ý\033[m", fname, FILE_READ);
   unlink(fname);
   
@@ -318,11 +318,11 @@ t_display()
 {
   char genbuf[64];
 
-  setuserfile(genbuf, fn_writelog);
+  sethomefile(genbuf, cuser.userid, fn_writelog);
 
   if (more(genbuf, YEA) != -1)
   {
-    char *choose[3] = {"cC.²M°£","mM.²¾¦Ü³Æ§Ñ¿ý","rR.«O¯d"};
+    char *choose[3] = {"cC)²M°£","mM)²¾¦Ü³Æ§Ñ¿ý","rR)«O¯d"};
     
     /* add by hialan 20020519  ¤ô²y®e¶q¤p©ó200k */
        
@@ -405,11 +405,10 @@ bmw_lightbar(num, bmw, row, bar, barcolor)
 }
 
                                                                                 
-int
-t_bmw()
+int t_bmw()
 {
   char fname[80];
-  char *choose[3] = {"cC.²M°£","mM.²¾¦Ü³Æ§Ñ¿ý","rR.«O¯d"};  
+  char *choose[3] = {"cC)²M°£","mM)²¾¦Ü³Æ§Ñ¿ý","rR)«O¯d"};  
   
   sethomefile(fname, cuser.userid, FN_BMW);
   if(dashf(fname))

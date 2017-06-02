@@ -38,7 +38,7 @@ int cancel_article ARG((char *, char *, char *));
 #ifdef  MapleBBS
 
 #define _BBS_UTIL_C_
-#include "record.c"
+#include "../WD/record.c"
 
 #else
 report()

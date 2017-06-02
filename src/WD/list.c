@@ -19,9 +19,7 @@ void listdoent();
 void ListEdit();
 
 
-int
-belong_list(fname, userid)
-  char *fname, *userid;
+int belong_list(char *fname, char *userid)
 {
   int fd, can = 0;
   PAL pal;
@@ -45,10 +43,7 @@ belong_list(fname, userid)
 }
 
 
-static void
-list_desc(fhdr, echo)
-  fileheader *fhdr;
-  int echo;
+static void list_desc(fileheader *fhdr, int echo)
 {
   char buf[80];
 
@@ -72,8 +67,7 @@ list_desc(fhdr, echo)
 }
 
 
-int
-list_add()
+int list_add()
 {
   char listfile[80], fpath[80], ans[4];
   fileheader hdr;
@@ -82,7 +76,7 @@ list_add()
 
   if (currstat != LISTEDIT)
   {
-    char *list_choose[3]={"11.一般名單","22.好友名單","qQ.離開"};
+    char *list_choose[3]={"11)一般名單","22)好友名單", msg_choose_cancel};
     strcpy(listfile, "list.0");
 
     switch (getans2(1, 0, "新增 ", list_choose, 3, '1'))
@@ -101,7 +95,7 @@ list_add()
 	  break;
     }
 
-    setuserfile(fpath, FN_LIST);
+    sethomefile(fpath, cuser.userid, FN_LIST);
     if (belong_list(fpath, listfile))
     {
       pressanykey("已有此名單了 !");
@@ -110,7 +104,7 @@ list_add()
     list_desc(&hdr, DOECHO);
     strcpy(hdr.filename, listfile);
     sprintf(hdr.date, "%02d/%02d", ptime->tm_mon + 1, ptime->tm_mday);
-    setuserfile(fpath, FN_LIST);
+    sethomefile(fpath, cuser.userid, FN_LIST);
     if (rec_add(fpath, &hdr, sizeof(fileheader)) == -1)
       pressanykey("系統發生錯誤! 請通知站長!");
 
@@ -177,11 +171,7 @@ list_add()
 }
 
 
-static int
-list_del(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
+static int list_del(int ent, fileheader *fhdr, char *direct)
 {
   char genbuf[100];
 
@@ -190,7 +180,7 @@ list_del(ent, fhdr, direct)
   {
     if (currstat == LISTMAIN)
     {
-      setuserfile(genbuf, fhdr->filename);
+      sethomefile(genbuf, cuser.userid, fhdr->filename);
       unlink(genbuf);
     }
     strcpy(genbuf, strrchr(currdirect, '/') + 1);
@@ -216,17 +206,13 @@ list_del(ent, fhdr, direct)
 
 
 /* shakalaca.000115: 應該用 i_read 再讀一遍的.. 慢改 */
-static int
-list_view(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
+static int list_view(int ent, fileheader *fhdr, char *direct)
 {
   char buf[80];
 
   if (currstat == LISTMAIN)
   {
-    setuserfile(buf, fhdr->filename);
+    sethomefile(buf, cuser.userid, fhdr->filename);
     ListEdit(buf);
   } 
   else
@@ -236,11 +222,7 @@ list_view(ent, fhdr, direct)
 }
 
 
-static int
-list_merge(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
+static int list_merge(int ent, fileheader *fhdr, char *direct)
 {
   /* 引入名單: 判斷要引入的名單中如果有 id 存在 target 則跳過 */
   int fd;
@@ -278,7 +260,7 @@ list_merge(ent, fhdr, direct)
    if (strstr(currdirect, source))
      return RC_FULL;
 
-    setuserfile(buf, source);
+    sethomefile(buf, cuser.userid, source);
     if ((fd = open(buf, O_RDONLY)) >= 0)
     {
       while (read(fd, &list, sizeof(list)) == sizeof(list))
@@ -295,11 +277,7 @@ list_merge(ent, fhdr, direct)
 }
 
 
-static int
-list_multi(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
+static int list_multi(int ent, fileheader *fhdr, char *direct)
 {
   int reciper;
 
@@ -314,11 +292,7 @@ list_multi(ent, fhdr, direct)
 }
 
 
-static int
-list_edit(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
+static int list_edit(int ent, fileheader *fhdr, char *direct)
 {
   fileheader tmpfhdr = *fhdr;
   char fpath[80], ans[3];
@@ -328,7 +302,7 @@ list_edit(ent, fhdr, direct)
 
   /*
    * shakalaca.000117: 改描述而以嘛.. :p 用 enter 也可以改內容, so..
-   * setuserfile(buf, fhdr->filename); if (currstat == LISTMAIN)
+   * sethomefile(buf, cuser.userid, fhdr->filename); if (currstat == LISTMAIN)
    * ListEdit(buf);
    */
   strcpy(fpath, strrchr(currdirect, '/') + 1);
@@ -362,11 +336,7 @@ list_edit(ent, fhdr, direct)
 }
 
 
-static int
-list_move(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
+static int list_move(int ent, fileheader *fhdr, char *direct)
 {
   fileheader *tmp;
   char newnum[5], buf[30];
@@ -422,11 +392,7 @@ struct one_key list_comm[] = {
   '\0', NULL, 0, NULL,0};
 
 /*Change For LightBar by hialan on 20020609*/
-void
-listdoent(num, ent, row, bar, bar_color)
-  int num, row ,bar;
-  fileheader *ent;
-  char *bar_color;
+void listdoent(int num, fileheader *ent, int row, int bar, char *bar_color)
 {
   move(row, 0);
   clrtoeol();
@@ -445,32 +411,32 @@ listdoent(num, ent, row, bar, bar_color)
 }
 
 
-void
-listtitle()
+void listtitle()
 {
   char buf[256];
   sprintf(buf, "%s [線上 %d 人]", BOARDNAME, count_ulist());
   showtitle("群組名單", buf);
   if (currstat != LISTMAIN)
-    outs("\
-  [a]新增 [c]修改 [d]刪除 [m]移動 [i]引入名單 [s]群組寄信 [→]觀看 [h]elp\n\
-" COLOR1 "\033[1m 編號 模式 日  期 名  稱        描        述                                   \033[0m");
+  {
+    outs("[a]新增 [c]修改 [d]刪除 [m]移動 [i]引入名單 [s]群組寄信 [→]觀看 [h]elp\n");
+    prints("%s 編號 模式 日  期 名  稱        描        述                                   \033[0m", COLOR3);
+  }
   else
-    outs("\
-  [a]新增 [c]修改 [d]刪除 [m]移動 [→]觀看 [h]elp\n\
-" COLOR1 "\033[1m 編號 日  期 名  稱        描        述                                        \033[0m");
+  {
+    outs("[a]新增 [c]修改 [d]刪除 [m]移動 [→]觀看 [h]elp\n");
+    prints("%s 編號 日  期 名  稱        描        述                                        \033[0m", COLOR3);
+  }
 }
 
 
-int
-ListMain()
+int ListMain()
 {
   char buf[STRLEN];
 
-  setuserfile(buf, FN_LIST);
+  sethomefile(buf, cuser.userid, FN_LIST);
   if(rec_num(buf, sizeof(fileheader)) == 0)
   {
-    char *choose_list[2] = {"nN.新增","qQ.離開"};  
+    char *choose_list[2] = {"nN)新增", msg_choose_cancel};  
     
     if (getans2(1, 0, "尚未有名單 ", choose_list, 2, 'q') == 'n') 
     {
@@ -493,9 +459,7 @@ ListMain()
 }
 
 
-void
-ListEdit(fname)
-  char *fname;
+void ListEdit(char *fname)
 {
   char currdirect0[64];
   int tmp = 1;
@@ -504,7 +468,7 @@ ListEdit(fname)
 
   if(rec_num(fname, sizeof(fileheader)) == 0)
   {
-    char *choose_list[2] = {"nN.新增","qQ.離開"};  
+    char *choose_list[2] = {"nN)新增", msg_choose_cancel};
     if (getans2(1, 0, "", choose_list, 2, 'q') == 'n') 
     {
       usint currstat0 = currstat;

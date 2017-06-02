@@ -38,7 +38,7 @@ all: 	$(TOOL)
 
 install:$(TOOL)
 	strip $(TOOL)
-	chown hialan.i89 $(TOOL)
+	chown bbs.bbs $(TOOL)
 	cp -fp $(TOOL) $(BBSHOME)/bin
 
 clean:

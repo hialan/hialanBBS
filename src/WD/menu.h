@@ -82,14 +82,14 @@ int board(), local_board(), Boards(), ReadSelect() ,
     New(),Favor(),favor_edit(),good_board(),voteboard();
 
 static struct one_key classlist[] = {
-'V',  voteboard, PERM_BASIC,"VoteBoard    [看板連署系統]",0,
-'C',      board, 	  0,"Class        [本站分類看板]",0,
-'N',        New, 	  0,"New          [所有看板列表]",0,
-'L',local_board, 	  0,"Local        [站內看板列表]",0,
-'G', good_board, 	  0,"GoodBoard    [  優良看板  ]",0,
-'B',      Favor, PERM_BASIC,"BoardFavor   [我的最愛看板]",0,
-'F', favor_edit, PERM_BASIC,"FavorEdit    [編輯我的最愛]",0,
-'S', ReadSelect, 	  0,"Select       [  選擇看板  ]",0,
+'V',  voteboard, PERM_BASIC,"VoteBoard    看板連署系統",0,
+'C',      board, 	  0,"Class        本站分類看板",0,
+'N',        New, 	  0,"New          所有看板列表",0,
+'L',local_board, 	  0,"Local        站內看板列表",0,
+'G', good_board, 	  0,"GoodBoard    優良看板列表",0,
+'B',      Favor, PERM_BASIC,"BoardFavor   我的最愛看板",0,
+'F', favor_edit, PERM_BASIC,"FavorEdit    編輯我的最愛",0,
+'S', ReadSelect, 	  0,"Select       選擇看板",0,
 0,NULL, 0, NULL,0};
 
 /* ----------------------------------------------------- */
@@ -127,17 +127,21 @@ int t_bmw();
 
 static struct one_key talklist[] = {
 
-'L',  t_users,      0,              "List          [線上名單]",0,
-'P',  t_pager,      PERM_BASIC,     "Pager         [切換狀態]",0,
-'I',  t_idle,       0,              "Idle          [鎖定螢幕]",0,
-'Q',  t_query,      0,              "QueryUser     [查詢User]",0,
+'L',  t_users,      0,              "List          線上名單",0,
+'P',  t_pager,      PERM_BASIC,     "Pager         切換狀態",0,
+'I',  t_idle,       0,              "Idle          鎖定螢幕",0,
+'Q',  t_query,      0,              "QueryUser     查詢使用者",0,
 /*
 'T',  t_talk,       PERM_PAGE,      "Talk          [找人聊天]",0,
  */
-'C',  "SO/chat.so:t_chat",PERM_CHAT,"ChatRoom      [連線聊天]",1,
+'C',  "SO/chat.so:t_chat",PERM_CHAT,"ChatRoom      連線聊天",1,
+/*
 'D',  t_display,    0,              "Display       [水球回顧]",0,
-'W',  t_bmw,        PERM_PAGE,      "Write         [水球回顧]", 0,
+*/
+'D',  t_bmw,        PERM_PAGE,      "Display       水球回顧", 0,
+/*
 'X',  XFile,        PERM_XFILE,     "Xfile         [修改系統檔]",0,
+*/
 0, NULL, 0, NULL,0};
 
 /*-------------------------------------------------------*/
@@ -298,15 +302,15 @@ int Announce(), Boards(), Goodbye(), board(), Favor();
 
 
 struct one_key cmdlist[] = {
-'A',  Announce,     0,              "Announce      [天地精華]",0,
-'B',  BOARD,        0,              "Board         [看板功\能]",0,
-'C',  board,        0,              "Class         [分類看板]",0,
-'F',  Favor,        PERM_BASIC,     "Favor         [我的最愛]",0,
-'M',  Mail,         PERM_BASIC,     "Mail          [福音快遞]",0,
-'T',  Talk,         0,              "Talk          [談天說地]",0,
-'U',  User,         0,              "User          [個人工具]",0,
-'S',  Service,      PERM_BASIC,     "Service       [各種服務]",0,
-'0',  admin,        PERM_ADMIN,     "0Admin        [系統管理]",0,
-'G',  Goodbye,      0,              "Goodbye       [有緣千里]",0,
+'A',  Announce,     0,              "Announce      天地精華",0,
+'B',  BOARD,        0,              "Board         看板功\能",0,
+'C',  board,        0,              "Class         分類看板",0,
+'F',  Favor,        PERM_BASIC,     "Favor         我的最愛",0,
+'M',  Mail,         PERM_BASIC,     "Mail          信件功\能",0,
+'T',  Talk,         0,              "Talk          談天說地",0,
+'U',  User,         0,              "User          個人工具",0,
+'S',  Service,      PERM_BASIC,     "Service       各種服務",0,
+'0',  admin,        PERM_ADMIN,     "0Admin        系統管理",0,
+'G',  Goodbye,      0,              "Goodbye       有緣千里",0,
 0, NULL, 0, NULL,0};
 /* INDENT ON */

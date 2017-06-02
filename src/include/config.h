@@ -14,14 +14,14 @@
 /* ------------------------------------------------------*/
 
 #define BOARDNAME       "«Â¥§´µ©@°ØÀ]"			/* ¤¤¤å¯¸¦W */
-#define BBSNAME         "Venice Cofe BBS"		/* ­^¤å¯¸¦W */
-#define MYHOSTNAME      "infor.org"			/* ºô§} */
-#define MYIP		"203.64.26.200"			/* IP */
+#define BBSNAME         "Venice Cofe Shop"		/* ­^¤å¯¸¦W */
+#define MYHOSTNAME      "Venice.twbbs.org"		/* ºô§} */
+#define MYIP		"163.25.104.100"		/* IP */
 #define MYVERSION       "WD-BBS 2.9 SNAP"		/* µ{¦¡ª©¥» */
-#define MYBBSID         "WD"				/* Âà«H¥N½X */
-#define BBSHOME         "/home/i89/hialan/MYBBS/bbs"	/* BBS ªº®a */
-#define BBSUSER         "hialan"
-#define BBSUID          2319
+#define MYBBSID         "Venice-BBS"			/* Âà«H¥N½X */
+#define BBSHOME         "/home/bbs"			/* BBS ªº®a */
+#define BBSUSER         "bbs"
+#define BBSUID          1005
 #define BBSGID          1005
 #define TAG_VALID	"[WD BBS]To "	
 			/* shakalaca.000814: §ï¥Î MagicKey »{ÃÒ
@@ -209,14 +209,13 @@
 #define DEF_MAXP	2500	/* ¬ÝªO¤å³¹°ò¥»¤W­­¼Æ¶q */
 #define DEF_MAXT	365	/* ¬ÝªO¤å³¹°ò¥»«O¯d¤Ñ¼Æ */
 
-#define COLOR1	"[46;37m"
-#define COLOR2	"[1m[44;33m"
-#define COLOR3	"[1;44m"
+#define COLOR1	"[46m"
+#define COLOR2	"[45m"
+#define COLOR3	"[m[30m[47m"	/* Title Color*/
 
 /* ----------------------------------------------------- */
 /* ¶®¼Ö¥§®¦ ¦Û­q©w¸qâ                                    */
 /* ----------------------------------------------------- */
                                                                                 
-#define MAXPATHLEN      256     /* µ{¦¡¸ô®|ªº³Ì¤jªø«× */
 #define MAXMONEY(cuser) ((cuser.totaltime*10) + (cuser.numlogins*100) + (cuser.numposts*1000))
   /* ª÷¿ú¤W­­ hialan:030131*/

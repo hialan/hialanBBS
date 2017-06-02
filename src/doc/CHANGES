@@ -199,3 +199,17 @@
 
 [2003/07/14]
   1.修改 menu.c --> show_menu() 無窮回圈
+
+[2003/07/15]
+  1.取消 更新中獎名單, 只轉錄文章到 ColdKing
+  2.新增 global.h --> msg_choose 作為預設值
+  3.將所有 setuserfile -> sethomefile
+  4.取消定義 MAXPATHLEN 變成 PATHLEN
+
+[2003/07/19]
+  1.個人板權限設定: 如果有個人板的屬性, 只會出現在Personal.All, 不會出現在其他的目錄下
+
+[2003/07/21]
+  1.介面大致上修改成 AT-BBS
+  2.修改 使用者檔案, 改用 win_select() , 捨棄 etc/userfile
+  3.修正 menu.c --> domenu() 第一項會顯示出不應該看到的東西

@@ -116,11 +116,10 @@ getans2(line, col, prompt, s, many, def)
   char bar_color[50];
   char buf2[128];
   char *p;      /*訊息的指標*/
-  char *choose_yesno[3]={"yY.是","nN.否","qQ.取消"};
-                                                                                
+
   /*預設值*/
   off_set = offset_count(prompt);
-  if(!s) s = choose_yesno;
+  if(!s) s = msg_choose;
   
   if(many == 1) return *(s[0]);	/* 只有一個選項選什麼? */
   

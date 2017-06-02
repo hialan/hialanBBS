@@ -11,9 +11,9 @@
 #####################################################
 VERSION=0.50_B4-WD_patch
 LASTVERSION=0.50beta-3
-ADMINUSER= ychia@infor.org
-BBSHOME = /home/i89/hialan/MYBBS/bbs
-BBS_SRC = /home/i89/hialan/MYBBS/bbs/WD
+ADMINUSER= LinuxBoy@at.cgucccc.org
+BBSHOME = /home/bbs
+BBS_SRC = /home/bbs/WD
 #######################
 # if you want to make a "bbsnnrp" only, 
 # change TARGET=$(BBSNNRP)
@@ -526,7 +526,7 @@ receive_article.o: /usr/include/runetype.h /usr/include/errno.h
 receive_article.o: /usr/include/malloc.h /usr/include/stdlib.h
 receive_article.o: /usr/include/sys/stat.h /usr/include/sys/file.h
 receive_article.o: /usr/include/sys/fcntl.h daemon.h bbslib.h inntobbs.h
-receive_article.o: /home/nation/src/WD/record.c
+receive_article.o: /home/bbs/src/WD/record.c
 port.o: innbbsconf.h /usr/include/stdio.h /usr/include/sys/cdefs.h
 port.o: /usr/include/machine/ansi.h /usr/include/syslog.h
 port.o: /usr/include/sys/types.h /usr/include/sys/inttypes.h

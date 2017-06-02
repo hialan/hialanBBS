@@ -36,12 +36,12 @@ rebuild_pnote_ansi(int newflag) {
   FILE *fp;
 
   if (newflag) {
-    setuserfile(fname, fn_pnote_ans);
-    setuserfile(fpath, fn_note_dat);
+    sethomefile(fname, cuser.userid, fn_pnote_ans);
+    sethomefile(fpath, cuser.userid, fn_note_dat);
   }
   else {
-    setuserfile(fname, fn_pnote_ans_save);
-    setuserfile(fpath, fn_note_dat_save);
+    sethomefile(fname, cuser.userid, fn_pnote_ans_save);
+    sethomefile(fpath, cuser.userid, fn_note_dat_save);
   }
 
   if ((fp = fopen(fname, "w")) == NULL) {
@@ -201,9 +201,9 @@ del_pnote(notedata *pitem, int newflag) {
  notedata item;
 
  if (newflag)
-   setuserfile(fpath, fn_note_dat);
+   sethomefile(fpath, cuser.userid, fn_note_dat);
  else
-   setuserfile(fpath, fn_note_dat_save);
+   sethomefile(fpath, cuser.userid, fn_note_dat_save);
 
  sprintf(fold, "%s.tmp", fpath);
  f_mv(fpath, fold);
@@ -269,7 +269,7 @@ p_edithint()
     int aborted;
 
     setutmpmode(PRECORD);
-    setuserfile(genbuf, fn_pnote_hint);
+    sethomefile(genbuf, cuser.userid, fn_pnote_hint);
     aborted = vedit(genbuf, NA);
     if (!aborted)
       outs("留言錄製完畢");
@@ -278,7 +278,7 @@ p_edithint()
   }
   else if (genbuf[0] == 'd')
   {
-    setuserfile(genbuf, fn_pnote_hint);
+    sethomefile(genbuf, cuser.userid, fn_pnote_hint);
     unlink(genbuf);
     outmsg("留言刪除完畢");
   }
@@ -294,9 +294,9 @@ get_pnote(notedata *pitem, int newflag) {
  char fpath[MAXPATHLEN];
 
  if (newflag)
-   setuserfile(fpath, fn_note_dat);
+   sethomefile(fpath, cuser.userid, fn_note_dat);
  else
-   setuserfile(fpath, fn_note_dat_save);
+   sethomefile(fpath, cuser.userid, fn_note_dat_save);
 
  if ((fp = fopen(fpath, "r")) != NULL) {
    while (fread(&myitem, sizeof(myitem), 1, fp) == 1) {
@@ -352,10 +352,10 @@ Pnote(int newflag) {
           item_array[i].buf[0][0] = 0;
         }
         if (newflag) {
-          setuserfile(fpath, fn_pnote_ans);
+          sethomefile(fpath, cuser.userid, fn_pnote_ans);
         }
         else {
-          setuserfile(fpath, fn_pnote_ans_save);
+          sethomefile(fpath, cuser.userid, fn_pnote_ans_save);
         }
         more(fpath, YEA);
         break;
@@ -371,7 +371,7 @@ Pnote(int newflag) {
           offset = num;
     }
     else if ((ans[0] == 's' || ans[0] == 'S') && newflag) {
-        setuserfile(fpath, fn_note_dat_save);
+        sethomefile(fpath, cuser.userid, fn_note_dat_save);
         if((num1=get_pnote(item_array,0)) >= MAX_PNOTE) {  /* wisely */
           move(t_lines-3, 0);
           pressanykey("答錄機已經錄到底囉，沒辦法保存了，記得快整理整理喔...");
@@ -403,9 +403,9 @@ Pnote(int newflag) {
         char title[128], buf[80];
 
         if (newflag)
-          setuserfile(fpath, fn_pnote_ans);
+          sethomefile(fpath, cuser.userid, fn_pnote_ans);
         else
-          setuserfile(fpath, fn_pnote_ans_save);
+          sethomefile(fpath, cuser.userid, fn_pnote_ans_save);
 
         sethomepath(buf, cuser.userid);
         stampfile(buf, &mymail);
@@ -433,9 +433,9 @@ Pnote(int newflag) {
   }
 
   if (newflag)
-    setuserfile(fpath, fn_note_dat);
+    sethomefile(fpath, cuser.userid, fn_note_dat);
   else
-    setuserfile(fpath, fn_note_dat_save);
+    sethomefile(fpath, cuser.userid, fn_note_dat_save);
 
   offset = 0;
   if ((fp = fopen(fpath, "w")) != NULL) {

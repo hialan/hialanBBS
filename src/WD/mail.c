@@ -16,8 +16,7 @@ static char listfile[] = "list.0";
 static int mailkeep=0, mailsum=0;
 static int mailsumlimit=0,mailmaxkeep=0;
 
-int
-setforward() /* Ptt , modify by wildcat*/
+int setforward() /* Ptt , modify by wildcat*/
 {
   char buf[80],ip[50]="",yn[4];
 // wildcat : bbs ©Ò¦³ domain name list
@@ -443,17 +442,17 @@ multi_list(reciper)
 /*[»¡©ú] fn_override ¬°ÂÂª©ªº¦n¤Í¦W³æ*/
 /*§ï¦¨ FN_PAL*/
 
-      setuserfile(genbuf, genbuf[0] == '1' ? listfile : FN_PAL);
+      sethomefile(genbuf, cuser.userid, genbuf[0] == '1' ? listfile : FN_PAL);
       ToggleNameList(reciper, genbuf, msg_cc);
       break;
 
     case 'o':
-      setuserfile(genbuf, "alohaed");
+      sethomefile(genbuf, cuser.userid, "alohaed");
       ToggleNameList(reciper, genbuf, msg_cc);
       break;
 
     case 'n':
-      setuserfile(genbuf, "postlist");
+      sethomefile(genbuf, cuser.userid, "postlist");
       ToggleNameList(reciper, genbuf, msg_cc);
       break;
 
@@ -555,7 +554,7 @@ multi_send(title, inmail)
       sprintf(save_title, "[³q§i] %s", fpath);
     } 
 
-    setuserfile(fpath, fn_notes);
+    sethomefile(fpath, cuser.userid, fn_notes);
 
     if (fp = fopen(fpath, "w"))
     {
@@ -660,7 +659,7 @@ multi_reply(ent, fhdr, direct)
 
   stand_title("¸s²Õ¦^«H");
   strcpy(quote_user, fhdr->owner);
-  setuserfile(quote_file, fhdr->filename);
+  sethomefile(quote_file, cuser.userid, fhdr->filename);
   multi_send(fhdr->title, 1);
   return 0;
 }
@@ -705,7 +704,7 @@ mail_all()
    getdata(2, 0, "¥DÃD¡G", fpath, 64, DOECHO,0);
    sprintf(save_title, "[¨t²Î³q§i][1;32m %s[m", fpath);
 
-   setuserfile(fpath, fn_notes);
+   sethomefile(fpath, cuser.userid, fn_notes);
 
    if (fp = fopen(fpath, "w")) {
       fprintf(fp, "¡° [[1m¨t²Î³q§i[m] ³o¬O«Êµ¹©Ò¦³¨Ï¥ÎªÌªº«H\n");
@@ -799,7 +798,7 @@ m_forward(ent, fhdr, direct)
   }
 
   strcpy(quote_user, fhdr->owner);
-  setuserfile(quote_file, fhdr->filename);
+  sethomefile(quote_file, cuser.userid, fhdr->filename);
   sprintf(save_title, "%.64s (fwd)", fhdr->title);
   move(1, 0);
   clrtobot();
@@ -856,7 +855,7 @@ read_new_mail(fptr)
   if (genbuf[0] == 'n')
     return 0;
 
-  setuserfile(fname, fptr->filename);
+  sethomefile(fname, cuser.userid, fptr->filename);
   fptr->filemode |= FILE_READ;
   if (substitute_record(currmaildir, fptr, sizeof(*fptr), idc))
     return -1;
@@ -866,7 +865,8 @@ read_new_mail(fptr)
   while (!done)
   {
     int more_result = more(fname, YEA);
-    switch (more_result) {
+    switch (more_result) 
+    {
     case 1:
        return RS_PREV;
     case 2:
@@ -886,9 +886,7 @@ read_new_mail(fptr)
       multi_reply(idc, fptr, currmaildir);
       return RC_FULL;
     }
-    move(b_lines, 0);
-    clrtoeol();
-    outs(msg_mailer);
+    readfoot(2);
     refresh();
 
     switch (igetkey())
@@ -914,7 +912,7 @@ read_new_mail(fptr)
   {
     clear();
     prints("§R°£«H¥ó¡m%s¡n?", fptr->title);
-    genbuf[0] = getans2(1, 0, msg_sure_ny,0,2,'n');
+    genbuf[0] = getans2(1, 0, msg_sure, 0, 2, 'n');
     if (genbuf[0] == 'y')
     {
       unlink(fname);
@@ -953,25 +951,20 @@ m_new()
 }
 
 
-static void
-mailtitle()
+static void mailtitle()
 {
   char buf[100]="";
 
   sprintf(tmpbuf,"%s [½u¤W %d ¤H]",BOARDNAME,count_ulist());
   showtitle("\0¶l¥ó¿ï³æ", tmpbuf);
-  outs("\
-[¡ö]Â÷¶} [¡ô,¡õ]¿ï¾Ü [¡÷,r]¾\\Åª«H¥ó [R]¦^«H [x]Âà¹F [y]¸s²Õ¦^«H [h]¨D§U\n[1m\
-"COLOR1"  ½s¸¹   ¦^ ¤é ´Á §@ ªÌ        «H  ¥ó  ¼Ð  ÃD");
+  outs("  y)¦^«H  x)Âà¹Fµ¹§O¤H  ^X)Âà¿ý¨ì¬ÝªO  m)«O¯d  d)§R°£  D)§R°£³sÄò¦h½g  F)Âà±H\n");
+  prints("%s  ½s¸¹¦^ ¤é ´Á §@ ªÌ        «H  ¥ó  ¼Ð  ÃD", COLOR3);
 
   getmailnum();
   if(mailsumlimit)
-  {
-    sprintf(buf,"[32m(®e¶q:%d/%dk %d/%d½g)",mailsum, mailsumlimit
-                    ,mailkeep,mailmaxkeep);
-  }
-  sprintf(buf,"%s%*s[m",buf,34-strlen(buf),"");
-  outs(buf);
+    sprintf(buf,"(®e¶q:%d/%dk %d/%d½g)",mailsum, mailsumlimit ,mailkeep,mailmaxkeep);
+    
+  prints("\033[34m%34.34s   [m",buf);
 }
 
 static int
@@ -1082,7 +1075,7 @@ mail_reply(ent, fhdr, direct)
   /* §PÂ_¬O boards ©Î mail */
 
   if (curredit & EDIT_MAIL)
-    setuserfile(quote_file, fhdr->filename);
+    sethomefile(quote_file, cuser.userid, fhdr->filename);
   else
     setbfile(quote_file, currboard, fhdr->filename);
 
@@ -1212,7 +1205,7 @@ mail_cross_post(ent, fhdr, direct)
     else
       xfile.savemode = 'S';
 
-    setuserfile(fname, fhdr->filename);
+    sethomefile(fname, cuser.userid, fhdr->filename);
     if (ent)
     {
       xptr = fopen(xfpath, "w");
@@ -1257,7 +1250,7 @@ mail_save(int ent, fileheader* fhdr, char* direct)
 
    if (HAS_PERM(PERM_MAILLIMIT)) 
    {
-      setuserfile(fpath, fhdr->filename);
+      sethomefile(fpath, cuser.userid, fhdr->filename);
       strcpy(title, "¡º ");
       strncpy(title+3, fhdr->title, TTLEN-3);
       title[TTLEN] = '\0';
@@ -1462,7 +1455,7 @@ doforward(direct, fh, mode)
   int mode;                     /* ¬O§_ uuencode */
 {
   static char address[60];
-  char fname[MAXPATHLEN];
+  char fname[PATHLEN];
   int return_no;
   char genbuf[200];
   

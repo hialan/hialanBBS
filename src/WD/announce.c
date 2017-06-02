@@ -32,7 +32,7 @@ enum
 };
 
 
-static char copyfile[MAXPATHLEN];
+static char copyfile[PATHLEN];
 static char copytitle[TTLEN + 1];
 static char copyowner[IDLEN + 2];
 static char *mytitle = BOARDNAME "§G§iÄæ";
@@ -47,7 +47,7 @@ a_perm(fname,fhdr,me)
   fileheader *fhdr;
   AMENU *me;
 {
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   if (fhdr->filemode & FILE_REFUSE)
   {
     if(dashf(fname))
@@ -399,7 +399,7 @@ gem(char *maintitle, ITEM * path, int update)
 {
   GMENU me;
   int ch;
-  char fname[MAXPATHLEN];
+  char fname[PATHLEN];
 
   strncpy (me.mtitle, maintitle, 40);
   me.mtitle[40] = 0;
@@ -498,7 +498,7 @@ gem(char *maintitle, ITEM * path, int update)
 		  go_proxy (fname, node, 0);
 		if (ch == Ctrl ('C') && *paste_path && paste_level)
 		{
-		  char newpath[MAXPATHLEN];
+		  char newpath[PATHLEN];
 		  fileheader item;
 
 		  strcpy (newpath, paste_path);
@@ -694,7 +694,7 @@ a_additem (pm, myheader)
      AMENU *pm;
      fileheader *myheader;
 {
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
 
   setadir (buf, pm->path);
   if (rec_add (buf, myheader, FHSZ) == -1)
@@ -703,11 +703,9 @@ a_additem (pm, myheader)
 }
 
 
-static void
-a_loadname (pm)
-     AMENU *pm;
+static void a_loadname (AMENU *pm)
 {
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   int len;
 
   setadir (buf, pm->path);
@@ -715,8 +713,8 @@ a_loadname (pm)
   if (len < p_lines)
     bzero (&pm->header[len], FHSZ * (p_lines - len));
 }
-void
-atitle ()
+
+static void atitle ()
 {
   showtitle ("ºëµØ¤å³¹", a_title);
   outs ("\
@@ -725,50 +723,57 @@ atitle ()
                                   [m");
 }
 
-static int
-a_showmenu (pm)
-     AMENU *pm;
+static int a_showmenu (AMENU *pm)
 {
   char *title, *editor;
   int n;
   fileheader *item;
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   time_t dtime;
 
   showtitle ("ºëµØ¤å³¹", pm->mtitle);
-  prints ("   [1;32m½s¸¹    ¼Ð      ÃD%56s[0m", "½s    ¿ï      ¤é    ´Á");
+  move(1, 0);
+  clrtoeol();
+  prints("%s\033[30m¢«\033[37m¬ÝªO¢@¤å³¹¢@¤åºK¢¨%sºëµØ°Ï\033[m¢©                                      ^Z)§Ö³t¿ï³æ",
+  	 COLOR1, 
+  	 COLOR3);
+  	 
+  move(2, 0);
+  clrtoeol();
+  prints("%s  ½s¸¹     ¼Ð      ÃD                                  ½s¿ïªÌ        ¤é    ´Á  \033[m", COLOR3);
 
   if (pm->num)
-    {
+  {
       setadir (buf, pm->path);
       a_loadname (pm);
       for (n = 0; n < p_lines && pm->page + n < pm->num; n++)
-	{
+      {
 	  item = &pm->header[n];
 	  title = item->title;
 	  editor = item->owner;
-/*  Ptt §â®É¶¡§ï¬°¨úÀÉ®×®É¶¡
-   dtime = atoi(&item->filename[2]);
- */
 	  sprintf (buf, "%s/%s", pm->path, item->filename);
 	  dtime = dasht (buf);
 	  a_timestamp (buf, &dtime);
-          prints ("\n%6d%s %-47.46s%-13s[%s]",
-            pm->page + n + 1, (item->filemode & FILE_REFUSE) ? ")" : ".",
+	  move(3+n, 0);
+	  clrtoeol();
+          prints ("%6d%c %-47.46s%-13s[%s]",
+            pm->page + n + 1, (item->filemode & FILE_REFUSE) ? ')' : '.',
             title, editor, buf);
-	}
-    }
+      }
+  }
   else
-    {
-      outs ("\n  [1;32m¡m[33mºëµØ°Ï[32m¡n[mªO¥D¥´²V¤¤¡A©Î¬O¼x¨DªO¥D¤¤");
-    }
+  {
+    move(3, 0);
+    clrtoeol();
+    outs ("  [1;32m¡m[33mºëµØ°Ï[32m¡n[mªO¥D¥´²V¤¤¡A©Î¬O¼x¨DªO¥D¤¤");
+  }
 
   move (b_lines, 0);
-  outs (pm->level ?
-	COLOR2 " ¡iªO  ¥D¡j " COLOR1 "[1m [33m(Ctrl+Z)[37m»¡©ú  [33m(q/¡ö)[37mÂ÷¶}  \
-[33m(n)[37m·s¼W¤å³¹  [33m(g)[37m·s¼W¥Ø¿ý  [33m(e)[37m½s¿èÀÉ®×  [m" :
-	COLOR2 " ¡i¥\\¯àÁä¡j " COLOR1 "[1m [33m(Ctrl+Z)[37m»¡©ú  [34m(q/¡ö)[37mÂ÷¶}  \
-[33m(k¡ôj¡õ)[37m²¾°Ê´å¼Ð  [33m(enter/¡÷)[37mÅª¨ú¸ê®Æ  [m");
+  clrtoeol();
+  if (pm->level)
+    prints("%s  ½s¿èºëµØ°Ï  %s      n|g)·s¼W¤å³¹|¥Ø¿ý  e)½s¿èÀÉ®×  d)§R°£  o)³]©wÁôÂÃ  h)»¡©ú \033[m", COLOR2, COLOR3);
+  else
+    prints("%s  ÂsÄýºëµØ  %s                       ¡ö¡ô¡õ¡÷|PgUp|PgDn|Home|End)¾ÉÄý  h)»¡©ú \033[m",COLOR2, COLOR3);
 }
 
 /* ===== Added by mgtsai, Sep 10th, '96 ===== */
@@ -793,7 +798,7 @@ a_moveitem (pm)
   fileheader *tmp;
   char newnum[4];
   int num, max, min;
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   int fail;
 
   sprintf (buf, "½Ð¿é¤J²Ä %d ¿ï¶µªº·s¦¸§Ç¡G", pm->now + 1);
@@ -845,7 +850,7 @@ static void
 a_delete (pm)
      AMENU *pm;
 {
-  char fpath[MAXPATHLEN], buf[MAXPATHLEN], cmd[MAXPATHLEN];
+  char fpath[PATHLEN], buf[PATHLEN], cmd[PATHLEN];
   char ans[4];
   fileheader backup;
 
@@ -929,12 +934,12 @@ load_paste ()
   FILE *fp;
 
   if (!*paste_fname)
-    setuserfile (paste_fname, "paste_path");
+    sethomefile (paste_fname, cuser.userid, "paste_path");
   if (stat (paste_fname, &st) == 0 && st.st_mtime > paste_time
       && (fp = fopen (paste_fname, "r")))
     {
       int i;
-      fgets (paste_path, MAXPATHLEN, fp);
+      fgets (paste_path, PATHLEN, fp);
       i = strlen (paste_path) - 1;
       if (paste_path[i] == '\n')
 	paste_path[i] = 0;
@@ -952,8 +957,8 @@ static void
 a_pasteitem (pm)
      AMENU *pm;
 {
-  char newpath[MAXPATHLEN];
-  char buf[MAXPATHLEN * 2];
+  char newpath[PATHLEN];
+  char buf[PATHLEN * 2];
   char ans[2];
   int i;
   fileheader item;
@@ -1056,7 +1061,7 @@ static void
 a_appenditem (pm)
      AMENU *pm;
 {
-  char fname[MAXPATHLEN];
+  char fname[PATHLEN];
   char buf[256];
   char ans[2];
   FILE *fp, *fin;
@@ -1187,7 +1192,7 @@ static void
 a_newtitle (pm)
      AMENU *pm;
 {
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   fileheader item;
 
   memcpy (&item, &pm->header[pm->now - pm->page], FHSZ);
@@ -1205,7 +1210,7 @@ static void
 a_editsign (pm)
   AMENU *pm;
 {
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   fileheader item;
 
   memcpy (&item, &pm->header[pm->now - pm->page], FHSZ);
@@ -1225,7 +1230,7 @@ static void
 a_showname (pm)
      AMENU *pm;
 {
-  char buf[MAXPATHLEN];
+  char buf[PATHLEN];
   int len;
   int i;
   int sym;
@@ -1235,7 +1240,7 @@ a_showname (pm)
   if (dashl (buf))
     {
       prints ("¦¹ symbolic link ¦WºÙ¬° %s\n", pm->header[pm->now - pm->page].filename);
-      if ((len = readlink (buf, buf, MAXPATHLEN - 1)) >= 0)
+      if ((len = readlink (buf, buf, PATHLEN - 1)) >= 0)
 	{
 	  buf[len] = '\0';
 	  for (i = 0; BBSHOME[i] && buf[i] == BBSHOME[i]; i++);
@@ -1276,7 +1281,7 @@ a_newitem (pm, mode)
     "½Ð¿é¤J¼ÐÃD¡G",		/* ADDLINK */
     "½Ð¿é¤JÀÉ¦W¡G"};		/* ADDFILE */
 
-  char fpath[MAXPATHLEN], buf[MAXPATHLEN], lpath[MAXPATHLEN];
+  char fpath[PATHLEN], buf[PATHLEN], lpath[PATHLEN];
   fileheader item;
   int d;
 
@@ -1436,7 +1441,7 @@ a_menu (maintitle, path, lastlevel, mode)
 {
   static char Fexit;
   AMENU me;
-  char fname[MAXPATHLEN];
+  char fname[PATHLEN];
   int ch;
   extern struct one_key read_comms[];
 
@@ -1452,12 +1457,12 @@ a_menu (maintitle, path, lastlevel, mode)
   /* ºëµØ°Ï-tree ¤¤³¡¥÷µ²ºcÄÝ©ó cuser ==> BM */
 
   if (!(me.level = lastlevel))
-    {
-      char *ptr;
+  {
+    char *ptr;
 
-      if (ptr = strrchr (me.mtitle, '['))
-	me.level = is_BM (ptr + 1);
-    }
+    if (ptr = strrchr (me.mtitle, '['))
+      me.level = is_BM (ptr + 1);
+  }
 
   me.page = 9999;
   me.now = 0;
@@ -1469,13 +1474,13 @@ a_menu (maintitle, path, lastlevel, mode)
 	me.now = 0;
 
       if (me.now < me.page || me.now >= me.page + p_lines)
-	{
+      {
 	  me.page = me.now - ((me.page == 10000 && me.now > p_lines / 2) ?
 			      (p_lines / 2) : (me.now % p_lines));
 	  a_showmenu (&me);
-	}
+      }
 
-      ch = cursor_key (2 + me.now - me.page, 0);
+      ch = cursor_key (3 + me.now - me.page, 0);
 
       if (ch == 'q' || ch == 'Q' || ch == KEY_LEFT)
 	break;
@@ -1586,7 +1591,7 @@ a_menu (maintitle, path, lastlevel, mode)
 	      strcpy (paste_title, me.mtitle);
 	      paste_level = me.level;
 	      if (!*paste_fname)
-		setuserfile (paste_fname, "paste_path");
+		sethomefile (paste_fname, cuser.userid, "paste_path");
 	      if (fp = fopen (paste_fname, "w"))
 		{
 		  fprintf (fp, "%.*s\n%.*s\n%d\n",
@@ -1663,7 +1668,7 @@ a_menu (maintitle, path, lastlevel, mode)
 	    {
 	      if(getans2(b_lines, 0, "¬O§_½s¿è¥i¬Ý¨£¦W³æ? ", 0, 2, 'n') == 'y')	      
 	      {
-	        char buf[MAXPATHLEN];
+	        char buf[PATHLEN];
 	        if(dashf(fname))
 	          sprintf(buf,"%s.vis",fname);
 	        else
@@ -1702,7 +1707,7 @@ a_menu (maintitle, path, lastlevel, mode)
 	    {
 	      if(getans2(b_lines, 0, "¬O§_½s¿è¥i¬Ý¨£¦W³æ? ", 0, 2, 'n') == 'y')	      
 	      {
-	        char buf[MAXPATHLEN];
+	        char buf[PATHLEN];
 	        if(dashf(fname))
 	          sprintf(buf,"%s.vis",fname);
 	        else

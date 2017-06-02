@@ -32,7 +32,7 @@ get_sum_records(char* fpath, int size)
    long ans = 0;
    FILE* fp;
    fileheader fhdr;
-   char buf[MAXPATHLEN], *p;
+   char buf[PATHLEN], *p;
 
    if (!(fp = fopen(fpath, "r")))
       return -1;
@@ -392,7 +392,7 @@ delete_files(char* dirname, int (*filecheck)())
    FILE *fp, *fptmp;
    int ans = 0;
    char tmpfname[100];
-   char genbuf[MAXPATHLEN];
+   char genbuf[PATHLEN];
 
    if (!(fp = fopen(dirname, "r")))
       return ans;
@@ -638,7 +638,7 @@ gem_files(char* dirname, int (*filecheck)())
    fileheader fhdr;
    FILE *fp;
    int c = 0 ,ans = 0;
-   char genbuf[MAXPATHLEN];
+   char genbuf[PATHLEN];
 
    if (!(fp = fopen(dirname, "r")))
       return ans;
@@ -651,7 +651,7 @@ gem_files(char* dirname, int (*filecheck)())
      if ((*filecheck) (&fhdr)) 
      {
         char title[TTLEN+1] = "◇ "; //精華區 title 前三格是符號
-        char copypath[MAXPATHLEN];
+        char copypath[PATHLEN];
         fileheader item;
         int now;
         

@@ -107,7 +107,7 @@ brc_update()
     if (brc_num > 0)
       ptr = brc_putrecord(ptr, brc_name, brc_num, brc_list);
 
-    setuserfile(dirfile, fn_boardrc);
+    sethomefile(dirfile, cuser.userid, fn_boardrc);
     if ((fd = open(dirfile, O_RDONLY)) != -1)
     {
       tmp_size = read(fd, tmp_buf, sizeof(tmp_buf));
@@ -143,7 +143,7 @@ read_brc_buf()
 
   if (brc_buf[0] == '\0')
   {
-    setuserfile(dirfile, fn_boardrc);
+    sethomefile(dirfile, cuser.userid, fn_boardrc);
     if ((fd = open(dirfile, O_RDONLY)) != -1)
     {
       brc_size = read(fd, brc_buf, sizeof(brc_buf));
@@ -270,7 +270,7 @@ load_zapbuf()
   zapbuf = (int *) malloc(size);
   while (n)
     zapbuf[--n] = login_start_time;
-  setuserfile(fname, str_bbsrc);
+  sethomefile(fname, cuser.userid, str_bbsrc);
   if ((n = open(fname, O_RDONLY, 0600)) != -1)
   {
     read(n, zapbuf, size);
@@ -288,7 +288,7 @@ save_zapbuf()
   register int fd, size;
   char fname[60];
 
-  setuserfile(fname, str_bbsrc);
+  sethomefile(fname, cuser.userid, str_bbsrc);
   if ((fd = open(fname, O_WRONLY | O_CREAT, 0600)) != -1)
   {
     size = numboards * sizeof(int);
@@ -393,11 +393,19 @@ load_boards(char *bname , usint mode)
 
     if(mode)
     {
+      if(mode == BRD_PERSONAL)
+      {
+        if(strncmp(bptr->title, "­Ó¤H", 4)!=0 && !(bptr->brdattr & mode)) 
+          continue;
+      }
       if(!(bptr->brdattr & mode))
         continue;
     }
     else if (boardprefix)
     {
+      if (bptr->brdattr & BRD_PERSONAL)
+        continue;
+    
       if (boardprefix == str_local_board || boardprefix == str_good_board)
       {
         strncpy(brdclass, bptr->title + 5, 2);
@@ -415,11 +423,11 @@ load_boards(char *bname , usint mode)
     {
       char fpath[80];
       if (currmode & MODE_FAVORITE)
-        setuserfile(fpath, fn_myfavorite);
+        sethomefile(fpath, cuser.userid, fn_myfavorite);
       if (!belong(fpath, bptr->brdname))
         continue;
     }
-    else if(bptr->brdattr & BRD_GROUPBOARD || bptr->brdattr & BRD_CLASS)
+    else if(bptr->brdattr & BRD_GROUPBOARD || bptr->brdattr & BRD_CLASS || bptr->brdattr & BRD_PERSONAL)
       continue;
 
     if ((state = Ben_Perm(bptr)) && (yank_flag == 1 || (yank_flag == 2 &&
@@ -500,7 +508,7 @@ check_newpost(ptr)
 }
 
 
-static int
+static int 
 unread_position(dirfile, ptr)
   char *dirfile;
   boardstat *ptr;
@@ -545,17 +553,7 @@ unread_position(dirfile, ptr)
   return num;
 }
 
-
-static void
-brdlist_foot()
-{
-  prints(COLOR2"  ¿ï¾Ü¬ÝªO  "COLOR1"[1m  [33m(c)[37m·s¤å³¹¼Ò¦¡  [33m(v/V)\
-[37m¼Ð°O¤wÅª/¥¼Åª  [33m(y)[33m¦C¥X%s  [33m(z)[37m¨ú®ø/­q¾\\     [m",
-    yank_flag ? "­q¾\\" : "¥þ³¡");
-}
-
-int 
-have_author(char* brdname)
+int have_author(char* brdname)
 {
    char dirname[100];
    extern cmpfowner();
@@ -572,12 +570,7 @@ have_author(char* brdname)
 }
 
 
-/*Add for LightBar by hialan 20020605*/
-
-void
-show_brdlist_line( headx, row, clsflag, newflag, bar, bar_color)
-  int headx, row, clsflag, newflag, bar;
-  char *bar_color;
+static void show_brdlist_line(int headx, int row, int clsflag, int newflag, char *bar_color)
 {
   boardstat *ptr;
   int head = headx;
@@ -640,7 +633,7 @@ show_brdlist_line( headx, row, clsflag, newflag, bar, bar_color)
         }
 
         prints("%s%-12s[m %s%5.5s[m%-2.2s %-34.34s%s  %-13.13s[m",
-          (bar) ? bar_color : "", ptr->name,
+          (bar_color) ? bar_color : "", ptr->name,
           color[(unsigned int)(ptr->title[1]+ptr->title[2]+
                  ptr->title[3]+ptr->title[0])%7],
           ptr->title ,ptr->title+5, attrbuf,
@@ -650,23 +643,33 @@ show_brdlist_line( headx, row, clsflag, newflag, bar, bar_color)
       }
 }                                                                                
 
-/*Add End*/
+static void brdlist_foot()
+{
+  move(b_lines, 0);
+  clrtoeol();
+  prints("%s  ¿ï¾Ü¬ÝªO  %s                         ¡ö¡ô¡õ¡÷|PgUp|PgDn|Home|End)¾ÉÄý  h)»¡©ú [m", 
+    	 COLOR2, COLOR3);
+}
 
-
-static void
-show_brdlist(head, clsflag, newflag)
+static void show_brdlist(head, clsflag, newflag)
 {
   if (clsflag)
   {
     sprintf(tmpbuf,"%s [½u¤W %d ¤H]",BOARDNAME,count_ulist());
     showtitle("¬ÝªO¦Cªí", tmpbuf);
 
-    prints("[¡ö]¤W¤@­¶[¡÷]¾\\Åª¡ô¡õ]¿ï¾Ü[y]¸ü¤J[S]±Æ§Ç[/]·j´M [^Z]¨D§U [PgUp/PgDn]¤W¤U­¶\n"
-      COLOR1"[1m%-20s Ãþ§OÂà«H%-33s§ë²¼ ªO    ¥D    [m",
+    move(1,0);
+    clrtoeol();
+    prints("%s¢«¬ÝªO\033[0;37m%s¢©¤å³¹¢@¤åºK¢@ºëµØ°Ï\033[30m¢ª\033[m S)±Æ§Ç  c)·s¤å³¹¼Ò¦¡  v|V)¼Ð°O¤wÅª/¥¼Åª      %s", 
+    	   COLOR3, COLOR1, yank_flag ? "­q¾\\" : "¥þ³¡");
+    
+    move(2, 0);
+    clrtoeol();
+    prints("%s%-20s Ãþ§OÂà«H%-33s§ë²¼ ªO    ¥D    [m",
+      COLOR3, 
       newflag ? "Á`¼Æ ¥¼Åª ¬Ý  ªO" : "  ½s¸¹  ¬Ý  ªO", 
       clsflag == 1 ? " ¤¤   ¤å   ±Ô   ­z" : " ¢è²ÎÂà¨pÁô°ÎÀu­Ó ");
 
-    move(b_lines, 0);
     brdlist_foot();
   }
 
@@ -683,8 +686,7 @@ show_brdlist(head, clsflag, newflag)
 
 /* ®Ú¾Ú title ©Î name °µ sort */
 
-static
-int
+static int 
 cmpboard(brd, tmp)
   boardstat *brd, *tmp;
 {
@@ -709,15 +711,14 @@ set_menu_BM(char *BM)
 }
 
 /*By hialan ¬ÝªO¤º«öv */
-int
-v_board (ent, fhdr, direct)
+int v_board (ent, fhdr, direct)
   int ent;
   fileheader * fhdr;
   char *direct;
 {
   boardstat *ptr;
   char ans;
-  char *choose[3] = {"vV.¤wÅª","uU.¥¼Åª","qQ.¨ú®ø"};
+  char *choose[3] = {"vv)¤wÅª","uu)¥¼Åª","qq)¨ú®ø"};
   
   ans = getans2(b_lines - 1, 0,"³]©w¬ÝªO: ", choose, 3, 'v');
   move(b_lines - 1, 0);
@@ -747,8 +748,7 @@ v_board (ent, fhdr, direct)
   return RC_DRAW;
 }
 
-static void
-choose_board(int newflag,usint mode)
+static void choose_board(int newflag,usint mode)
 {
 #define SHOW_BRDLIST() show_brdlist(head, clsflag, newflag)
 
@@ -759,7 +759,6 @@ choose_board(int newflag,usint mode)
   int clsflag;
   char genbuf[200],*prefixtmp;
   extern time_t board_visit_time;
-//  extern int m_newbrd(),m_mod_board(char *bname);
   char bar_color[50];
   int page_lines;    /*¤@­¶¦³´X¦æ*/  
   
@@ -823,9 +822,22 @@ choose_board(int newflag,usint mode)
     {
       clrchyiuan(b_lines-5,b_lines-1);
       move(b_lines-5,0);
-      prints("[1;36m%s[m\n", msg_seperator);
-      prints(" [1;33m%s [mªOªº¬ÝªO»¡©ú :\n%-80.80s\n%-80.80s\n%-80.80s",
-        nbrd[num].name,nbrd[num].desc[0],nbrd[num].desc[1],nbrd[num].desc[2]);
+      prints("[0;1m%s[m\n", msg_seperator);
+      
+      move(b_lines-5,6+2);
+      outs("¬ÝªO»¡©ú");
+      
+      move(b_lines-3,0);
+      clrtoeol();
+      outs(nbrd[num].desc[0]);
+      
+      move(b_lines-2,0);
+      clrtoeol();
+      outs(nbrd[num].desc[1]);
+      
+      move(b_lines-1,0);
+      clrtoeol();
+      outs(nbrd[num].desc[2]);
       {
         int c;
 
@@ -833,17 +845,17 @@ choose_board(int newflag,usint mode)
         if(num+c < brdnum && nbrd[num+c].name)
         {
           move(b_lines-5,69);
-          prints("\033[1;33m[ÁÙ¦³¤U­¶­ò¡I]\033[1;36m¢w\033[m");
+          prints("[ÁÙ¦³¤U­¶­ò¡I]");
         }
       }
     }
 
     if( HAVE_HABIT(HABIT_LIGHTBAR) )
     {
-      show_brdlist_line(num, 3 + num - head, clsflag, newflag, 1, bar_color);  
+      show_brdlist_line(num, 3 + num - head, clsflag, newflag, bar_color);  
       cursor_show(3 + num - head, 0);
       ch = igetkey();
-      show_brdlist_line(num, 3 + num - head, clsflag, newflag, 0, 0);      
+      show_brdlist_line(num, 3 + num - head, clsflag, newflag, 0);      
     }
     else
       ch = cursor_key(3 + num - head, 0);
@@ -909,7 +921,7 @@ choose_board(int newflag,usint mode)
           break;
 */
         brc_initial(ptr->name);
-        setuserfile(fpath, fn_myfavorite);
+        sethomefile(fpath, cuser.userid, fn_myfavorite);
         if (ch == 'f' )
         {
           if(file_list_count(fpath) > MAX_FAVORITE)
@@ -1088,7 +1100,6 @@ choose_board(int newflag,usint mode)
           move(1,1);
           clrtobot();
           DL_func("SO/admin.so:va_m_mod_board", ptr->name);
-          //m_mod_board(ptr->name);
           brdnum = -1;
         }
         break;
@@ -1096,7 +1107,6 @@ choose_board(int newflag,usint mode)
         if (HAS_PERM(PERM_SYSOP) || (currmode & MODE_MENU)) 
         {
           DL_func("SO/admin.so:m_newbrd");
-          //m_newbrd();
           brdnum = -1;
         }
         break;
@@ -1182,8 +1192,7 @@ choose_board(int newflag,usint mode)
 }
 
 
-int
-board()
+int board()
 {
   choose_board(cuser.habit & HABIT_BOARDLIST,0);
   return 0;
@@ -1238,7 +1247,7 @@ Favor()
   boardprefix = NULL;
   currmode |= MODE_FAVORITE;
 
-  setuserfile(fpath, fn_myfavorite);
+  sethomefile(fpath, cuser.userid, fn_myfavorite);
   if ((fp = fopen(fpath, "r")) == NULL) return;
   else fclose(fp);
 
@@ -1267,7 +1276,7 @@ favor_edit()
     qsort(nbrd, brdnum, sizeof(boardstat), cmpboard);
   }
 
-  setuserfile(fpath, fn_myfavorite);
+  sethomefile(fpath, cuser.userid, fn_myfavorite);
   move(0, 0);
 
   dirty = 0;

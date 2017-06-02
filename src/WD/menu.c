@@ -7,7 +7,6 @@
 /* change : hialan.nation@infor.org		         */
 /*-------------------------------------------------------*/
 
-
 #include "bbs.h"
 #include "menu.h"   //所有的 menu struct
 
@@ -26,7 +25,7 @@ void showtitle(char *title, char *mid)
 
   if (title[0] == 0)
     title++;
-   else if (chkmail(0))
+  else if (chkmail(0))
   {
     mid = "\033[41;33;5m   信箱裡面有新信唷！  \033[m\033[1m"COLOR1;
     spc = 22;      // CyberMax: spc 是匹配 mid 的大小.
@@ -42,7 +41,7 @@ void showtitle(char *title, char *mid)
     spc = 22;
   }
 
-  spc = 66 - strlen(title) - spc - strlen(currboard);
+  spc = 64 - strlen(title) - spc - strlen(currboard);
 
   if (spc < 0)
      spc = 0;
@@ -51,20 +50,19 @@ void showtitle(char *title, char *mid)
   buf[spc] = '\0';
 
   clear();
-  prints(COLOR2"  \033[1;36m%s  "COLOR1"%s\033[33m%s%s%s\033[3%s\033[1m "COLOR2"  \033[36m%s  \033[m\n",
-    title, buf, mid, buf, " " + pad,
-    currmode & MODE_SELECT ? "1m系列" :
-    currmode & MODE_DIGEST ? "5m文摘" : "7m看板", currboard);
-
+  prints("%s\033[1m\033[33m←\033[37m%s\033[33m→"
+  	 "\033[33m%s%s%s%s \033[0;45;36m◤\033[1;33m%s【%s】\033[m\n",
+    COLOR1, title, 
+    buf, mid, buf, " " + pad,
+    currmode & MODE_SELECT ? "系列" :
+    currmode & MODE_DIGEST ? "文摘" : "看板", currboard);
 }
 
 /* ------------------------------------ */
 /* 動畫處理                              */
 /* ------------------------------------ */
-
-
 #define FILMROW 11
-#define MENU_ROW (b_lines - (24 - menu_row) + 1)
+#define MENU_ROW 3
 unsigned char menu_row = 13;
 unsigned char menu_column = 4;
 char mystatus[256];
@@ -114,16 +112,14 @@ void movie(int i)
     setapath(pbuf, "Note");
     sprintf(buf, "%s/%s", pbuf, film->notes[i]);
     if(film->notes[i][0])
-    {
-      show_file(buf,1,FILMROW,NO_RELOAD);
-    }
+      show_file(buf, 13, FILMROW, NO_RELOAD);
   }
 
   i = ptime->tm_wday << 1;
   update_data();
-  sprintf(mystatus, "\033[1;33;44m %d:%02d %c%c %0d/%0d "
-"\033[1;37;46m ID: %-13s ＄\033[1;37;46m%6d%c,\033[33m%5d%c"
-"\033[31m[β]%-2.2s \033[37m[%-20.20s]\033[m",
+  sprintf(mystatus, " %d:%02d %c%c  %0d/%0d  "
+		    "我是:\033[1m%-13s\033[m銀\033[1;37m%6d%c,\033[m|金\033[1;33m%6d%c"
+		    "\033[32m[β%-2.2s]\033[41;37m%-18.18s\033[m",
     ptime->tm_hour, ptime->tm_min, myweek[i], myweek[i + 1],
     ptime->tm_mon + 1, ptime->tm_mday, cuser.userid, 
     (cuser.silvermoney/1000) <= 0 ? cuser.silvermoney : cuser.silvermoney/1000,
@@ -132,10 +128,10 @@ void movie(int i)
     (cuser.goldmoney/1000) <= 0 ? ' ' : 'k',    
     msgs[currutmp->pager],
     currutmp->birth ? "生日記得要請客唷!!" : film->today_is);
-  move(b_lines,0);
+  move(1, 0);
   clrtoeol();
   outs(mystatus);
-  refresh();
+//  refresh();
 }
 
 
@@ -173,27 +169,19 @@ int show_movie2()  //小看板
   return 1;
 }
 
-static int 
-show_menu(struct one_key *p)
+static int show_menu(struct one_key *p)
 {
   register int n = 0, m = 0;
   register char *s;
   char buf[256];
-  int old_menu_row;
 
   movie(0);
 #ifdef HAVE_NOTE_2
   show_movie2();  /* 讀取 NOTE2 的內容*/
 #endif
 
-  if (currstat == GAME)
-  {
-    old_menu_row = menu_row;
-    menu_row = 2;
-  }
-  
   move(MENU_ROW - 1,0);
-  prints(COLOR1"\033[1m         功\  能        說    明                 按 [\033[1;33mCtrl-Z\033[37m] \033[31m求助               \033[m");
+  prints("%s      功\  能          說    明                  按 [Ctrl-Z] 求助               \033[m",  COLOR3);
 
   move(MENU_ROW, 0);
   while ((s = p[n].desc)!=NULL || movie2[m][0]!='\0')  /*要兩個同時為0才結束*/
@@ -202,7 +190,7 @@ show_menu(struct one_key *p)
     {
       if (HAS_PERM(p[n].level))
       {
-        prints("%*s  [\033[1;36m%c\033[m]", menu_column, "", s[0]);
+        prints("%*s  [\033[1;33m%c\033[m]", menu_column, "", s[0]);
         strcpy(buf,s+1);
         if(!is_menu_stat() || movie2[m][0]=='\0')
         {
@@ -220,7 +208,6 @@ show_menu(struct one_key *p)
       movie2[m][0] = '\0';
   }
   
-  if (currstat == GAME) menu_row = old_menu_row;  /*game 有移位..移回來*/
   return n - 1;
 }
 
@@ -228,7 +215,6 @@ show_menu(struct one_key *p)
 void
 domenu(int cmdmode, char *cmdtitle, int cmd, struct one_key *cmdtable)
 {
-#define OLD_MENU_ROW (b_lines - (24 - old_menu_row) + 1)
 
   int lastcmdptr;  	// cmdtable 的指標, 用來指到現在游標所在的陣列位置
   int n, pos, total, i; // pos   在 switch 完 cmd 後, 重新計算顯示位置用
@@ -237,7 +223,6 @@ domenu(int cmdmode, char *cmdtitle, int cmd, struct one_key *cmdtable)
   			// i	 可見項目的指標
   int err;
   int chkmailbox();
-  int old_menu_row = menu_row;
   static char cmd0[LOGIN];  //每個 menu 使用過後的位置
   char bar_color[50];  
 
@@ -249,11 +234,17 @@ domenu(int cmdmode, char *cmdtitle, int cmd, struct one_key *cmdtable)
 
   showtitle(cmdtitle, tmpbuf);
   total = show_menu(cmdtable);
-  move(b_lines,0);
+  move(1,0);
   outs(mystatus);
 
   lastcmdptr = pos = 0;
 
+  while (!HAS_PERM(cmdtable[lastcmdptr].level))  //count the first lastcmdptr
+  {
+    if(++lastcmdptr > total)
+      return;
+  }
+  
   do
   {
     i = -1;
@@ -383,18 +374,18 @@ domenu(int cmdmode, char *cmdtitle, int cmd, struct one_key *cmdtable)
     {
       showtitle(cmdtitle, tmpbuf);
       show_menu(cmdtable);
-      move(b_lines,0);
+      move(1, 0);
       outs(mystatus);
       refscreen = NA;
     }
 
     if(!HAVE_HABIT(HABIT_LIGHTBAR))
-      cursor_clear(OLD_MENU_ROW + pos, menu_column);
+      cursor_clear(MENU_ROW + pos, menu_column);
     else
     {
-      move(OLD_MENU_ROW + pos, 0);
+      move(MENU_ROW + pos, 0);
       clrtoeol();
-      prints("%*s  \033[0;37m[\033[1;36m%c\033[0;37m]%-27s\033[m ",
+      prints("%*s  \033[0;37m[\033[1;33m%c\033[0;37m]%-27s\033[m ",
         menu_column,"",cmdtable[lastcmdptr].desc[0],cmdtable[lastcmdptr].desc + 1);
       if(is_menu_stat())
         outs(movie2[pos]);
@@ -408,13 +399,13 @@ domenu(int cmdmode, char *cmdtitle, int cmd, struct one_key *cmdtable)
     }
     
     if(!HAS_HABIT(HABIT_LIGHTBAR))
-      cursor_show(OLD_MENU_ROW + pos, menu_column);
+      cursor_show(MENU_ROW + pos, menu_column);
     else
     {
-      move(OLD_MENU_ROW + pos, 0);
+      move(MENU_ROW + pos, 0);
       clrtoeol();
-      cursor_show(OLD_MENU_ROW+pos, menu_column);
-      move(OLD_MENU_ROW + pos, menu_column+2);
+      cursor_show(MENU_ROW+pos, menu_column);
+      move(MENU_ROW + pos, menu_column+2);
       prints("\033[m%s[%c]%-27s\033[m ",
         bar_color, cmdtable[lastcmdptr].desc[0], cmdtable[lastcmdptr].desc+1);     
       if(is_menu_stat())

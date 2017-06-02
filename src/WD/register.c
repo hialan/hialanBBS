@@ -147,7 +147,7 @@ check_register()
   {
     /* 回覆過身份認證信函，或曾經 E-mail post 過 */
 
-    setuserfile(genbuf, "email");
+    sethomefile(genbuf, cuser.userid, "email");
     if (dashf(genbuf))
       cuser.userlevel |= ( PERM_POST );
 

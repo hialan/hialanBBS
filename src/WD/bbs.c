@@ -135,8 +135,7 @@ make_bmlist()
 }
 
 
-void
-set_board ()
+void set_board ()
 {
   boardheader *bp;
   boardheader *getbcache ();
@@ -161,22 +160,46 @@ set_board ()
 }
 
 
-static void
-readtitle ()
+static void readtitle ()
 {
   showtitle (currBM, brd_title);
-  outs ("\
-[¡ö]Â÷¶} [¡÷]¾\\Åª [^P]µoªí¤å³¹ [b]³Æ§Ñ¿ý [d]§R°£ [z]ºëµØ°Ï [TAB]¤åºK [h]¨D§U\n\
-" COLOR1 "[1m  ½s¸¹   ");
+  move(1, 0);
+  clrtoeol();
+  
+  if(currmode & MODE_SELECT || currmode & MODE_DIGEST)
+    prints("%s\033[30m¢«\033[37m¬ÝªO¢@¤å³¹¢¨%s%s%s\033[37m¢©ºëµØ°Ï\033[36;40m¢©\033[m",
+    	   COLOR1, COLOR3, (currmode & MODE_SELECT) ? "¨t¦C" : "¤åºK", COLOR1);
+  else
+    prints("%s\033[30m¢«\033[37m¬ÝªO¢¨%s¤å³¹%s\033[37m¢©¤åºK¢@ºëµØ°Ï\033[36;40m¢©\033[m",
+    	   COLOR1, COLOR3, COLOR1);
+  outs(" ^P)µoªí  z)ºëµØ°Ï  TAB)¤åºK  V)§ë²¼  ^X)§Ö³t¿ï³æ ");
+
+  move(2, 0);  
+  prints("%s  ½s¸¹ ", COLOR3);
 
   if (currmode & MODE_TINLIKE)
-    outs ("SC  ½g ¼Æ");
+    outs ("SC½g ¼Æ");
   else
-    outs ("SC  ¤é ´Á");
-  outs ("  §@  ªÌ       ¤å  ³¹  ¼Ð  ÃD                                [m");
+    outs ("SC¤é ´Á");
+  outs ("  §@  ªÌ       ¤å  ³¹  ¼Ð  ÃD                                    [m");
 }
 
-
+void readfoot(char tag)
+{
+  move(b_lines, 0);
+  clrtoeol();    
+  switch(tag)
+  {
+    case 1:  //¤å³¹
+    case 2:  //«H¥ó
+      if ((currstat == RMAIL) || (currstat == READING))
+      {
+        prints("%s  %s  %s       =[]<>)¥DÃD¦¡¾\\Åª  ¡ö¡ô¡õ¡÷|PgUp|PgDn|Home|End)¾ÉÄý  h)»¡©ú \033[m",
+                COLOR2, (tag==2) ? "«H¥ó¦Cªí" : "¤å³¹¿ïÅª", COLOR3);
+      }
+    break;
+  }
+}
 /*Change For LightBar by  hialan on 20020609*/
 void
 doent (num, ent, row, bar, bar_color)
@@ -196,11 +219,11 @@ doent (num, ent, row, bar, bar_color)
     sprintf(buf , "\033[1;31mR  %s",
       colors[(unsigned int) (ent->date[4] + ent->date[5]) % 7]);
   else if(ent->score != 0)
-    sprintf(buf , "%s%02d %s",
+    sprintf(buf , "%s%02d%s",
       ent->score > 0 ? "\033[1;31m" : "\033[1;32m",
       ent->score,colors[(unsigned int) (ent->date[4] + ent->date[5]) % 7]);
   else
-    sprintf(buf , "   %s",
+    sprintf(buf , "  %s",
       colors[(unsigned int) (ent->date[4] + ent->date[5]) % 7]);
 
   if (currstat != RMAIL)
@@ -237,21 +260,21 @@ doent (num, ent, row, bar, bar_color)
     mark = "R:";
   }
 
-  if (title[40])
-    strcpy (title + 40, " ¡K");  /* §â¦h¾lªº string ¬å±¼ */
+  if (title[44])
+    strcpy (title + 44, " ¡K");  /* §â¦h¾lªº string ¬å±¼ */
 
   checkowner =(user_info *) searchowner(ent->owner);
 
   move(row, 0);
   clrtoeol();
   if (strncmp (currtitle, title, TTLEN))
-    prints ("%6d %s %s%-6s[m%s%s%-12.12s[m %s %s\n", 
+    prints ("%6d%s%s%-6s[m%s%s%-12.12s[m %s %s\n", 
       num, type, buf, ent->date,
       checkowner ? rcolor[is_friend(checkowner)] : "",
       (bar_color) ? bar_color : "", ent->owner,
       mark, title);
   else
-    prints ("%6d %s %s%-6s[m%s%s%-12.12s[m [1;3%cm%s %s[m\n",
+    prints ("%6d%s%s%-6s[m%s%s%-12.12s[m [1;3%cm%s %s[m\n",
       num, type, buf, ent->date,
       checkowner ? rcolor[is_friend(checkowner)] : "", (bar_color) ? bar_color : "", ent ->owner,
       color, mark, title);
@@ -425,7 +448,7 @@ do_reply (fhdr)
 //    DL_func("SO/votebrd.so:va_do_voteboardreply",fhdr);
   else
   {
-    char *choose[4]={"fF.¬ÝªO","mM.§@ªÌ«H½c","bB.¨âªÌ¬Ò¬O","qQ.¨ú®ø"};
+    char *choose[4]={"fF)¬ÝªO","mM)§@ªÌ«H½c","bB)¨âªÌ¬Ò¬O", msg_choose_cancel};
       
     genbuf = getans2(b_lines - 1, 0,"¡¶ ¦^À³¦Ü ",choose,4,'f');
     switch (genbuf)
@@ -493,7 +516,7 @@ do_postnotify (char *fpath)
   FILE *fp;
   char genbuf[256];
 
-  setuserfile (genbuf, "postnotify.ok");
+  sethomefile (genbuf, cuser.userid, "postnotify.ok");
   if (fp = fopen (genbuf, "r"))
     {
       char last_fname[80];
@@ -585,14 +608,12 @@ getindex (fpath, fname, size)
 extern long wordsnum;    /* ­pºâ¦r¼Æ */
 #define PREFIXLEN 50	//¤å³¹Ãþ§O³Ì¤jªø«×
 
-char postprefix[10][PREFIXLEN];
+static char postprefix[10][PREFIXLEN];
 
-int /*¤å³¹Ãþ§O by hialan 3.21.2002*/
-b_load_class(bname)
-  char *bname;
+static int b_load_class(char *bname) /*¤å³¹Ãþ§O by hialan 3.21.2002*/
 {
       FILE *prefixfile;
-      char chartemp[PREFIXLEN],buf[MAXPATHLEN];
+      char chartemp[PREFIXLEN],buf[PATHLEN];
 
       setbfile (buf, bname, FN_POSTPREFIX);
       
@@ -630,12 +651,7 @@ b_load_class(bname)
       return 0;
 }
 
-int
-make_cold(board,save_title,money, fpath)
-  char *board;
-  char *save_title;
-  int money;
-  char *fpath;  //Âà¸ô¤å³¹
+int make_cold(char *board, char *save_title, int money, char *fpath)
 {
   int cold;
 
@@ -656,46 +672,12 @@ make_cold(board,save_title,money, fpath)
     cold = 9;
   
   if(cold == 9)
-  {
-    FILE *fcoldin,*fcoldout;
-    char coldfile[30];
-    time_t now = time(0);
-
     do_copy_post("ColdKing", fpath, FILE_MARKED); // Âà¿ý¤å³¹
-	  
-    strcpy(coldfile,BBSHOME"/etc/cold");
-
-    if((fcoldin = fopen(coldfile,"r")) != NULL)
-    {
-      char wordd[41][200];
-      int i,j;
-
-      for(i=0;i<41;i++)
-      {
-        if(feof(fcoldin))break;
-        fgets(wordd[i],199,fcoldin);
-      }
-
-      fclose(fcoldin);
-
-      if((fcoldout = fopen(coldfile,"w")) != NULL)
-      {
-        fprintf(fcoldout,"%s",wordd[0]);
-        fprintf(fcoldout,"\033[1;46m¤¤¼ú¤H:\033[m%s \033[1;46m¬ÝªO:\033[0mboard://%s \033[0;1;46m®É¶¡:\033[m%s\033[1;44m¤å³¹¼ÐÃD:\033[m%s \033[1;44m½ZÄw:\033[m%d\n\n",cuser.userid, board,ctime(&now), save_title, money);
-
-        if(i > 0)
-          for(j=1;j<i-1;j++)
-            fprintf(fcoldout,"%s",wordd[j]);
-
-        fclose(fcoldout);
-      }	    
-    }
-   }
-   return cold;
+    
+  return cold;
 }
 
-int
-do_post ()
+int do_post ()
 {
   fileheader postfile;
   char fpath[80], buf[80];
@@ -737,7 +719,10 @@ do_post ()
     }
 
   setbfile(genbuf, currboard, FN_POST_NOTE ); /* ychia.021212:¦Û­q¤å³¹µoªí­n»â */
-  more(genbuf, YEA); //hialan:¨S¦³¸ÓÀÉ¦Û°Ê¸õ¹L
+  if(dashf(genbuf))
+    more(genbuf, YEA);
+  else
+    more("etc/post.note", YEA);
 
   if (quote_file[0])
     do_reply_title (20, currtitle);
@@ -753,12 +738,12 @@ do_post ()
     {
       char tmp[50];
       
-      sprintf(tmp, "%d%d.%s ", i+1, i+1, postprefix[i]);
+      sprintf(tmp, "%d%d)%s ", i+1, i+1, postprefix[i]);
       strcpy(postprefix[i], tmp);
       board_class[i] = postprefix[i];
     }
-    board_class[9] = "wW.¦Û¦æ¿é¤J";
-    board_class[10] = "qQ.¤£¿é¤J";
+    board_class[9] = "wW)¦Û¦æ¿é¤J";
+    board_class[10] = "qQ)¤£¿é¤J";
   
     memset (save_title, 0, TTLEN);
     
@@ -891,7 +876,7 @@ do_post ()
           FILE * fp;
           time_t now = time (0);
           fileheader mhdr;
-          char genbuf1[MAXPATHLEN], fpath1[STRLEN];
+          char genbuf1[PATHLEN], fpath1[STRLEN];
 
           setbpath (genbuf1, "Security");
           stampfile (genbuf1, &mhdr);
@@ -1066,7 +1051,7 @@ cross_post (ent, fhdr, direct)
   char *direct;
 {
   char xboard[20], fname[80], xfpath[80], xtitle[80];
-  char *choose_save[3] = {"sS.¦sÀÉ","lL.¯¸¤º","qQ.¨ú®ø"};
+  char *choose_save[3] = {"sS)¦sÀÉ","lL)¯¸¤º", msg_choose_cancel};
   fileheader xfile;
   FILE * xptr;
   int author = 0;
@@ -1092,7 +1077,7 @@ cross_post (ent, fhdr, direct)
   ent = 1;
   if (HAS_PERM (PERM_SYSOP) || !strcmp (fhdr->owner, cuser.userid))
   {
-    char *choose_repost[2] = {"11.­ì¤åÂà¸ü","22.ÂÂÂà¿ý®æ¦¡"};
+    char *choose_repost[2] = {"11)­ì¤åÂà¸ü","22)ÂÂÂà¿ý®æ¦¡"};
     if (getans2(2, 0, "",choose_repost, 2,'1') != '2')
     {
       char inputbuf;
@@ -1177,7 +1162,7 @@ read_post (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-  char genbuf[256], buf[MAXPATHLEN];
+  char genbuf[256], buf[PATHLEN];
   int more_result;
   
   setdirpath (genbuf, direct, fhdr->filename);  /*¦]¬°¤å³¹¥[±K,·h¨ì«e­± hialan*/
@@ -1255,7 +1240,7 @@ read_post (ent, fhdr, direct)
 /* ----------------------------------------------------- */
 man()
 {
-  char buf[64], buf1[64], xboard[20], fpath[MAXPATHLEN];
+  char buf[64], buf1[64], xboard[20], fpath[PATHLEN];
   boardheader * bp;
   boardheader * getbcache ();
 
@@ -1307,12 +1292,12 @@ cite (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   char title[TTLEN + 1];
 
   if (currstat == RMAIL)
   {
-    setuserfile (fpath, fhdr->filename);
+    sethomefile (fpath, cuser.userid, fhdr->filename);
     add_tag ();
   }
   else
@@ -1339,7 +1324,7 @@ Cite_post (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   char title[TTLEN + 1];
 
   if(fhdr->filemode & FILE_REFUSE)
@@ -1361,7 +1346,7 @@ Cite_post (ent, fhdr, direct)
 int
 Cite_posts (int ent, fileheader * fhdr, char *direct)
 {
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
 
   if(fhdr->filemode & FILE_REFUSE)
   {
@@ -1373,7 +1358,7 @@ Cite_posts (int ent, fileheader * fhdr, char *direct)
   if (*paste_path && paste_level && dashf (fpath))
   {
     fileheader fh;
-    char newpath[MAXPATHLEN];
+    char newpath[PATHLEN];
 
     strcpy (newpath, paste_path);
     stampfile (newpath, &fh);
@@ -1396,7 +1381,7 @@ edit_title (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-  char genbuf[MAXPATHLEN];
+  char genbuf[PATHLEN];
   extern int thread_title;
   
   if(thread_title)
@@ -1522,7 +1507,7 @@ del_tag (ent, fhdr, direct)
       currfmode = FILE_TAGED;
       if (currmode & MODE_SELECT)
       { 
-        char xfile[MAXPATHLEN];
+        char xfile[PATHLEN];
         
         sprintf(xfile,"%s.vis", direct);
         unlink (direct);
@@ -1671,7 +1656,7 @@ score (ent, fhdr, direct)
 {
   char buf[128];
   time_t now = time(0);
-  char *choose[4] = {"11.¥[¤À","22.¦©¤À", "33.±ÀÂË¤å³¹", "qQ.¨ú®ø"};
+  char *choose[4] = {"11)¥[¤À","22)¦©¤À", "33)±ÀÂË¤å³¹", msg_choose_cancel};
   
   if (currstat == RMAIL)
     return RC_NONE;
@@ -1810,7 +1795,7 @@ del_range (ent, fhdr, direct)
       return RC_FULL;
     }
     
-    if (getans2(1, 48, msg_sure_ny, 0, 2, 'n') == 'y')
+    if (getans2(1, 48, msg_sure, 0, 2, 'n') == 'y')
     {
       outmsg ("³B²z¤¤,½Ðµy«á...");
       refresh ();
@@ -1950,8 +1935,8 @@ del_post (ent, fhdr, direct)
 save_mail (int ent, fileheader * fh, char *direct)
 {
   fileheader mhdr;
-  char fpath[MAXPATHLEN];
-  char genbuf[MAXPATHLEN];
+  char fpath[PATHLEN];
+  char genbuf[PATHLEN];
   char *p;
 
   if (ent < 0)
@@ -1999,22 +1984,22 @@ board_edit ()
   boardheader * getbcache ();
   int bid, mode = 0;
   time_t now = time(0);
-  char *board_admin_menu[12] = {"00.¨ú®ø",
-      			        "11.§ï¤¤¤å¦WºÙ",
-      			        "22.¬ÝªO»¡©ú",
-      			   	"33.¶iªOµe­±",
-      				"44.¥i¨£¦W³æ",
-      				"55.³]±K½X",
-      				"66.§ï¤å³¹Ãþ§O",
-      				"77.¶R¤W­­",
-      				"88.¬ÝªOPO¤åª`·N¨Æ¶µ", 
-      				"99.§ïÄÝ©Ê",
-      				"aA.¬Ý¤µ¤é¬ö¿ý",
-      				"bB.§ïÃþ§O"};  
+  char *board_admin_menu[12] = {"00)¨ú®ø",
+      			        "11)§ï¤¤¤å¦WºÙ",
+      			        "22)¬ÝªO»¡©ú",
+      			   	"33)¶iªOµe­±",
+      				"44)¥i¨£¦W³æ",
+      				"55)³]±K½X",
+      				"66)§ï¤å³¹Ãþ§O",
+      				"77)¶R¤W­­",
+      				"88)¬ÝªOPO¤åª`·N¨Æ¶µ", 
+      				"99)§ïÄÝ©Ê",
+      				"aA)¬Ý¤µ¤é¬ö¿ý",
+      				"bB)§ïÃþ§O"};  
 
   if (currmode & MODE_BOARD)
   {
-    char genbuf[BTLEN], buf[MAXPATHLEN], ans;
+    char genbuf[BTLEN], buf[PATHLEN], ans;
     bid = getbnum (currboard);
 
     if (rec_get (fn_board, &bp, sizeof (boardheader), bid) == -1)
@@ -2026,9 +2011,7 @@ board_edit ()
     if (bp.brdattr & BRD_PERSONAL || HAS_PERM(PERM_SYSOP))
       mode = 1;
 
-    genbuf[0] = win_select("¬ÝªOºÞ²z", "", board_admin_menu, HAVE_PERM(PERM_SYSOP) ? 12 : (mode == 1) ? 11 : 9 ,'0');
-    
-    switch(genbuf[0])
+    switch(win_select("¬ÝªOºÞ²z", "", board_admin_menu, (mode == 1) ? 12 : 9 ,'0'))
     {
       case '1':
         move (1, 0);
@@ -2253,7 +2236,7 @@ board_edit ()
           case '9':
           {
             int oldattr=bp.brdattr;
-            char *brd_type[3]={"oO.¶}©ñ","pP.¨p¤H","hH.ÁôÂÃ"};
+            char *brd_type[3]={"oO)¶}©ñ","pP)¨p¤H","hH)ÁôÂÃ"};
 
             ans = getans2(1, 0,"¬ÝªOª¬ºA§ó§ï¬°", brd_type, 3, 'o');
     
@@ -2298,8 +2281,6 @@ board_edit ()
           break;
 
           case 'b':
-          if(HAS_PERM(PERM_SYSOP))
-          {
             move (1, 0);
             clrtoeol ();
             getdata (1, 0, "½Ð¿é¤J¬ÝªO·sÃþ§O:",genbuf, 5, DOECHO, bp.title );
@@ -2313,7 +2294,6 @@ board_edit ()
               log_usies("PREFIX",currboard);
               strncpy (bp.title , genbuf, 4);
             }
-          }
           break;
 
       default:
@@ -2393,8 +2373,8 @@ good_post (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-  char genbuf[MAXPATHLEN];
-  char genbuf2[MAXPATHLEN];
+  char genbuf[PATHLEN];
+  char genbuf2[PATHLEN];
   fileheader digest;
 
   if(fhdr->filemode & FILE_REFUSE)
@@ -2470,7 +2450,7 @@ post_mail_uncode (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-    char fname[MAXPATHLEN];
+    char fname[PATHLEN];
        
     setdirpath(fname, direct, fhdr->filename);
     if (dashf(fname))
@@ -2484,7 +2464,7 @@ post_mail (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-    char fname[MAXPATHLEN];
+    char fname[PATHLEN];
        
     setdirpath(fname, direct, fhdr->filename);
     if (dashf(fname))
@@ -2554,8 +2534,7 @@ struct one_key read_comms[] =
   'R', post_b_results,	 	0,"¬Ý§ë²¼µ²ªG",0,
   '\0', NULL, 0, NULL,0};
 
-void
-Read ()
+void Read ()
 {
   int mode0 = currutmp->mode;
   int currmode0 = currmode;
@@ -2572,14 +2551,16 @@ Read ()
   {
     setbfile (buf, currboard, fn_notes);
     more (buf, YEA);
-  }
+  }  
+
   bid = getbnum (currboard);
-  currutmp->brc_id = bid;
+  currutmp->brc_id = bid;    
   if(Ben_Perm(&brdshm->bcache[bid]-1) != 1)
   {
     pressanykey(P_BOARD);
     return;
-  }
+  }  
+
   setbdir (buf, currboard);
   curredit &= ~EDIT_MAIL;
   i_read (READING, buf, readtitle, doent, read_comms, &(brdshm->total[bid - 1]));
@@ -2700,7 +2681,7 @@ note()
   myitem.buf[0][0] = myitem.buf[1][0] = myitem.buf[2][0] = '\0';
   do
   {
-    char *choose[3]={"sS.Àx¦s","eE.­«·s¨Ó¹L","qQ.¨ú®ø"};
+    char *choose[3]={"sS)Àx¦s","eE)­«·s¨Ó¹L", msg_choose_cancel};
 
     change_bp(16, "½Ð¯d¨¥ (¦Ü¦h¤T¦æ)", myitem.buf);
     
@@ -2868,7 +2849,7 @@ Goodbye()
   movie(999);
   if (cuser.userlevel)
   {
-    char *prompt[3]={"gG.ÀH­·¦Ó³u","mM.¦«¹Ú¯¸ªø","nN.§Ú­n§o³Û"};
+    char *prompt[3]={"gG)ÀH­·¦Ó³u","mM)¦«¹Ú¯¸ªø","nN)§Ú­n§o³Û"};
     char ans = win_select("Â÷¶}" BOARDNAME, "", prompt, 3, 'g');
 
     if (ans == 'm')

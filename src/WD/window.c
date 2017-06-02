@@ -21,7 +21,7 @@ EX:  win_select("加密文章", "是否編輯可看見名單? ", 0, 2, 'n')
 
 typedef struct Win_form
 {
-  char title[5];		//標題顏色
+  char title[5];	//標題顏色
   char body[5];		//內文顏色
   char border[8][3];	//外框
 } Win_form;
@@ -36,7 +36,7 @@ static Win_form winform;
 static int
 load_winform(Win_form *woutput)
 {
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
 
   sethomefile(fpath, cuser.userid, FN_WINFORM);
   
@@ -56,11 +56,11 @@ load_winform(Win_form *woutput)
     
     strcpy(woutput->border[0], "═");
     strcpy(woutput->border[1], "╔");
-    strcpy(woutput->border[2], "╗");    
-    strcpy(woutput->border[3], "╚");
-    strcpy(woutput->border[4], "╝");
-    strcpy(woutput->border[5], "╠");
-    strcpy(woutput->border[6], "╣");
+    strcpy(woutput->border[2], "╗");
+    strcpy(woutput->border[3], "╠");
+    strcpy(woutput->border[4], "╣");    
+    strcpy(woutput->border[5], "╚");
+    strcpy(woutput->border[6], "╝");
     strcpy(woutput->border[7], "║");
   }
   if(currutmp && (woutput == &winform))
@@ -72,7 +72,7 @@ load_winform(Win_form *woutput)
 static int
 save_winform(Win_form *winput)
 {
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   int fd;
   
   sethomefile(fpath, cuser.userid, FN_WINFORM);
@@ -91,11 +91,9 @@ save_winform(Win_form *winput)
 /*------------------------------*/
 /*  視窗產生                    */
 /*------------------------------*/
-static void
-show_winline(x, y, win_len, words, bgcolor, barcolor, form)
-  char *words, *bgcolor, *barcolor;
-  int x, y, win_len;
-  Win_form *form;
+static void 
+show_winline(int x, int y, int win_len, char *words, 
+		char *bgcolor, char *barcolor, Win_form *form)
 {
   char buf[128];
 
@@ -113,9 +111,7 @@ show_winline(x, y, win_len, words, bgcolor, barcolor, form)
 }
 
 static int
-show_winbox(x, y, line, width, title, prompt)
-  char *title,*prompt;
-  int line, width, x, y;
+show_winbox(int x, int y, int line, int width, char *title, char *prompt)
 {
   int win_len;  /*win_len 是有幾個二位元字!!*/
   int i,j;
@@ -157,11 +153,11 @@ show_winbox(x, y, line, width, title, prompt)
   show_winline(x+1, y, win_len, title, title_color, 0, &winform);  
 
   /*標題下橫槓*/
-  sprintf(buf, " %s",winform.border[5]);
+  sprintf(buf, " %s",winform.border[3]);
   j = win_len -1;                                                                                
   for(i = 1;i < j;i++)
     strcat(buf, winform.border[0]);
-  strcat(buf, winform.border[6]);
+  strcat(buf, winform.border[4]);
                                                                                 
   move(x+2,y);
   clrtoeol();
@@ -171,11 +167,11 @@ show_winbox(x, y, line, width, title, prompt)
     show_winline(x+3, y, win_len, prompt, bgcolor, 0, &winform);
 
   /*我的屁股*/
-  sprintf(buf," %s", winform.border[3]);
+  sprintf(buf," %s", winform.border[5]);
   j = win_len -1;
   for(i = 1;i < j;i++)
     strcat(buf, winform.border[0]);
-  strcat(buf, winform.border[4]);
+  strcat(buf, winform.border[6]);
                                                                                 
   move(x + 3 + line,y);
   clrtoeol();
@@ -187,10 +183,7 @@ show_winbox(x, y, line, width, title, prompt)
 /*------------------------------*/
 /*  視窗應用                    */
 /*------------------------------*/
-int
-msgbox(line, width, title, prompt)
-  char *title,*prompt;
-  int line, width;
+int msgbox(int line, int width, char *title, char *prompt)
 {
   int x,y, win_len;
 
@@ -202,19 +195,16 @@ msgbox(line, width, title, prompt)
 }
 
 int
-win_select(title, prompt, choose, many, def)
-  int many;
-  char *title, *prompt, **choose, def;
+win_select(char *title, char *prompt, char **choose, int many, char def)
 {
   int x, y, i;
   int win_len, ch;
   int width;
   char *p;
   char barcolor[50], bgcolor[40];
-  static char *choose_yesno[2]={"y(Y) 是","n(N) 否"};
   
   if(!choose)
-    choose = choose_yesno;
+    choose = msg_choose;
 
   for(i = 0;i < many;i++)
   {
@@ -295,16 +285,15 @@ win_select(title, prompt, choose, many, def)
 /*------------------------------*/
 /*  使用者設定視窗外貌          */
 /*------------------------------*/
-int
-win_formchange()
+int win_formchange()
 {
   Win_form preview;
   int x=0,y=0, i, j,redraw, ch;
   const int winlen = 20;
   const int top=8;
   char buf[40], lightbar[40], *tmp;
-  char *choose[2][5]={{"標題顏色", "直棒", "上左", "下左", "中左"}, 
-      		      {"背景顏色", "橫棒", "上右", "下右", "中右"}};
+  char *choose[2][5]={{"標題顏色", "直棒", "上左", "中左", "下左"}, 
+      		      {"背景顏色", "橫棒", "上右", "中右", "下右"}};
   		 
   load_winform(&preview);
   get_lightbar_color(lightbar);
@@ -338,20 +327,20 @@ win_formchange()
       
       move(redraw++,20);
       clrtoeol();
-      outs(preview.border[5]);
+      outs(preview.border[3]);
       for(i=0;i<winlen-2;i++)
         outs(preview.border[0]);
-      outs(preview.border[6]);      
+      outs(preview.border[4]);      
 
       get_color(buf, preview.body);
       show_winline(redraw++, 19, winlen, "這是內文", buf, 0, &preview);
       
       move(redraw++,20);
       clrtoeol();
-      outs(preview.border[3]);
+      outs(preview.border[5]);
       for(i=0;i<winlen-2;i++)
         outs(preview.border[0]);
-      outs(preview.border[4]);      
+      outs(preview.border[6]);      
 
       redraw=0;
     }

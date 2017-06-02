@@ -9,12 +9,6 @@
 #include "bbs.h"
 #include <varargs.h>
 
-void
-setuserfile(buf, fname)
-  char *buf, *fname;
-{
-  sprintf(buf, "home/%s/%s", cuser.userid, fname);
-}
 
 void
 setbdir(buf, boardname)
@@ -673,13 +667,13 @@ void (*procp)();
 
 capture_screen()
 {
-   char fname[MAXPATHLEN];
+   char fname[PATHLEN];
    FILE* fp;
    extern screenline *big_picture;
    extern uschar scr_lns;
    int i;
 
-   setuserfile(fname, "buf.0");
+   sethomefile(fname, cuser.userid, "buf.0");
    if (fp = fopen(fname, "w")) 
    {
       for (i = 0; i < scr_lns; i++)
@@ -691,14 +685,14 @@ capture_screen()
 void
 edit_note()
 {
-   char fname[MAXPATHLEN];
+   char fname[PATHLEN];
    int mode0 = currutmp->mode;
    int stat0 = currstat;
    char c0 = *quote_file;
 
    *quote_file = 0;
    setutmpmode(NOTE);
-   setuserfile(fname, "note");
+   sethomefile(fname, cuser.userid, "note");
    vedit(fname, 0);
    currutmp->mode = mode0;
    currstat = stat0;
@@ -741,14 +735,14 @@ tbf_ask()
 int
 check_personal_note(int newflag, char* userid) 
 {
- char fpath[MAXPATHLEN];
+ char fpath[PATHLEN];
  FILE *fp;
  int  total = 0;
  notedata myitem;
  char *fn_note_dat      = "pnote.dat";
 
  if (userid == NULL)
-   setuserfile(fpath, fn_note_dat);
+   sethomefile(fpath, cuser.userid, fn_note_dat);
  else
    sethomefile(fpath, userid, fn_note_dat);
 

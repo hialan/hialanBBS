@@ -179,13 +179,10 @@ readln(fp, buf)
 }
 
 
-int
-more(fpath, promptend)
-  char *fpath;
-  int promptend;
+int more(char *fpath, int promptend)
 {
   extern char* strcasestr();
-  static char *head[4] = {" §@ªÌ ", " ¼ÐÃD ", " ®É¶¡ ", " Âà«H "};
+  static char *head[4] = {"§@ªÌ", "¼ÐÃD", "®É¶¡", "Âà«H"};
   char *ptr, *word, buf[1024],*ch1;
   struct stat st;
   FILE *fp;
@@ -235,7 +232,8 @@ more(fpath, promptend)
 
   while ((numbytes = readln(fp, buf)) || (line == t_lines))
   {
-    if (scrollup) {
+    if (scrollup) 
+    {
        rscroll();
        move(0, 0);
     }
@@ -265,12 +263,14 @@ more(fpath, promptend)
               ptr[-1] = '\0';
               
               /*hialan §ïÃC¦â*/
-              prints("\033[m[34;47m%s\033[1m[37;44m%-53.53s\033[m[34;47m %.4s \033[m[37;44m%-13s[0m\n", head[0], word, ptr, ptr + 5);
+              clrtoeol();
+              prints("[1;36m¢~\033[46;37m%s\033[m%-55.55s[1;33;46m%.4s[m\033[1;33m%-13s\033[36m¢¡[0m\n", head[0], word, ptr, ptr + 5);
             }
             else if (pos < (local ? 3 : 4))
             {
               if(!local && pos == 1) str_decode(word);
-              prints("\033[m[34;47m%s\033[1m[37;44m%-72.72s[m\n", head[pos], word);
+              clrtoeol();
+              prints("[1;36m¢x\033[46;37m%s\033[m%-72.72s[1;36m¢x\033[m\n", head[pos], word);
             }
 
             viewed += numbytes;
@@ -291,7 +291,7 @@ more(fpath, promptend)
           {
             header = 1;
 
-            prints("[0;36m%s[m\n", msg_seperator);
+            outs("[1;36m¢¢¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w\033[0;30;47m y)¦^À³  /)·j´M¤å¦r  =[]<>)¥DÃD¦¡¾\\Åª \033[0;1;36m¢£[m\n");
             line = pos = (local ? 4 : 5);
           }
         }
@@ -425,21 +425,21 @@ woju
         continue;
 */
       move(b_lines, 0);
-      if (viewed == st.st_size) {
+      if (viewed == st.st_size) 
+      {
          if (searching == 1)
             searching = 0;
 /*
 woju
 */
       }
-      else if (pageno == 1 && lino == 1) {
+      else if (pageno == 1 && lino == 1) 
+      {
          if (searching == -1)
             searching = 0;
       }
-      prints(COLOR2"  ÂsÄý P.%d(%d%%)  ", pageno,(viewed * 100) / st.st_size);
-
-      prints(COLOR1" [1m[33m (^Z)[37m¨D§U \
-[33m¡÷¡õ [PgUp][PgDn][Home][End][33m ¡ö(q)[37mµ²§ô[m");
+      prints("%s  ÂsÄý P.%d(%d%%)  ", COLOR2, pageno,(viewed * 100) / st.st_size);
+      prints("%s                 ¡ö¡ô¡õ¡÷|PgUp|PgDn|Home|End)¾ÉÄý  h)»¡©ú \033[m", COLOR3);
 
       move(b_lines,0);   /*¸Ñ¨Mª½±µ¸õ¨ì¬ÝªOªºBug*/
       while (line == b_lines || (line > 0 && viewed == st.st_size))
@@ -831,7 +831,7 @@ more_web(fpath, promptend)
       setbdir(bpath, bname);
       rec_get(bpath, &fhdr, sizeof(fileheader), pos);
       setbfile(bpath, bname, fhdr.filename);
-      more(bpath);
+      more(bpath, 0);
     }
     else
     {

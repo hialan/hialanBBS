@@ -20,10 +20,7 @@ extern void resolve_boards();
 char *sex[8] = { MSG_BIG_BOY, MSG_BIG_GIRL, MSG_LITTLE_BOY, MSG_LITTLE_GIRL,
                  MSG_MAN, MSG_WOMAN, MSG_PLANT, MSG_MIME };
 
-void
-user_display(u, real)
-  userec *u;
-  int real;
+void user_display(userec *u, int real)
 {
   int diff; 
   int day = 0, hour = 0, min = 0;
@@ -94,7 +91,7 @@ user_display(u, real)
     }
     outc('\n');
   }
-  prints("[33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´[m\n");
+  outs("[33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´[m\n");
 
   if (!real)
     outs((u->userlevel & PERM_LOGINOK) ?
@@ -109,10 +106,7 @@ user_display(u, real)
 }
 
 
-void
-uinfo_query(u, real, unum)
-  userec *u;
-  int real, unum;
+void uinfo_query(userec *u, int real, int unum)
 {
   userec x;
   register int i, fail, mail_changed;
@@ -126,14 +120,12 @@ uinfo_query(u, real, unum)
 
   memcpy(&x, u, sizeof(userec));
   {
-    char *choose[6] = {"00.µ²§ô","11.­×§ï¸ê®Æ","22.³]©w±K½X","33.³]©wÅv­­","44.²M°£±b¸¹","55.§ïID"};
+    char *choose[6] = {msg_choose_cancel ,"11)­×§ï¸ê®Æ","22)³]©w±K½X","33)³]©wÅv­­","44)²M°£±b¸¹","55)§ïID"};
     ans = getans2(b_lines, 0, real ? "" : "½Ð¿ï¾Ü ", choose, real ? 6 : 3, 0);
   }
   
   if (ans > '2' && !real)
-  {
     ans = '0';
-  }
 
   if (ans == '1' || ans == '3')
   {
@@ -169,7 +161,7 @@ uinfo_query(u, real, unum)
 
     //­×§ï©Ê§Oªº¦a¤è
     {
-      char *choose_sex[8]={"11.¸¯®æ","22.©j±µ","33.©³­}","44.¬ü¬Ü","55.Á¦¨û","66.ªü«¼","77.´Óª«","88.Äqª«"};
+      char *choose_sex[8]={"11)¸¯®æ","22)©j±µ","33)©³­}","44)¬ü¬Ü","55)Á¦¨û","66)ªü«¼","77)´Óª«","88)Äqª«"};
 
       buf[0] = getans2(i++, 0, "©Ê§O ", choose_sex, 8, u->sex + '1');
       if (buf[0] >= '1' && buf[0] <= '8')
@@ -216,11 +208,11 @@ uinfo_query(u, real, unum)
         if ((l = atol(buf)) >= 0)
           x.goldmoney = l;
       sprintf(genbuf, "%ld", x.sendmsg);
-      if (getdata(i, 0,"µo¤Ñ­µ¼Æ¡G", buf, 10, DOECHO,genbuf))
+      if (getdata(i, 0,"µo¤ô²y¼Æ¡G", buf, 10, DOECHO,genbuf))
         if ((l = atol(buf)) >= 0)
           x.sendmsg = l;
       sprintf(genbuf, "%ld", x.receivemsg);
-      if (getdata(i++, 25,"¦¬¤Ñ­µ¼Æ¡G", buf, 10, DOECHO,genbuf))
+      if (getdata(i++, 25,"¦¬¤ô²y¼Æ¡G", buf, 10, DOECHO,genbuf))
         if ((l = atol(buf)) >= 0)
           x.receivemsg = l;
       sprintf(genbuf, "%ld", x.bequery);
@@ -326,7 +318,8 @@ uinfo_query(u, real, unum)
     return;
   }
 
-  if (getans(msg_sure_ny) == 'y')
+//  if (getans(msg_sure_ny) == 'y')
+  if (getans2(b_lines-1, 0, msg_sure, 0, 2, 'n') == 'y')
   {
     if (flag) 
       DL_func("SO/admin.so:va_Security",temp,i,cuser.userid,x.userid);
@@ -372,8 +365,7 @@ woju
 }
 
 
-int
-u_info()
+int u_info()
 {
   move(1, 0);
   update_data(); 
@@ -384,16 +376,14 @@ u_info()
 }
 
 
-int
-u_cloak()
+int u_cloak()
 {
   pressanykey((currutmp->invisible ^= 1) ? MSG_CLOAKED : MSG_UNCLOAK);
   return XEASY;
 }
 
 
-unsigned
-u_habit()
+unsigned u_habit()
 {
   unsigned fbits;
   register int i;
@@ -411,7 +401,7 @@ u_habit()
     prints("%4s%c. %-28s %-7s\n"
        , " ", 'A' + i, habitstrings[i],((fbits >> i) & 1 ? choice[0] : choice[1]));
 
-    if(i == 5)      /*¬ÝªO¦CªíÅã¥Ü¦b²Ä 6 ¶µ , ÂÐ»\±¼*/
+    if(i == 4)      /*¬ÝªO¦CªíÅã¥Ü¦b²Ä 5 ¶µ , ÂÐ»\±¼*/
     { 
       move( i%NUMHABITS + 4, i <= 14 ? 36 : 72);
       prints((fbits >> i) & 1 ? "¤å³¹¼Æ" : "½s¸¹  ");
@@ -460,7 +450,7 @@ u_habit()
       {
         fbits ^= (1 << i);
         move( i%NUMHABITS + 4, i <= 14 ? 36 : 72);
-        if(i == 5)	/*¬ÝªO¦CªíÅã¥Ü¦b²Ä 6 ¶µ*/
+        if(i == 4)	/*¬ÝªO¦CªíÅã¥Ü¦b²Ä 5 ¶µ*/
           prints((fbits >> i) & 1 ? "¤å³¹¼Æ" : "½s¸¹  ");
         else
           prints((fbits >> i) & 1 ? choice[0] : choice[1]);
@@ -478,10 +468,7 @@ u_habit()
 }
 
 
-void
-showsig(uid, i)
-  char *uid;
-  int i;
+static void showsig(char *uid, int i)
 {
   char genbuf[STRLEN];
   clear();
@@ -494,11 +481,10 @@ showsig(uid, i)
   prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
 }
 
-void
-showplans(char* uid)
+void showplans(char* uid)
 {
   char genbuf[200];
-  char *choose_plans[5] = {"11.°ò¥»¸ê®Æ","22.Ã±¦WÀÉ","33.ºëµØ¤å³¹","44.¯d¨¥µ¹(¥L/¦o)","QQ.Â÷¶}"};
+  char *choose_plans[5] = {"11)°ò¥»¸ê®Æ","22)Ã±¦WÀÉ","33)ºëµØ¤å³¹","44)¯d¨¥µ¹(¥L/¦o)", msg_choose_cancel};
   
   if (!strcmp(uid, STR_GUEST))	/* alan.000330: guest¤£¶·­n¦³­Ó¤HºëµØ°Ï */
   {
@@ -525,7 +511,7 @@ showplans(char* uid)
       break;
     case '2':
     {
-      char *choose[10]={"11", "22", "33", "44", "55", "66", "77", "88", "99", "qQ.¨ú®ø"};
+      char *choose[10]={"11", "22", "33", "44", "55", "66", "77", "88", "99", msg_choose_cancel};
       char *choose_tmp[10];
       int i,n=0; //¦³´X­Ó Ã±¦WÀÉ
       
@@ -571,19 +557,32 @@ showplans(char* uid)
 }
 
 
-int
-u_editfile()
+int u_editfile()
 {
   int mode;
   char ans, ans2, buf[128], msg1[64], msg2[16];
-  show_file("etc/userfile", 3, 11, ONLY_COLOR);
-  ans = getans(" ­n¬Ý­þ­ÓÀÉ®× ? ");
-
+  char *choose[13]={"11)Ã±¦WÀÉ ¤@",
+  		    "22)Ã±¦WÀÉ ¤G",
+  		    "33)Ã±¦WÀÉ ¤T",
+  		    "44)Ã±¦WÀÉ ¥|",
+  		    "55)Ã±¦WÀÉ ¤­",
+  		    "66)Ã±¦WÀÉ ¤»",
+  		    "77)Ã±¦WÀÉ ¤C",
+  		    "88)Ã±¦WÀÉ ¤K",
+  		    "99)Ã±¦WÀÉ ¤E",
+  		    "00)¦W¤ùÀÉ",
+  		    "cC)¦Û­q´å¼Ð­ò!!",
+  		    "sS)©Ú¦¬¶l¥ó¦W³æ",
+  		    msg_choose_cancel};
+  		    
+  char *choose2[3]={"eE)½s¿è", "dD)§R°£", msg_choose_cancel};
+  
+  ans = win_select("¨Ï¥ÎªÌÀÉ®×", "­n¬Ý­þ­ÓÀÉ®× ?", choose , 13, 'q');
   switch(ans)
   {
     case '0':
       clear();
-      setuserfile(buf, fn_plans);
+      sethomefile(buf, cuser.userid, fn_plans);
       more(buf, YEA);
       mode = EDITPLAN;
       strcpy(msg2, "¦W¤ùÀÉ");
@@ -599,6 +598,8 @@ u_editfile()
     case '8':
     case '9':
       showsig(cuser.userid, ans-'0');
+      sethomefile(buf, cuser.userid, "sig.0");
+      buf[strlen(buf) - 1] = ans;
       mode = EDITSIG;
       strcpy(msg2, "Ã±¦WÀÉ");
       break;
@@ -631,14 +632,14 @@ u_editfile()
 
 /*
     case 's':
-      setuserfile(buf,"spam-list");
+      sethomefile(buf, cuser.userid, "spam-list");
       clear();
       show_file(buf, 2, 2, STRIP_ALL);
       strcpy(msg2, "©Ú¦¬¶l¥ó¦W³æ");
       break;
 */    
     case 's':
-      setuserfile(buf,"spam-list");
+      sethomefile(buf, cuser.userid, "spam-list");
       clear();
       ListEdit(buf);
       return 0;
@@ -647,8 +648,7 @@ u_editfile()
       return;
   }
     
-  sprintf(msg1, "%s ½s¿è(E) §R°£(D) ¨S¨Æ[Q] ", msg2);
-  ans2 = getans(msg1);
+  ans2= getans2(b_lines, 0, msg1, choose2, 3, 'q');
   if (ans2 == 'e')
   {
     setutmpmode(mode);

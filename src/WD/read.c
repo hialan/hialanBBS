@@ -7,10 +7,7 @@
 /*-------------------------------------------------------*/
 
 #include "bbs.h"
-
 #include <sys/mman.h>
-#define MSG_POSTER      \
-COLOR2"  ¤å³¹¿ïÅª  "COLOR1"[1m (y)[37m¦^«H [33m(=[]<>)[37m¬ÛÃö¥DÃD [33m(/?)[37m·j´M¼ÐÃD [33m(aA)[37m·j´M§@ªÌ [33m(x)[37mÂà¿ý [33m(V)[37m§ë²¼ [0m"
 
 struct keeploc
 {
@@ -256,13 +253,11 @@ EnumTagFhdr(fhdr, direct, locus)
 /* 0 : single article */
 /* ow: whole tag list */
 
-int
-AskTag(msg)
-  char *msg;
+int AskTag(char *msg)
 {
   char buf[80];
   int num;
-  char *choose[3] = {"aA.¤å³¹", "tT.¼Ð°O", "qQ.¨S¨Æ"};
+  char *choose[3] = {"aA)¤å³¹", "tT)¼Ð°O", msg_choose_cancel};
 
   num = TagNum;
   sprintf(buf, "¡» %s ", msg);
@@ -750,11 +745,7 @@ struct one_key sub_key[]={
 'G',	  NULL, 0, "©Ò¦³³Q mark ¹Lªº¤å³¹¡C",0,
 '\0', NULL, 0, NULL,0};
 
-int 
-show_helplist_line(row, cmd, barcolor)
-  int row;
-  struct one_key cmd;
-  char *barcolor;
+int show_helplist_line(int row, struct one_key cmd, char *barcolor)
 {
   char buf[128];
   char key[10];
@@ -808,9 +799,7 @@ show_helplist_line(row, cmd, barcolor)
   outs(buf);
 }
 
-int
-i_read_helper(rcmdlist)
-  struct one_key *rcmdlist;
+int i_read_helper(struct one_key *rcmdlist)
 {
   char page=0, cursor=0, i, draw=1;
   char max_cursor, max_page;
@@ -833,7 +822,7 @@ i_read_helper(rcmdlist)
       showtitle("½u¤W¨D§U", tmpbuf);
 
       prints("[¡ö]¤W¤@­¶ [¡÷]°õ¦æ¸Ó«ü¥O [¡ô¡õ]¿ï¾Ü\n");
-      prints(COLOR1"\033[1m    «ü¥O/«öÁä       »¡          ©ú%45s\033[0m\n", "");    
+      prints("%s    «ü¥O/«öÁä       »¡          ©ú%45s\033[0m\n", COLOR3, "");
 
       for(i=0;i<20 && rcmdlist[i+page*20].key;i++)
         show_helplist_line(i, rcmdlist[i+page*20], 0);
@@ -845,7 +834,7 @@ i_read_helper(rcmdlist)
     {
       move(b_lines, 0);
       clrtoeol();
-      prints(COLOR2"%12s\033[m"COLOR1"\033[1;33m  (b)\033[37m°ò¥»«ü¥O¶° %-s", " ¿ï¾Ü¥\\¯à ", "\033[33m(u)\033[37m¥DÃD¦¡¾\\Åª«ü¥O¶°                   \033[m");            
+      prints("%s  ¿ï¾Ü¥\\¯à  %s  b)°ò¥»«ü¥O¶° %-40.40s  \033[m", COLOR2, COLOR1, "u)¥DÃD¦¡¾\\Åª«ü¥O¶°");
       draw = 0;
     }
     
@@ -934,10 +923,7 @@ i_read_helper(rcmdlist)
 
 int thread_title;
 static int
-i_read_key(rcmdlist, locmem, ch)
-  struct one_key *rcmdlist;
-  struct keeploc *locmem;
-  int ch;
+i_read_key(struct one_key *rcmdlist, struct keeploc *locmem, int ch)
 {
   int i;
 //  static thread_title;
@@ -1292,7 +1278,7 @@ struct one_key *rcmdlist;
           }
           else
           {
-            char *choose_post[2] = {"pP.µoªí¤å³¹", "qQ.Â÷¶}"};
+            char *choose_post[2] = {"pP)µoªí¤å³¹", msg_choose_cancel};
             if (getans2(b_lines - 1, 0, "¬ÝªO·s¦¨¥ß ", choose_post, 2, 'q') == 'p')
               do_post();
             goto return_i_read;
@@ -1348,16 +1334,10 @@ struct one_key *rcmdlist;
       }
 
     case RC_FOOT:
-    if ((currstat == RMAIL) || (currstat == READING))
-      outmsg(curredit & EDIT_MAIL ? msg_mailer : MSG_POSTER);
-    else
-    {
-      move(b_lines, 0);
-      clrtoeol();
-    }
-/*
-woju
-*/
+      if(curredit & EDIT_MAIL)
+        readfoot(2);
+      else
+        readfoot(1);
       break;
     case RS_PREV:
     case RS_NEXT:
