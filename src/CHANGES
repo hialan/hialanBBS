@@ -166,5 +166,9 @@
 [2003/02/28]
   1.將 struct MENU 和 struct one_key 合併
 
-[2003/02/29]
+[2003/03/01]
   1.將 user.c -> showplans 完成
+
+[2003/03/02]
+  1.user.c 增加 showsig 顯示簽名檔
+  2.MagicKey 啟用

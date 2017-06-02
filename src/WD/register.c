@@ -167,7 +167,6 @@ check_register()
 #ifdef REG_FORM
     if (HAS_PERM(PERM_POST) && !HAS_PERM(PERM_LOGINOK)
       && answer("¬O§_­n¶ñ¼gµù¥U³æ (y/N)") == 'y')
-    //u_register();
     DL_func("SO/register.so:u_register");
 #endif
 

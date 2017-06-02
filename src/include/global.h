@@ -26,6 +26,7 @@
 #define FN_LIST		".LIST"		/* 名單 */
 #define FN_POSTPREFIX	".POSTPREFIX"	/* 標題類別 by hialan 3/21/2002*/
 #define FN_POST_NOTE	".POSTNOTE"	/* ychia.021212:看板自訂文章發表要領 */
+#define FN_MAGICKEY	"MagicKey"	/* 認證碼檔案 */
 #define FN_PAL		"pal"
 #define FN_ALOHA	"aloha"
 
@@ -207,6 +208,7 @@ char *fn_register       = "register.new";
 char *fn_plans          = "plans";
 char *fn_writelog       = "writelog";
 char *fn_talklog        = "talklog";
+char *fn_magickey	= FN_MAGICKEY;
 char *fn_overrides      = FN_OVERRIDES;
 char *fn_reject         = FN_REJECT;
 char *fn_canvote        = FN_CANVOTE;
@@ -309,6 +311,7 @@ extern char *fn_register;
 extern char *fn_plans;
 extern char *fn_writelog;
 extern char *fn_talklog;
+extern char *fn_magickey;
 extern char *fn_overrides;
 extern char *fn_reject;
 extern char *fn_canvote;

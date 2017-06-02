@@ -186,7 +186,7 @@ show_movie2()  /*show note2 by hialan 02/04/20*/
 
 static int
 show_menu(p)
-  MENU *p;
+  struct one_key *p;
 {
   register int n = 0, m = 0;
   register char *s;
@@ -247,7 +247,7 @@ void
 domenu(cmdmode, cmdtitle, cmd, cmdtable)
   char *cmdtitle;
   int cmdmode, cmd;
-  MENU *cmdtable;
+  struct one_key *cmdtable;
 {
 #define OLD_MENU_ROW (b_lines - (24 - old_menu_row) + 1)
 

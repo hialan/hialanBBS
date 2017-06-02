@@ -46,7 +46,7 @@
 #define LOGINATTEMPTS	(3)	/* 最大進站失誤次數 */
 #define LOGINASNEW		/* 採用上站申請帳號制度 */
 #define INTERNET_EMAIL		/* 支援 InterNet Email 功能(含 Forward) */
-#undef	REG_MAGICKEY		/* 發出 MagicKey eMail 身份認證信函 */
+#define	REG_MAGICKEY		/* 發出 MagicKey eMail 身份認證信函 */
 #define	REG_FORM		/* shakalaca: 填註冊單 */
 				/* shakalaca.000813: 認證方式請擇一 */
 #undef  NEWUSER_LIMIT		/* 新手上路的三天限制 */

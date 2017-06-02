@@ -136,19 +136,19 @@ char *permstrings[] = {
 /* these are habits in userec.habit                      */
 /* ----------------------------------------------------- */
 
-#define HABIT_MOVIE     000000000001    /* 開/關動態看板 */
-#define HABIT_COLOR     000000000002    /* 彩色/黑白切換 */
-#define HABIT_NOTE      000000000004    /* 顯示留言板 */
-#define HABIT_ALARM	000000000010    /* 半點報時 */
-#define HABIT_BELL	000000000020	/* 聲音 */
-#define HABIT_BOARDLIST	000000000040    /* 看板列表顯示文章數或是編號 */
-#define HABIT_SEELOG	000000000100    /* 上站都去看紀錄排名? */
-#define HABIT_CYCLE	000000000200    /* 循環式閱讀 */
-#define HABIT_FEELING	000000000400
-#define HABIT_FROM	000000001000
-#define HABIT_LIGHTBAR	000000002000	/* 光棒選單 */
-#define HABIT_ALREADYSET	000000020000    /* 每次上站都設定? */
-#define HABIT_NOBRDHELP	000000040000	/* 不顯示看板說明 */
+#define HABIT_MOVIE       000000000001    /* 開/關動態看板 */
+#define HABIT_COLOR       000000000002    /* 彩色/黑白切換 */
+#define HABIT_NOTE        000000000004    /* 顯示留言板 */
+#define HABIT_ALARM	  000000000010    /* 半點報時 */
+#define HABIT_BELL	  000000000020	  /* 聲音 */
+#define HABIT_BOARDLIST	  000000000040    /* 看板列表顯示文章數或是編號 */
+#define HABIT_SEELOG	  000000000100    /* 上站都去看紀錄排名? */
+#define HABIT_CYCLE	  000000000200    /* 循環式閱讀 */
+#define HABIT_FEELING	  000000000400
+#define HABIT_FROM	  000000001000
+#define HABIT_LIGHTBAR	  000000002000	  /* 光棒選單 */
+#define HABIT_ALREADYSET  000000004000    /* 每次上站都設定? */
+#define HABIT_NOBRDHELP	  000000010000	  /* 不顯示看板說明 */
 
 #define HAS_HABIT(x)     ((x)?cuser.habit&(x):1)
 #define HAVE_HABIT(x)    (cuser.habit&(x))

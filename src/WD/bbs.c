@@ -166,7 +166,7 @@ readtitle ()
 {
   showtitle (currBM, brd_title);
   outs ("\
-[¡ö]Â÷¶} [¡÷]¾\\Åª [^P]µoªí¤å³¹ [b]³Æ§Ñ¿ý [d]§R°£ [z]ºëµØ°Ï [TAB]¤åºK [^Z]¨D§U\n\
+[¡ö]Â÷¶} [¡÷]¾\\Åª [^P]µoªí¤å³¹ [b]³Æ§Ñ¿ý [d]§R°£ [z]ºëµØ°Ï [TAB]¤åºK [h]¨D§U\n\
 " COLOR1 "[1m  ½s¸¹   ");
 
   if (currmode & MODE_TINLIKE)

@@ -503,7 +503,7 @@ check_money(unsigned long int money,int mode)
   return 0;
 }
 
-
+#if 0
 // wildcat : 千禧獎金 :p
 void
 get_bonus()
@@ -520,6 +520,7 @@ get_bonus()
 
   pressanykey("恭喜你獲得 %d 元銀幣的千禧獎金",money);
 }  
+#endif
 
 /* wildcat 981218 */
 #define INTEREST_TIME	86400*7	// wildcat:7天發放一次利息
@@ -583,6 +584,7 @@ show_file(char *filename, int y, int lines, int mode)
 }
 
 
+#if 0
 /*---------------------------------------------------------------------*/
 /* int chyiuan_ansi(buf,str,max)的用法:自畫像用                        */
 /* buf:chyiuan_ansi過後的string                                        */
@@ -622,7 +624,7 @@ chyiuan_ansi(buf,str,max)
   }
   return count;
 }
-
+#endif
 
 int
 answer(char *s)
@@ -678,14 +680,15 @@ capture_screen()
    int i;
 
    setuserfile(fname, "buf.0");
-   if (fp = fopen(fname, "w")) {
+   if (fp = fopen(fname, "w")) 
+   {
       for (i = 0; i < scr_lns; i++)
          fprintf(fp, "%.*s\n", big_picture[i].len, big_picture[i].data);
       fclose(fp);
    }
 }
 
-
+void
 edit_note()
 {
    char fname[MAXPATHLEN];
@@ -850,12 +853,14 @@ show_help(mode)
     more(BBSHOME"/etc/help/LUSERS.help",YEA);
   else if(mode == READBRD || mode == READNEW)
     more(BBSHOME"/etc/help/BOARD.help",YEA);
+  else if(mode == RMAIL)
+//    more(BBSHOME"/etc/help/MAIL.help",YEA);
+    return 0;
   else if(mode == READING)
-    more(BBSHOME"/etc/help/READ.help",YEA);
+//    more(BBSHOME"/etc/help/READ.help",YEA);
+    return 0;
   else if(mode == ANNOUNCE)
     more(BBSHOME"/etc/help/ANNOUNCE.help",YEA);
-  else if(mode == RMAIL)
-    more(BBSHOME"/etc/help/MAIL.help",YEA);
   else if(mode == EDITING)
     more(BBSHOME"/etc/help/EDIT.help",YEA);
   else
@@ -983,13 +988,6 @@ change_lightbar()
   choose[3]=blink;
   choose[4]=underline;
 
-/*
-  ch[LB_BG]='0' + cuser.lightbar[LB_BG];
-  ch[LB_WD]='0' + cuser.lightbar[LB_WD];
-  ch[LB_LT]='0' + cuser.lightbar[LB_LT];
-  ch[LB_BL]='0' + cuser.lightbar[LB_BL];
-  ch[LB_UL]='0' + cuser.lightbar[LB_UL];
-*/  
   clear();
   stand_title("光棒改色");
   

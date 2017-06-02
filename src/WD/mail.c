@@ -44,7 +44,6 @@ setforward() /* Ptt , modify by wildcat*/
 // ª½±µ¥Î not_addr ¨Ó§PÂ_¬O¤£¬O email §Y¥i
   if(allow && !not_addr(ip))
   {
-//    getdata(b_lines,0,"½T©w¶}±Ò¦Û°ÊÂà«H¥\\¯à?(Y/n)",yn,3,LCECHO,0);
     yn[0] = getans2(b_lines,0,"½T©w¶}±Ò¦Û°ÊÂà«H¥\\¯à? ",0,2,'y');
     if(yn[0] != 'n' &&  (fp=fopen(buf,"w")))
     {
@@ -962,7 +961,7 @@ mailtitle()
   sprintf(tmpbuf,"%s [½u¤W %d ¤H]",BOARDNAME,count_ulist());
   showtitle("\0¶l¥ó¿ï³æ", tmpbuf);
   outs("\
-[¡ö]Â÷¶} [¡ô,¡õ]¿ï¾Ü [¡÷,r]¾\\Åª«H¥ó [R]¦^«H [x]Âà¹F [y]¸s²Õ¦^«H [^Z]¨D§U\n[1m\
+[¡ö]Â÷¶} [¡ô,¡õ]¿ï¾Ü [¡÷,r]¾\\Åª«H¥ó [R]¦^«H [x]Âà¹F [y]¸s²Õ¦^«H [h]¨D§U\n[1m\
 "COLOR1"  ½s¸¹   ¦^ ¤é ´Á §@ ªÌ        «H  ¥ó  ¼Ð  ÃD");
 
   getmailnum();
@@ -1158,12 +1157,11 @@ mail_cross_post(ent, fhdr, direct)
   fileheader *fhdr;
   char *direct;
 {
-  char xboard[20], fname[80], xfpath[80], xtitle[80], inputbuf[10];
+  char xboard[20], fname[80], xfpath[80], xtitle[80]; 
   fileheader xfile;
   FILE *xptr;
   int author = 0;
   char genbuf[200];
-  char genbuf2[4];
 
   make_blist();
   move(2, 0);
@@ -1180,12 +1178,10 @@ mail_cross_post(ent, fhdr, direct)
   {
     char *choose[2]={"11.­ì¤åÂà¸ü","22.ÂÂÂà¿ý®æ¦¡"};
 
-    genbuf[0] = getans2(2, 0, "",choose,2,'1');
-    if (genbuf[0] != '2')
+    if (getans2(2, 0, "",choose,2,'1') != '2')
     {
       ent = 0;
-      inputbuf[0] = getans2(2,0,"«O¯d­ì§@ªÌ¦WºÙ¶Ü?",0,2,'y');
-      if (inputbuf[0] != 'n' && inputbuf[0] != 'N') author = 1;
+      if (getans2(2,0,"«O¯d­ì§@ªÌ¦WºÙ¶Ü?",0,2,'y') != 'n') author = 1;
     }
   }
 
@@ -1195,8 +1191,7 @@ mail_cross_post(ent, fhdr, direct)
     strcpy(xtitle, fhdr->title);
 
   sprintf(genbuf, "±Ä¥Î­ì¼ÐÃD¡m%.60s¡n¶Ü? ", xtitle);
-  genbuf2[0] = getans2(2, 0, genbuf,0,2,'y');
-  if (*genbuf2 == 'n')
+  if (getans2(2, 0, genbuf,0,2,'y') == 'n')
   {
     if (getdata(2, 0, "¼ÐÃD¡G", genbuf, TTLEN, DOECHO,0))
       strcpy(xtitle, genbuf);
@@ -1269,7 +1264,8 @@ mail_save(int ent, fileheader* fhdr, char* direct)
    char fpath[256];
    char title[TTLEN+1];
 
-   if (HAS_PERM(PERM_MAILLIMIT)) {
+   if (HAS_PERM(PERM_MAILLIMIT)) 
+   {
       setuserfile(fpath, fhdr->filename);
       strcpy(title, "¡º ");
       strncpy(title+3, fhdr->title, TTLEN-3);
@@ -1631,6 +1627,7 @@ mail_justify(userec muser)
 
   if (valid_ident(muser.email) && !not_addr(muser.email))
   {
+    FILE *fp;
     char title[80], *ptr, ch, MagicKey[9];
     ushort checksum;            /* 16-bit is enough */
     time_t now;
@@ -1649,15 +1646,15 @@ mail_justify(userec muser)
     sprintf(title, "%d", checksum + time(&now));
     strncpy(MagicKey, title, 8);
     MagicKey[8] = '\0';
+    sethomefile(title, cuser.userid, fn_magickey);
+    if((fp = fopen(title, "w")) == NULL)
+    {
+      pressanykey("¿ù»~!!¶}±ÒÀÉ®×¥¢±Ñ, ½Ð³qª¾¯¸ªø!!");
+      return;
+    }
+    fprintf(fp, "%s", MagicKey);
+    fclose(fp);
 
-/*
-    sprintf(title, "[WD BBS]To %s(%d:%d) [User Justify]",
-      muser.userid, getuser(muser.userid) + MAGIC_KEY, checksum);
-*/ /* shakalaca.990718: ±NÃÒ»{¼Ð°O¿W¥ß¥X¨Ó¤è«K­×§ï */
-/*
-    sprintf(title, "%s%s(%d:%d) [User Justify]", TAG_VALID, 
-      muser.userid, getuser(muser.userid) + MAGIC_KEY, checksum);
-*/
     sprintf(title, "%s To %s: [­«­n ! ½Ð¾\\Åª]", TAG_VALID, muser.userid);
 
     if (bbs_sendmail(NULL, title, muser.email, MagicKey) < 0)

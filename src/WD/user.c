@@ -479,6 +479,22 @@ u_habit()
 
 
 void
+showsig(uid, i)
+  char *uid;
+  int i;
+{
+  char genbuf[STRLEN];
+  clear();
+  sethomefile(genbuf, uid, "sig.0");
+  genbuf[strlen(genbuf) - 1] = i + '0';
+  move(3, 0);
+  prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w[42m   Ã±¦WÀÉ %d   [40m¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
+  show_file(genbuf, 4, MAXSIGLINES, ONLY_COLOR);
+  move(4 + MAXSIGLINES, 0);
+  prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
+}
+
+void
 showplans(char* uid)
 {
   char genbuf[200];
@@ -518,7 +534,11 @@ showplans(char* uid)
         sethomefile(genbuf, uid, "sig.0");
         genbuf[strlen(genbuf) - 1] = i + '1';
         if(dashf(genbuf)) 
+        {
           choose_tmp[n++] = choose[i];
+          showsig(uid, i+1);
+          pressanykey_old(NULL);
+        }
       }
       
       if(n==0)
@@ -529,19 +549,11 @@ showplans(char* uid)
       
       choose_tmp[n++] = choose[9];
       
-      i = getans2(b_lines, 0, "½Ð¿ï¾ÜÃ±¦WÀÉ:", choose_tmp, n, 'q');;
-      if(i >= '1' && i <= '9')
+      do
       {
-          clear();
-          sethomefile(genbuf, uid, "sig.0");
-          genbuf[strlen(genbuf) - 1] = i;
-          move(3, 0);
-          prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w[42m   Ã±¦WÀÉ %c   [40m¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
-          show_file(genbuf, 4, MAXSIGLINES, ONLY_COLOR);
-          move(4 + MAXSIGLINES, 0);
-          prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
-          pressanykey_old(NULL);
-      }
+        i = getans2(b_lines, 0, "½Ð¿ï¾ÜÃ±¦WÀÉ:", choose_tmp, n, 'q');;
+        if(i >= '1' && i <= '9') showsig(uid, i-'0');
+      }while(i>='1' && i<='9');
     }
       break;
     case '3':
@@ -586,14 +598,7 @@ u_editfile()
     case '7':
     case '8':
     case '9':
-      setuserfile(buf, "sig.0");
-      buf[strlen(buf) - 1] = ans;
-      move(3, 0);
-      prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w[42m   Ã±¦WÀÉ %c   [40m¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", ans);
-//    clear();
-      show_file(buf, 4, MAXSIGLINES, ONLY_COLOR);
-      move(4 + MAXSIGLINES, 0);
-      prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", ans);
+      showsig(cuser.userid, ans-'0');
       mode = EDITSIG;
       strcpy(msg2, "Ã±¦WÀÉ");
       break;
@@ -890,10 +895,12 @@ u_verify()
     return XEASY;
   }
 
-  sethomefile(keyfile, cuser.userid, "MagicKey");
+  sethomefile(keyfile, cuser.userid, fn_magickey);
   if (!dashf(keyfile))
   {
-    pressanykey("±z©|¥¼µo¥X»{ÃÒ«H.. -_-");
+    if(win_select("»{ÃÒ½X", "±zÁÙ¥¼µo»{ÃÒ«H, ­nµo¥X¶Ü?", 0, 2, 'y') == 'y')
+      mail_justify(cuser);
+    
     return XEASY;
   }
 
@@ -914,9 +921,7 @@ u_verify()
   if (*inbuf)
   {
     if (strcmp(key, inbuf))
-    {
       pressanykey("¿ù»~, ½Ð­«·s¿é¤J.");
-    }
     else
     {
       int unum = getuser(cuser.userid);

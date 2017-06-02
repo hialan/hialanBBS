@@ -1353,7 +1353,11 @@ talk_ask(uentp)  //要求聊天等連線事宜
 {
   if (uentp->pid != currpid)
   {
+    char genbuf[MAXPATHLEN];
     clear();
+    stand_title("聊天選項");
+    sethomefile(genbuf, uentp->userid, fn_plans);
+    if (dashf(genbuf)) show_file(genbuf, 4, 20, ONLY_COLOR);
     move(3, 0);
     my_talk(uentp);
   }

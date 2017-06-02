@@ -264,9 +264,12 @@ u_register()
   }
   cuser.rtimes++;
   strcpy(cuser.realname, rname);
-  strcpy(cuser.email, email);
+  strcpy(cuser.email, email);  
   cuser.sex= sex_is[0]-'1';
   cuser.month=mon;cuser.day=day;cuser.year=year;
+#ifdef  REG_MAGICKEY
+  mail_justify(cuser); //ª{√“ΩX
+#endif      
   if (fn = fopen(fn_register, "a"))
   {
     now = time(NULL);

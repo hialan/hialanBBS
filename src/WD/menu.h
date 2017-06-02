@@ -31,10 +31,8 @@ null_menu()
          則按 n 會跳到閱讀新信, 按 r 會跳到信件列表
          當執行完閱讀新信後, 游標會自動跳到信件列表
 #endif
-typedef struct one_key MENU;  //使用 struct one_key
-			
 
-void domenu(int, char *, int, MENU *);
+void domenu();
 /* ----------------------------------------------------- */
 /* The set user menu for administrator                   */
 /* ----------------------------------------------------- */
