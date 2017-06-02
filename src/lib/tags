@@ -1,0 +1,140 @@
+Btime	str_time.c	/^Btime(clock)$/
+CTRL	../include/global.h	/^#define CTRL(c) ('c'&037)       \/* This gives ESIX/
+Ctime	str_time.c	/^Ctime(clock)$/
+Ctrl	../include/global.h	/^#define Ctrl(c)         ( c & 037 )$/
+Etime	str_time.c	/^Etime(clock)$/
+HAS_HABIT	../include/perm.h	/^#define HAS_HABIT(x)     ((x)?cuser.habit&(x):1)$/
+HAS_PERM	../include/perm.h	/^#define HAS_PERM(x)     ((x)?cuser.userlevel&(x):1/
+HAVE_HABIT	../include/perm.h	/^#define HAVE_HABIT(x)    (cuser.habit&(x))$/
+HAVE_PERM	../include/perm.h	/^#define HAVE_PERM(x)    (cuser.userlevel&(x))$/
+Isspace	../include/xchat.h	/^Isspace (ch)$/
+Link	Link.c	/^Link(char* src, char* dst)$/
+MAX	../include/bbs.h	/^      #define	MAX(a,b)	((a>b)?a:b)$/
+MIN	../include/bbs.h	/^      #define	MIN(a,b)	((a<b)?a:b)$/
+Msplay	splay.c	/^main(int argc, char *argv[])$/
+Mstr_pat	str_pat.c	/^main()$/
+Mxsort	xsort.c	/^main()$/
+Now	str_time.c	/^Now()$/
+PERM_HIDE	../include/perm.h	/^#define PERM_HIDE(u) ((u)->userlevel & PERM_SYSOP /
+Rename	Rename.c	/^Rename(char* src, char* dst)$/
+STR_PAT	str_pat.c	/^#define	STR_PAT(x, y)	printf("<%s, %s> : %d\\n", x,/
+SWAPINIT	xsort.c	/^#define SWAPINIT(a, es) \\$/
+acl_addr	acl_addr.c	/^acl_addr(acl, addr)$/
+acl_has	acl_has.c	/^acl_has(acl, user, host)$/
+archiv32	archiv32.c	/^archiv32(chrono, fname)$/
+archiv32m	archiv32m.c	/^archiv32m(chrono, fname)$/
+bad_user	bad_user.c	/^bad_user(char* name)$/
+base64_code	str_decode.c	/^base64_code(x)$/
+brd_fpath	f_path.c	/^brd_fpath(fpath, board, fname)$/
+char_lower	../include/global.h	/^#define char_lower(c)  ((c >= 'A' && c <= 'Z') ? c/
+chartoupper	../include/global.h	/^#define chartoupper(c)  ((c >= 'a' && c <= 'z') ? /
+checkpasswd	str_passwd.c	/^checkpasswd(passwd, test)$/
+chrono32	chrono32.c	/^chrono32(str)$/
+ci_strncmp	ci_strncmp.c	/^ci_strncmp(s1, s2, n)$/
+compareint	splay.c	/^compareint(void *a, void *b)$/
+counter	counter.c	/^counter(filename,modes)$/
+countproctitle	args.c	/^int countproctitle() {$/
+cut_ansistr	cut_ansistr.c	/^cut_ansistr(char *buf, char *str, int len) {$/
+dns_addr	dns_addr.c	/^dns_addr(name)$/
+dns_ident	dns_ident.c	/^dns_ident(lport, from, rhost, ruser)$/
+dns_init	dns.c	/^dns_init()$/
+dns_mx	dns_smtp.c	/^dns_mx(domain, mxlist)$/
+dns_name	dns_name.c	/^dns_name(addr, name)$/
+dns_open	dns_open.c	/^dns_open(host, port)$/
+dns_query	dns.c	/^dns_query(name, qtype, ans)$/
+dns_smtp	dns_smtp.c	/^dns_smtp(host)$/
+f_cat	f_cat.c	/^f_cat(fpath, msg)$/
+f_cp	f_cp.c	/^f_cp(src, dst, mode)$/
+f_img	f_img.c	/^f_img(fpath, fsize)$/
+f_ln	f_ln.c	/^f_ln(src, dst)$/
+f_map	f_map.c	/^f_map(fpath, fsize)$/
+f_mode	f_mode.c	/^f_mode(fpath)$/
+f_mv	f_mv.c	/^f_mv(src, dst)$/
+f_new	f_new.c	/^f_new(fold, fnew)$/
+f_open	f_open.c	/^f_open(fpath)$/
+f_rm	f_rm.c	/^f_rm(fpath)$/
+f_suck	f_suck.c	/^f_suck(fp, fpath)$/
+file_list_count	file_list_count.c	/^file_list_count(char *fname)$/
+friend_count	friend_count.c	/^friend_count(char *fname)$/
+gem_fpath	f_path.c	/^gem_fpath(fpath, board, fname)$/
+genpasswd	str_passwd.c	/^genpasswd(pw)$/
+getdtablesize	../include/bbs.h	/^#define getdtablesize()         (64)$/
+getshort	../include/dns.h	/^getshort(c)$/
+hash32	hash32.c	/^hash32(str)$/
+hdr_fpath	hdr_fpath.c	/^hdr_fpath(fpath, folder, hdr)$/
+hdr_stamp	hdr_stamp.c	/^hdr_stamp(folder, token, hdr, fpath)$/
+initsetproctitle	args.c	/^initsetproctitle(argc, argv, envp)$/
+int_cmp	xsort.c	/^int_cmp(a, b)$/
+is_alnum	is_alnum.c	/^is_alnum(ch)$/
+is_alpha	is_alpha.c	/^is_alpha(ch)$/
+is_fname	is_fname.c	/^is_fname(str)$/
+is_fpath	is_fpath.c	/^is_fpath(path)$/
+isprint2	isprint2.c	/^isprint2(ch)$/
+mak_dirs	mak_dirs.c	/^mak_dirs(fpath)$/
+mak_fpath	f_path.c	/^mak_fpath(str, key, name)$/
+min	xsort.c	/^#define min(a, b)	(a) < (b) ? a : b$/
+newstr	args.c	/^#define newstr(s)    strcpy(malloc(strlen(s) + 1),/
+nextfield	nextfield.c	/^nextfield(data, field)$/
+nextword	../include/xchat.h	/^nextword (str)$/
+not_addr	not_addr.c	/^not_addr(addr)$/
+not_alnum	not_alnum.c	/^not_alnum(ch)$/
+not_alpha	not_alpha.c	/^not_alpha(ch)$/
+printint	splay.c	/^printint(void *a)$/
+printpt	args.c	/^printpt(const char* format, ...) {$/
+qp_code	str_decode.c	/^qp_code(x)$/
+rec_apply	rec_apply.c	/^rec_apply(fpath, fptr, size)$/
+rec_del	rec_del.c	/^rec_del(data, size, pos, fchk, fdel)$/
+rec_get	rec_get.c	/^rec_get(fpath, data, size, pos)$/
+rec_ins	rec_ins.c	/^rec_ins(fpath, data, size, pos, num)$/
+rec_mov	rec_mov.c	/^rec_mov(data, size, from, to)$/
+rec_num	rec_num.c	/^rec_num(fpath, size)$/
+rec_put	rec_put.c	/^rec_put(fpath, data, size, pos)$/
+rm_dir	f_rm.c	/^rm_dir(fpath)$/
+setadir	setpf.c	/^setadir(buf, path)$/
+setapath	setpf.c	/^setapath(buf, boardname)$/
+setbfile	setpf.c	/^setbfile(buf, boardname, fname)$/
+setbgdir	setpf.c	/^setbgdir(buf, boardname)                          /
+setbpath	setpf.c	/^setbpath(buf, boardname)$/
+setdirpath	str_fpath.c	/^setdirpath(fpath, direct, fname)$/
+sethomedir	setpf.c	/^sethomedir(buf, userid)$/
+sethomefile	setpf.c	/^sethomefile(buf, userid, fname)$/
+sethomeman	setpf.c	/^sethomeman(buf, userid)$/
+sethomepath	setpf.c	/^sethomepath(buf, userid)$/
+setproctitle	args.c	/^setproctitle(const char* cmdline) {$/
+shm_new	shm.c	/^shm_new(shmkey, shmsize)$/
+splay_free	splay.c	/^splay_free(SplayNode * top, void (*data_free) (voi/
+splay_in	splay.c	/^splay_in(top, data, compare)$/
+splay_out	splay.c	/^splay_out(SplayNode * top, void (*data_out) ())$/
+str_add	str_add.c	/^str_add(dst, src)$/
+str_cat	str_cat.c	/^str_cat(dst, s1, s2)$/
+str_cmp	str_cmp.c	/^str_cmp(s1, s2)$/
+str_decode	str_decode.c	/^str_decode(str)$/
+str_dup	str_dup.c	/^str_dup(src, pad)$/
+str_folder	str_folder.c	/^str_folder(fpath, folder, fname)$/
+str_from	str_from.c	/^str_from(from, addr, nick)$/
+str_has	str_has.c	/^str_has(list, tag)$/
+str_hash	str_hash.c	/^str_hash(str, seed)$/
+str_len	str_len.c	/^str_len(str)$/
+str_lower	str_lower.c	/^str_lower(dst, src)$/
+str_ncmp	str_ncmp.c	/^str_ncmp(s1, s2, n)$/
+str_ncpy	str_ncpy.c	/^str_ncpy(dst, src, n)$/
+str_ndup	str_ndup.c	/^str_ndup(src, len)$/
+str_pat	str_pat.c	/^str_pat(str, pat)$/
+str_rev	str_rev.c	/^str_rev(dst, src)$/
+str_rle	str_rle.c	/^str_rle(str)			\/* run-length encoding *\/$/
+str_stamp	str_stamp.c	/^str_stamp(str, chrono)$/
+str_str	str_str.c	/^str_str(str, tag) $/
+str_tail	str_tail.c	/^str_tail(str)$/
+str_trim	str_trim.c	/^str_trim(buf)			\/* remove trailing space *\/$/
+str_ttl	str_ttl.c	/^str_ttl(title)$/
+strip_ansi	strip_ansi.c	/^strip_ansi(buf, str ,mode)$/
+strstr_lower	strstr_lower.c	/^strstr_lower(str, tag)$/
+swap	xsort.c	/^#define swap(a, b)					\\$/
+swapcode	xsort.c	/^#define swapcode(TYPE, parmi, parmj, n) { 		\\$/
+swapfunc	xsort.c	/^swapfunc(a, b, n, swaptype)$/
+trim2	str_trim2.c	/^char* trim2(char* buffer)$/
+usleep	../include/bbs.h	/^#define usleep(usec)            {               \\$/
+usr_fpath	f_path.c	/^usr_fpath(fpath, user, fname)$/
+vecswap	xsort.c	/^#define vecswap(a, b, n) 	if ((n) > 0) swapfunc(a,/
+xsort	xsort.c	/^xsort(a, n, es, cmp)$/
+xwrite	xwrite.c	/^xwrite(fd, data, size)$/

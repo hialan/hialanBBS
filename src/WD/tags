@@ -1,0 +1,570 @@
+AddNameList	name.c	/^AddNameList(name)$/
+Announce	announce.c	/^Announce ()$/
+AnnounceSelect	announce.c	/^AnnounceSelect ()$/
+AppearInList	name.c	/^AppearInList(struct word *cwlist, char *data)$/
+ApplyToNameList	name.c	/^ApplyToNameList(fptr)$/
+AskTag	read.c	/^AskTag(msg)$/
+Ben_Perm	board.c	/^Ben_Perm(bptr)$/
+Boards	board.c	/^Boards()$/
+Cdate	stuff.c	/^Cdate(clock)$/
+Cdatelite	stuff.c	/^Cdatelite(clock)$/
+Cite_post	bbs.c	/^Cite_post (ent, fhdr, direct)$/
+Cite_posts	bbs.c	/^Cite_posts (int ent, fileheader * fhdr, char *dire/
+ClearSubList	name.c	/^ClearSubList(list)$/
+CountNameList	name.c	/^CountNameList()$/
+CreateNameList	name.c	/^CreateNameList()$/
+EnumTagFhdr	read.c	/^EnumTagFhdr(fhdr, direct, locus)$/
+EnumTagName	read.c	/^EnumTagName(fname, locus)$/
+Favor	board.c	/^Favor()$/
+FreeNameList	name.c	/^FreeNameList()$/
+GetSubList	name.c	/^GetSubList(tag, list)$/
+Goodbye	bbs.c	/^Goodbye()$/
+HELP	announce.c	/^HELP ()$/
+InNameList	name.c	/^InNameList(name)$/
+ListEdit	list.c	/^ListEdit(fname)$/
+ListMain	list.c	/^ListMain()$/
+LoadNameList	name.c	/^LoadNameList(reciper, listfile, msg)$/
+Log	announce.c	/^Log ()$/
+MaxLen	name.c	/^MaxLen(list, count)$/
+Mmain	main.c	/^main(argc, argv)$/
+New	board.c	/^New()$/
+NumInList	name.c	/^NumInList(list)$/
+Post	bbs.c	/^Post ()$/
+Ptt_prints	more.c	/^Ptt_prints(char* str,int mode)$/
+Read	bbs.c	/^Read ()$/
+ReadSelect	bbs.c	/^ReadSelect ()$/
+RemoveNameList	name.c	/^RemoveNameList(name)$/
+SHOW_BRDLIST	board.c	/^#define SHOW_BRDLIST() show_brdlist(head, clsflag,/
+Select	bbs.c	/^Select ()$/
+ShowNameList	name.c	/^ShowNameList(row, column, prompt)$/
+TagThread	read.c	/^TagThread(direct, search, type)$/
+Tagger	read.c	/^Tagger(chrono, recno, mode )$/
+ToggleNameList	name.c	/^ToggleNameList(reciper, listfile, msg)$/
+UserMaxLen	name.c	/^UserMaxLen(cwlist, cwnum, morenum, count)$/
+UserSubArray	name.c	/^UserSubArray(cwbuf, cwlist, cwnum, key, pos)$/
+XFile	announce.c	/^XFile ()$/
+a_additem	announce.c	/^a_additem (pm, myheader)$/
+a_appenditem	announce.c	/^a_appenditem (pm)$/
+a_copyitem	announce.c	/^a_copyitem (char *fpath, char *title, char *owner)/
+a_delete	announce.c	/^a_delete (pm)$/
+a_delrange	announce.c	/^a_delrange (pm)$/
+a_editsign	announce.c	/^a_editsign (pm)$/
+a_forward	announce.c	/^a_forward (path, pitem, mode)$/
+a_loadname	announce.c	/^a_loadname (pm)$/
+a_menu	announce.c	/^a_menu (maintitle, path, lastlevel, mode)$/
+a_moveitem	announce.c	/^a_moveitem (pm)$/
+a_newitem	announce.c	/^a_newitem (pm, mode)$/
+a_newtitle	announce.c	/^a_newtitle (pm)$/
+a_pasteitem	announce.c	/^a_pasteitem (pm)$/
+a_perm	announce.c	/^a_perm(fname,fhdr,me)$/
+a_refusemark	announce.c	/^a_refusemark (pm)$/
+a_searchtitle	announce.c	/^a_searchtitle (pm, rev)$/
+a_showmenu	announce.c	/^a_showmenu (pm)$/
+a_showname	announce.c	/^a_showname (pm)$/
+a_timestamp	announce.c	/^a_timestamp (buf, time)$/
+abort_bbs	main.c	/^abort_bbs()$/
+add_distinct	main.c	/^add_distinct(char* fname, char* line)$/
+add_flush	io.c	/^add_flush(flushfunc)$/
+add_io	io.c	/^add_io(fd, timeout)$/
+add_tag	bbs.c	/^add_tag (ent, fhdr, direct)$/
+addsignature	edit.c	/^addsignature(fp)$/
+alloc_line	edit.c	/^alloc_line()$/
+ansi2n	edit.c	/^ansi2n(int ansix, textline * line)$/
+answer	stuff.c	/^answer(char *s)$/
+append	edit.c	/^append(p, line)$/
+apply_boards	cache.c	/^apply_boards(func)$/
+apply_ulist	cache.c	/^apply_ulist(fptr)$/
+ask	edit.c	/^ask (prompt)$/
+ask_tmpbuf	edit.c	/^ask_tmpbuf(int y)$/
+atexit	stuff.c	/^atexit(procp)$/
+atitle	announce.c	/^atitle ()$/
+auto_backup	edit.c	/^auto_backup()$/
+b_load_class	bbs.c	/^b_load_class(bname)$/
+b_namearray	board.c	/^b_namearray(buf, pnum, tag)$/
+b_notes	bbs.c	/^b_notes ()$/
+back_line	edit.c	/^back_line(pos, num)$/
+bad_user_id	register.c	/^bad_user_id(userid)$/
+bbs_sendmail	mail.c	/^bbs_sendmail(fpath, title, receiver, key)$/
+be_rejected	talk.c	/^be_rejected(userid)$/
+beginsig	edit.c	/^beginsig(char* s)$/
+bell	stuff.c	/^bell()$/
+belong	stuff.c	/^belong(filelist, key)$/
+belong_list	list.c	/^belong_list(fname, userid)$/
+belong_spam	stuff.c	/^belong_spam(filelist, key)$/
+block_color	edit.c	/^block_color()$/
+block_del	edit.c	/^block_del(int hide)$/
+block_shift_left	edit.c	/^block_shift_left()$/
+block_shift_right	edit.c	/^block_shift_right()$/
+bmw_lightbar	talk.c	/^bmw_lightbar(row, bmw, ch, barcolor)$/
+board	board.c	/^board()$/
+board_digest	bbs.c	/^board_digest ()$/
+board_edit	bbs.c	/^board_edit ()$/
+board_select	bbs.c	/^board_select ()$/
+brc_addlist	board.c	/^brc_addlist(fname)$/
+brc_getrecord	board.c	/^brc_getrecord(ptr, name, pnum, list)$/
+brc_initial	board.c	/^brc_initial(boardname)$/
+brc_putrecord	board.c	/^brc_putrecord(ptr, name, num, list)$/
+brc_unread	board.c	/^brc_unread(fname)$/
+brc_update	board.c	/^brc_update()$/
+brdcomplete	name.c	/^brdcomplete(prompt, data)$/
+brdlist_foot	board.c	/^brdlist_foot()$/
+brdperm	bbs.c	/^brdperm (char *brdname, char *userid)$/
+cancel_post	bbs.c	/^cancel_post(fhdr, fpath)$/
+cancelpost	bbs.c	/^cancelpost (fh, by_BM)$/
+capture_screen	stuff.c	/^capture_screen()$/
+change_bp	hialan.c	/^change_bp(y, title, desc)$/
+change_lightbar	stuff.c	/^change_lightbar()$/
+change_scroll_range	term.c	/^change_scroll_range(int top, int bottom)$/
+chcxy	screen.c	/^chcxy(type)$/
+check_BM	main.c	/^check_BM()      \/* Ptt 自動取下離職板主權力 *\/$/
+check_ctrlword	io.c	/^check_ctrlword(buf,len)$/
+check_exp	stuff.c	/^check_exp(unsigned long int exp)$/
+check_local	edit.c	/^check_local(int i)$/
+check_max_online	main.c	/^check_max_online()$/
+check_money	stuff.c	/^check_money(unsigned long int money,int mode)$/
+check_newpost	board.c	/^check_newpost(ptr)$/
+check_personal_note	stuff.c	/^check_personal_note(int newflag, char* userid) $/
+check_quote	edit.c	/^check_quote()$/
+check_register	register.c	/^check_register()$/
+check_words	edit.c	/^check_words()$/
+chkmail	mail.c	/^chkmail(rechk)$/
+chkmailbox	mail.c	/^chkmailbox(void)$/
+chkpasswd	register.c	/^chkpasswd(passwd, test)$/
+chkstr	name.c	/^chkstr(otag, tag, name)$/
+choose_board	board.c	/^choose_board(int newflag,usint mode)$/
+chyiuan_ansi	stuff.c	/^chyiuan_ansi(buf,str,max)$/
+ci_strcmp	cache.c	/^ci_strcmp(s1, s2)$/
+cite	bbs.c	/^cite (ent, fhdr, direct)$/
+clear	screen.c	/^clear()$/
+clrchyiuan	screen.c	/^clrchyiuan(int x,int y)$/
+clrstandout	screen.c	/^clrstandout()$/
+clrtobot	screen.c	/^clrtobot()$/
+clrtoeol	screen.c	/^clrtoeol()$/
+cmpbnames	bbs.c	/^cmpbnames (bname, brec)$/
+cmpboard	board.c	/^cmpboard(brd, tmp)$/
+cmpfilename	bbs.c	/^cmpfilename (fhdr)$/
+cmpfmode	bbs.c	/^cmpfmode (fhdr)$/
+cmpfowner	bbs.c	/^cmpfowner (fhdr)$/
+cmppids	talk.c	/^cmppids(pid, urec)$/
+cmpuids	talk.c	/^cmpuids(uid, urec)$/
+cmpuname	talk.c	/^cmpuname(userid, pal)$/
+compute_user_value	register.c	/^compute_user_value(urec, clock)$/
+copy_stamp	announce.c	/^copy_stamp(char* fpath, char* fname)$/
+count_logins	cache.c	/^count_logins(fptr, farg, show)$/
+count_multi	cache.c	/^count_multi()$/
+count_multiplay	money.c	/^count_multiplay(int unmode)$/
+count_ulist	cache.c	/^count_ulist()$/
+creat_list	talk.c	/^creat_list()$/
+cross_post	bbs.c	/^cross_post (ent, fhdr, direct)$/
+cursor_clear	stuff.c	/^cursor_clear(row, column)$/
+cursor_key	stuff.c	/^cursor_key(row, column)$/
+cursor_pos	read.c	/^cursor_pos(locmem, val, from_top)$/
+cursor_show	stuff.c	/^cursor_show(row, column)$/
+cvtchar	term.c	/^cvtchar(sp, c)$/
+dashd	stuff.c	/^dashd(fname)$/
+dashf	stuff.c	/^dashf(fname)$/
+dashl	stuff.c	/^dashl(fname)$/
+dashs	stuff.c	/^dashs(fname)$/
+dasht	stuff.c	/^dasht(fname)$/
+debug	stuff.c	/^debug(mode)$/
+degold	money.c	/^degold(unsigned long int money)$/
+del_distinct	main.c	/^del_distinct(char* fname, char* line)$/
+del_one	bbs.c	/^del_one (ent, fhdr, direct)$/
+del_post	bbs.c	/^del_post (ent, fhdr, direct)$/
+del_range	bbs.c	/^del_range (ent, fhdr, direct)$/
+del_tag	bbs.c	/^del_tag (ent, fhdr, direct)$/
+delete_char	edit.c	/^delete_char()$/
+delete_file	record.c	/^delete_file(dirname, size, ent, filecheck)$/
+delete_files	record.c	/^delete_files(char* dirname, int (*filecheck)())$/
+delete_line	edit.c	/^delete_line(line)$/
+delete_range	record.c	/^delete_range(fpath, id1, id2)$/
+delete_range2	record.c	/^delete_range2(fpath, id1, id2)$/
+demailbox	money.c	/^demailbox(int m)$/
+demoney	money.c	/^demoney(unsigned long int money)$/
+deumoney	money.c	/^deumoney(char *tuser, int money)$/
+display_buffer	edit.c	/^display_buffer()$/
+do_all_post	bbs.c	/^do_all_post (char *fpath)$/
+do_aloha	main.c	/^do_aloha(char *hello)$/
+do_hold_mail	mail.c	/^do_hold_mail(fpath, receiver, holder)$/
+do_list	talk.c	/^do_list(modestr)$/
+do_move	term.c	/^do_move(destcol, destline)$/
+do_post	bbs.c	/^do_post ()$/
+do_postnotify	bbs.c	/^do_postnotify (char *fpath)$/
+do_quote	edit.c	/^do_quote()$/
+do_reply	bbs.c	/^do_reply (fhdr)$/
+do_reply_title	bbs.c	/^do_reply_title (row, title)$/
+do_select	bbs.c	/^do_select (ent, fhdr, direct)$/
+do_send	mail.c	/^do_send(userid, title)$/
+do_talk	talk.c	/^do_talk(fd)$/
+do_talk_char	talk.c	/^do_talk_char(twin, ch)$/
+do_talk_nextline	talk.c	/^do_talk_nextline(twin)$/
+do_unanonymous_post	bbs.c	/^do_unanonymous_post (char *fpath)$/
+do_voteboard	votebrd.c	/^int do_voteboard(void)$/
+do_voteboardreply	votebrd.c	/^do_voteboardreply(fileheader *fhdr)$/
+doent	bbs.c	/^doent (num, ent, row, bar, bar_color)$/
+doforward	mail.c	/^doforward(direct, fh, mode)$/
+dogetch	io.c	/^dogetch()$/
+domenu	menu.c	/^domenu(cmdmode, cmdtitle, cmd, cmdtable)$/
+dosearchuser	main.c	/^dosearchuser(userid)$/
+edit_msg	edit.c	/^edit_msg(void)$/
+edit_note	stuff.c	/^edit_note()$/
+edit_outs	edit.c	/^edit_outs(text)$/
+edit_post	bbs.c	/^edit_post (ent, fhdr, direct)$/
+edit_title	bbs.c	/^edit_title (ent, fhdr, direct)$/
+erase_tmpbuf	edit.c	/^erase_tmpbuf()$/
+favor_edit	board.c	/^favor_edit() {$/
+fillucache	cache.c	/^fillucache(uentp)$/
+fixkeep	read.c	/^fixkeep(s, first)$/
+flock	record.c	/^flock(fd, op)$/
+force_board	board.c	/^void force_board(char *bname)$/
+forward_line	edit.c	/^forward_line(pos, num)$/
+friend_add	talk.c	/^friend_add(uident)$/
+friend_delete	talk.c	/^friend_delete(uident)$/
+friend_descript	talk.c	/^friend_descript(uident)$/
+friend_load	talk.c	/^friend_load()$/
+g_additem	announce.c	/^g_additem (GMENU * pm, ITEM * myitem)$/
+g_bm_names	bbs.c	/^g_bm_names(bh)$/
+g_board_names	bbs.c	/^g_board_names (fhdr)$/
+g_searchtitle	announce.c	/^g_searchtitle (GMENU * pm, int rev)$/
+g_showmenu	announce.c	/^g_showmenu (pm)$/
+game_get	record.c	/^game_get(userid,GD)$/
+game_log	stuff.c	/^game_log(va_alist)$/
+game_rec	record.c	/^game_rec(userid,GD)$/
+garbage_line	edit.c	/^garbage_line(str)               \/* quote deletion/
+gem	announce.c	/^gem(char *maintitle, ITEM * path, int update)$/
+gem_files	record.c	/^gem_files(char* dirname, int (*filecheck)())$/
+gem_tag	bbs.c	/^gem_tag (ent, fhdr, direct)$/
+get_bonus	stuff.c	/^get_bonus()$/
+get_cursor	stuff.c	/^get_cursor()$/
+get_lightbar_bgcolor	stuff.c	/^get_lightbar_bgcolor(color)$/
+get_lightbar_color	stuff.c	/^get_lightbar_color(color)$/
+get_lightbar_wdcolor	stuff.c	/^get_lightbar_wdcolor(color)$/
+get_records	record.c	/^get_records(fpath, rptr, size, id, number)$/
+get_sum_records	record.c	/^get_sum_records(char* fpath, int size)$/
+get_win_msgline	window.c	/^get_win_msgline(buf, len, msg)$/
+getans	io.c	/^getans(prompt)$/
+getans2	hialan.c	/^getans2(line, col, prompt, s, many, def)$/
+getarg	term.c	/^getarg(argnum, type, p)$/
+getbcache	cache.c	/^getbcache(bname)$/
+getbname	cache.c	/^getbname(bid)$/
+getbnum	cache.c	/^getbnum(bname)$/
+getdata	io.c	/^getdata(line, col, prompt, buf, len, echo, ans)$/
+getfield	user.c	/^getfield(line, info, desc, buf, len)$/
+getindex	bbs.c	/^getindex (fpath, fname, size)$/
+getkeep	read.c	/^getkeep(s, def_topline, def_cursline)$/
+getlineno	edit.c	/^getlineno()$/
+getmailnum	mail.c	/^getmailnum(void)$/
+getnewuserid	register.c	/^getnewuserid()$/
+getnewutmpent	cache.c	/^getnewutmpent(up)$/
+getuser	cache.c	/^getuser(userid)$/
+getuserid	cache.c	/^getuserid(num)$/
+getyx	screen.c	/^getyx(y, x)$/
+go_cmd	announce.c	/^go_cmd (node, sock)$/
+go_menu	announce.c	/^go_menu (GMENU * pm, ITEM * node, int update)$/
+go_proxy	announce.c	/^go_proxy (char *fpath, ITEM * node, int update)$/
+good_board	board.c	/^good_board()$/
+good_post	bbs.c	/^good_post (ent, fhdr, direct)$/
+goto_line	edit.c	/^goto_line(int lino)$/
+gtty	term.c	/^#define gtty(fd, data) tcgetattr( fd, data )$/
+guest_count_ulist	cache.c	/^guest_count_ulist()$/
+haspostperm	cache.c	/^haspostperm(bname)$/
+have_author	board.c	/^have_author(char* brdname)$/
+hit_alarm_clock	io.c	/^hit_alarm_clock()$/
+hold_mail	mail.c	/^hold_mail(fpath, receiver)$/
+i_read	read.c	/^i_read(cmdmode, direct, dotitle, doentry, rcmdlist/
+i_read_key	read.c	/^i_read_key(rcmdlist, locmem, ch)$/
+i_read_user	hialan.c	/^int i_read_user()	\/\/user_display for i_read $/
+idlist_add	name.c	/^idlist_add(fpath, desc, uident)$/
+idlist_delete	name.c	/^idlist_delete(fpath, uident)$/
+igetch	io.c	/^igetch()$/
+igetkey	io.c	/^igetkey()$/
+inbtotal	cache.c	/^inbtotal(bname, add)$/
+indent_spcs	edit.c	/^indent_spcs()$/
+indigestion	edit.c	/^indigestion(i)$/
+ingold	money.c	/^ingold(unsigned long int money)$/
+init_alarm	io.c	/^init_alarm()$/
+init_tty	term.c	/^init_tty()$/
+initscr	screen.c	/^initscr()$/
+inmailbox	money.c	/^inmailbox(int m)$/
+inmoney	money.c	/^inmoney(int money)$/
+insert_char	edit.c	/^insert_char(ch)$/
+insert_string	edit.c	/^insert_string(str)$/
+inugold	money.c	/^inugold(char *tuser,int money)$/
+inumoney	money.c	/^inumoney(char *tuser,int money)$/
+invalid_fname	stuff.c	/^invalid_fname(str)$/
+invalid_pname	stuff.c	/^invalid_pname(str)$/
+is_BM	stuff.c	/^is_BM(list)$/
+is_friend	talk.c	/^is_friend(ui)$/
+is_hidden	talk.c	/^is_hidden(user)$/
+is_menu_stat	menu.c	/^is_menu_stat()	\/*判斷特定看板  by hialan 02\/04\//
+is_rejected	talk.c	/^is_rejected(ui)$/
+isig	announce.c	/^isig (sig)$/
+join	edit.c	/^join(line)$/
+killsp	edit.c	/^killsp(s)$/
+lazy_delete	bbs.c	/^lazy_delete (fhdr)$/
+leave_bbs	main.c	/^leave_bbs()$/
+list_add	list.c	/^list_add()$/
+list_del	list.c	/^list_del(ent, fhdr, direct)$/
+list_desc	list.c	/^list_desc(fhdr, echo)$/
+list_edit	list.c	/^list_edit(ent, fhdr, direct)$/
+list_help	list.c	/^list_help(ent, fhdr, direct)$/
+list_merge	list.c	/^list_merge(ent, fhdr, direct)$/
+list_move	list.c	/^list_move(ent, fhdr, direct)$/
+list_multi	list.c	/^list_multi(ent, fhdr, direct)$/
+list_view	list.c	/^list_view(ent, fhdr, direct)$/
+listcuent	talk.c	/^listcuent(uentp)$/
+listdoent	list.c	/^listdoent(num, ent, row, bar, bar_color)$/
+listtitle	list.c	/^listtitle()$/
+load_boards	board.c	/^load_boards(char *bname , usint mode)$/
+load_file	edit.c	/^load_file(fp)$/
+load_lightbar_color	stuff.c	/^load_lightbar_color()$/
+load_paste	announce.c	/^load_paste ()$/
+load_zapbuf	board.c	/^load_zapbuf()$/
+local_board	board.c	/^local_board()$/
+lockutmpmode	talk.c	/^lockutmpmode(int unmode)$/
+log_board	bbs.c	/^log_board (board, usetime)$/
+log_board2	bbs.c	/^log_board2( mode, usetime )$/
+log_board3	bbs.c	/^log_board3( mode, str, num )$/
+log_usies	main.c	/^log_usies(mode, msg)$/
+logattempt	main.c	/^logattempt(uid, type)$/
+login_query	main.c	/^login_query()$/
+m_forward	mail.c	/^m_forward(ent, fhdr, direct)$/
+m_internet	mail.c	/^m_internet()$/
+m_new	mail.c	/^m_new()$/
+m_postnotify	user.c	/^m_postnotify()$/
+m_read	mail.c	/^m_read()$/
+m_send	mail.c	/^m_send()$/
+m_sysop	bbs.c	/^m_sysop()$/
+mail2user	stuff.c	/^mail2user(userec muser,char *title,char *fname)$/
+mail_all	mail.c	/^mail_all()$/
+mail_cross_post	mail.c	/^mail_cross_post(ent, fhdr, direct)$/
+mail_del	mail.c	/^mail_del(ent, fhdr, direct)$/
+mail_forward	mail.c	/^mail_forward(fhdr, direct, mode)$/
+mail_justify	mail.c	/^mail_justify(userec muser)$/
+mail_list	mail.c	/^mail_list()$/
+mail_mbox	mail.c	/^mail_mbox()$/
+mail_read	mail.c	/^mail_read(ent, fhdr, direct)$/
+mail_reply	mail.c	/^mail_reply(ent, fhdr, direct)$/
+mail_save	mail.c	/^mail_save(int ent, fileheader* fhdr, char* direct)/
+mailtitle	mail.c	/^mailtitle()$/
+make_blist	bbs.c	/^make_blist ()$/
+make_bmlist	bbs.c	/^make_bmlist()$/
+make_cold	bbs.c	/^make_cold(board,save_title,money, fpath)$/
+man	bbs.c	/^man()$/
+mark	bbs.c	/^mark (ent, fhdr, direct)$/
+match_paren	edit.c	/^match_paren()$/
+modestring	talk.c	/^modestring(uentp, simple)$/
+mon_help	announce.c	/^mon_help ()$/
+more	more.c	/^more(fpath, promptend)$/
+more_web	more.c	/^more_web(fpath, promptend)$/
+move	screen.c	/^move(y, x)$/
+move_cursor_line	read.c	/^move_cursor_line(locmem, mode)$/
+movie	menu.c	/^movie(i)$/
+msgbox	hialan.c	/^msgbox(line, width, title, prompt, type)$/
+multi_list	mail.c	/^multi_list(reciper)$/
+multi_reply	mail.c	/^multi_reply(ent, fhdr, direct)$/
+multi_send	mail.c	/^multi_send(title, inmail)$/
+multi_user_check	main.c	/^multi_user_check()$/
+my_allpost	announce.c	/^my_allpost()$/
+my_ctime	stuff.c	/^my_ctime(const time_t *t)$/
+my_gem	announce.c	/^my_gem()$/
+my_kick	talk.c	/^my_kick(uentp)$/
+my_open	announce.c	/^my_open (char *path)$/
+my_query	talk.c	/^my_query(uident)$/
+my_send	mail.c	/^my_send(uident)$/
+my_talk	talk.c	/^my_talk(uin)$/
+my_write	talk.c	/^my_write(pid, hint)$/
+n2ansi	edit.c	/^n2ansi(int nx, textline * line)$/
+namecomplete	name.c	/^namecomplete(prompt, data)$/
+new_register	register.c	/^new_register(mode)$/
+nextfield	announce.c	/^nextfield (data, field)$/
+nolfilename	record.c	/^nolfilename(n, fpath)$/
+note	bbs.c	/^note()$/
+null_menu	menu.c	/^null_menu()$/
+num_in_buf	io.c	/^num_in_buf()$/
+o_clear	screen.c	/^#define o_clear()     output(clearbuf,clearbuflen)/
+o_cleol	screen.c	/^#define o_cleol()     output(cleolbuf,cleolbuflen)/
+o_scrollrev	screen.c	/^#define o_scrollrev() output(scrollrev,scrollrevle/
+o_standdown	screen.c	/^#define o_standdown() output(endstandout,endstando/
+o_standup	screen.c	/^#define o_standup()   output(strtstandout,strtstan/
+ochar	io.c	/^ochar(c)$/
+offset_count	io.c	/^offset_count(char *prompt)   \/\/ Robert Liu 20010/
+oflush	io.c	/^oflush()$/
+outc	screen.c	/^outc(ch)$/
+outcf	term.c	/^outcf(ch)$/
+outch	screen.c	/^outch(c)$/
+outgo_post	bbs.c	/^outgo_post(fh, board)$/
+outmsg	screen.c	/^outmsg(msg)$/
+outns	screen.c	/^outns(str, n)$/
+output	io.c	/^output(s, len)$/
+outs	screen.c	/^outs(str)$/
+outz	screen.c	/^outz(msg)$/
+over_load	main.c	/^over_load()$/
+pal_type	talk.c	/^pal_type(userid, whoask)$/
+parsecolor	screen.c	/^parsecolor(buf)$/
+passwd_outs	io.c	/^passwd_outs(text)$/
+pickup_cmp	talk.c	/^pickup_cmp(i, j)$/
+pickup_user	talk.c	/^pickup_user()$/
+pklist_doent	talk.c	/^pklist_doent(pklist, ch, row, bar, bar_color)$/
+popnum	term.c	/^popnum(num)$/
+popstring	term.c	/^popstring(str)$/
+pre_read_user	hialan.c	/^pre_read_user(item, fpath)$/
+pressanykey	stuff.c	/^pressanykey(va_alist)$/
+pressanykey_old	stuff.c	/^pressanykey_old(va_alist)$/
+printdash	stuff.c	/^printdash(mesg)$/
+prints	screen.c	/^prints(va_alist)$/
+purge_utmp	cache.c	/^purge_utmp(uentp)$/
+pusharg	term.c	/^pusharg(arg)$/
+pushnum	term.c	/^pushnum(num)$/
+re_m_postnotify	user.c	/^re_m_postnotify()$/
+read_brc_buf	board.c	/^read_brc_buf()$/
+read_file	edit.c	/^read_file(fpath)$/
+read_new_mail	mail.c	/^read_new_mail(fptr)$/
+read_post	bbs.c	/^read_post (ent, fhdr, direct)$/
+read_tmpbuf	edit.c	/^read_tmpbuf(int n)$/
+readln	more.c	/^readln(fp, buf)$/
+readtitle	bbs.c	/^readtitle ()$/
+rec_del	record.c	/^rec_del(fpath, size, id)$/
+rec_search	record.c	/^rec_search(fpath, rptr, size, fptr, farg)$/
+redoscr	screen.c	/^redoscr()$/
+refresh	screen.c	/^refresh()$/
+refusemark	bbs.c	/^refusemark(ent, fhdr, direct)$/
+region_scroll_down	screen.c	/^region_scroll_down(int top, int bottom)$/
+region_scroll_up	screen.c	/^region_scroll_up(int top, int bottom)$/
+rel_move	screen.c	/^rel_move(was_col, was_ln, new_col, new_ln)$/
+reload_bcache	cache.c	/^reload_bcache()$/
+reload_fcache	cache.c	/^reload_fcache()$/
+reload_filmcache	cache.c	/^reload_filmcache()$/
+reload_ucache	cache.c	/^reload_ucache()$/
+reply_post	bbs.c	/^reply_post (ent, fhdr, direct)$/
+reset_tty	term.c	/^reset_tty()$/
+resetutmpent	cache.c	/^resetutmpent()$/
+resolve_boards	cache.c	/^resolve_boards()$/
+resolve_fcache	cache.c	/^resolve_fcache()$/
+resolve_garbage	cache.c	/^resolve_garbage()$/
+resolve_ucache	cache.c	/^resolve_ucache()$/
+resolve_utmp	cache.c	/^resolve_utmp()$/
+restore_backup	edit.c	/^restore_backup()$/
+restore_cursor	term.c	/^restore_cursor()$/
+restore_tty	term.c	/^restore_tty()$/
+rscroll	screen.c	/^rscroll()$/
+save_cursor	term.c	/^save_cursor()$/
+save_lightbar_color	stuff.c	/^save_lightbar_color(color)$/
+save_mail	bbs.c	/^save_mail (int ent, fileheader * fh, char *direct)/
+save_zapbuf	board.c	/^save_zapbuf()$/
+score	bbs.c	/^score (ent, fhdr, direct)$/
+score_note	bbs.c	/^score_note(prompt, fhdr, direct)	\/\/推薦加分!! 學/
+scroll	screen.c	/^scroll()$/
+scroll_forward	term.c	/^scroll_forward()$/
+scroll_reverse	term.c	/^scroll_reverse()$/
+search_board	board.c	/^search_board(num)$/
+search_num	stuff.c	/^search_num(ch, max)$/
+search_pickup	talk.c	/^search_pickup(num, actor, pklist)$/
+search_rec	record.c	/^search_rec(char* dirname, int (*filecheck)())$/
+search_str	edit.c	/^search_str(int mode)$/
+search_ulist	cache.c	/^search_ulist(fptr, farg)$/
+search_ulistn	cache.c	/^search_ulistn(fptr, farg, unum)$/
+searchnewuser	cache.c	/^searchnewuser(mode)$/
+searchowner	cache.c	/^user_info* searchowner(userid)	\/* alan.000422: ow/
+searchuser	cache.c	/^searchuser(userid)$/
+select_read	read.c	/^select_read(locmem,sr_mode)$/
+set_board	bbs.c	/^set_board ()$/
+set_menu_BM	board.c	/^set_menu_BM(char *BM)$/
+setbdir	stuff.c	/^setbdir(buf, boardname)$/
+setenv	stuff.c	/^setenv(name, value, overwrite)$/
+setflags	main.c	/^setflags(mask, value)$/
+setforward	mail.c	/^setforward() \/* Ptt , modify by wildcat*\/$/
+setup_utmp	main.c	/^setup_utmp(mode)$/
+setuserfile	stuff.c	/^setuserfile(buf, fname)$/
+setuserid	cache.c	/^setuserid(num, userid)$/
+setutmpmode	cache.c	/^setutmpmode(mode)$/
+shortulist	talk.c	/^shortulist(uentp)$/
+show_brdlist	board.c	/^show_brdlist(head, clsflag, newflag)$/
+show_brdlist_line	board.c	/^show_brdlist_line( headx, row, clsflag, newflag, b/
+show_emptyline	hialan.c	/^show_emptyline(x, y, line, win_len, bgcolor)$/
+show_file	stuff.c	/^show_file(char *filename, int y, int lines, int mo/
+show_help	stuff.c	/^show_help(mode)$/
+show_last_call_in	main.c	/^show_last_call_in()$/
+show_menu	menu.c	/^show_menu(p)$/
+show_movie2	menu.c	/^show_movie2()  \/*show note2 by hialan 02\/04\/20*/
+show_win_line	window.c	/^show_win_line(y, x, msg, bgcolor, bar)$/
+show_winbox	hialan.c	/^show_winbox(x, y, line, width, title, prompt, type/
+show_winline	hialan.c	/^show_winline(x, y, win_len, words, bgcolor, barcol/
+showplans	user.c	/^showplans(char* uid)$/
+showsignature	edit.c	/^showsignature(fname)$/
+showtitle	menu.c	/^showtitle(title, mid)$/
+split	edit.c	/^split(line, pos)$/
+stampdir	record.c	/^stampdir(fpath, fh)$/
+stampfile	record.c	/^stampfile(fpath, fh)$/
+stamplink	record.c	/^stamplink(fpath, fh)$/
+stand_title	stuff.c	/^stand_title(title)$/
+standend	screen.c	/^standend()$/
+standout	screen.c	/^standout()$/
+standoutput	screen.c	/^standoutput(buf, ds, de, sso, eso)$/
+star_ime	edit.c	/^int star_ime(int key,char *ans1,char *ans2)$/
+strcasestr	edit.c	/^char* strcasestr(const char* big, const char* litt/
+stty	term.c	/^#define stty(fd, data) tcsetattr( fd, TCSETS, data/
+substitute_record	record.c	/^substitute_record(fpath, rptr, size, id)$/
+system_abort	main.c	/^system_abort()$/
+t_aloha	talk.c	/^t_aloha()$/
+t_bmw	talk.c	/^t_bmw()$/
+t_display	talk.c	/^t_display()$/
+t_display_new	talk.c	/^t_display_new(int b_f_flag)$/
+t_idle	talk.c	/^t_idle()$/
+t_list	talk.c	/^t_list()$/
+t_pager	talk.c	/^t_pager()$/
+t_pk	talk.c	/^t_pk()$/
+t_query	talk.c	/^t_query()$/
+t_talk	talk.c	/^t_talk()$/
+t_users	talk.c	/^t_users()$/
+talk_lightbar_key	talk.c	/^talk_lightbar_key(pklist, num, row, bar_color)$/
+talk_mail2user	stuff.c	/^talk_mail2user(void)$/
+talk_request	main.c	/^talk_request()$/
+talkreply	talk.c	/^talkreply()$/
+tbf_ask	stuff.c	/^tbf_ask()$/
+term_init	term.c	/^term_init(term)$/
+thread	read.c	/^thread(locmem, stype)$/
+touch_boards	cache.c	/^touch_boards()$/
+touchbtotal	cache.c	/^touchbtotal(bname)$/
+tparm	term.c	/^char *tparm(const char *str, ...) {$/
+transform_to_color	edit.c	/^transform_to_color(char* line)$/
+u_cloak	user.c	/^u_cloak()$/
+u_dis_change	hialan.c	/^u_dis_change (ent, fhdr, direct)$/
+u_editfile	user.c	/^u_editfile()$/
+u_exit	main.c	/^u_exit(mode)$/
+u_habit	user.c	/^u_habit()$/
+u_info	user.c	/^u_info()$/
+u_list	user.c	/^u_list()$/
+u_list_CB	user.c	/^u_list_CB(uentp)$/
+u_namearray	cache.c	/^u_namearray(buf, pnum, tag)$/
+u_register	user.c	/^u_register()$/
+u_verify	user.c	/^u_verify()$/
+uinfo_query	user.c	/^uinfo_query(u, real, unum)$/
+undelete_line	edit.c	/^undelete_line()$/
+unlockutmpmode	talk.c	/^unlockutmpmode()$/
+unread_position	board.c	/^unread_position(dirfile, ptr)$/
+untag	bbs.c	/^untag(fhdr, dirpath)$/
+update_data	stuff.c	/^update_data()$/
+user_allpost	announce.c	/^user_allpost(char *uid)$/
+user_display	user.c	/^user_display(u, real)$/
+user_gem	announce.c	/^user_gem(char *uid)$/
+user_login	main.c	/^user_login()$/
+usercomplete	name.c	/^usercomplete(prompt, data)$/
+userid_is_BM	stuff.c	/^userid_is_BM(userid, list)$/
+v_board	board.c	/^v_board (ent, fhdr, direct)$/
+va_do_voteboardreply	votebrd.c	/^va_do_voteboardreply(va_list pvar)$/
+valid_dirname	announce.c	/^valid_dirname(char* fname)$/
+valid_ident	stuff.c	/^valid_ident(ident)$/
+vedit	edit.c	/^vedit(fpath, saveheader)$/
+voteboard	board.c	/^void voteboard()$/
+vs_restore	screen.c	/^vs_restore(screen)                                /
+vs_save	screen.c	/^vs_save(screen)                                   /
+waste_money	main.c	/^waste_money()$/
+where	main.c	/^int where (char *from)$/
+win_getdata	hialan.c	/^win_getdata(width, title, prompt, winbuf, len, typ/
+win_select	hialan.c	/^win_select(title, prompt, choose, many, type, def)/
+word_bigsmall	hialan.c	/^word_bigsmall(ch)$/
+write_file	edit.c	/^write_file(fpath, saveheader)$/
+write_header	edit.c	/^write_header(FILE *fp)$/
+write_request	main.c	/^write_request()$/
+write_tmpbuf	edit.c	/^write_tmpbuf()$/

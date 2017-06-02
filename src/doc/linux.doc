@@ -1,0 +1,153 @@
+µL²áªi¤@¤U¤å³¹ÁÈª÷¹ô...
+°ò¥»¤W¬Omake¹L¦Ó¤v....ÁÙ¨S¦³¹ê»Ú´ú¸Õ¹L..
+¹L´X¤Ñ¦A´ú¸Õ¬Ý¬Ý¦n¤F....
+
+­º¥ý­n¥ý¨ìftp§ì¨ìwd_001201_src.tgz
+
+¦pªG¬O­n±qwd_991119¤É¯Å,¦³ºØÀÉ­nÂà®æ¦¡
+¬ÛÃöªºµ{¦¡©ñ¦b~/src/util~/fixtool©³¤U
+
+¸Ñ¶}ÀÉ®×¤§«á
+1.¨ì~/src/include­×§ïconfig.h
+  ­×§ï¦Û¤vbbsªº³]©w
+2.¨ì~/src/lib
+  ­×§ïMakefile,§âFor FreeBSD / OpenBSDªºrule mark °_¨Ó
+  §ï¦¨linuxªº.....
+  ¿é¤Jmake clean all
+  ´N¥i¥H¶¶§Q³q¹L²Ä¤@Ãö
+3.¨ì~/src/WD
+
+(1)  cp Makefile.RedHat Makefile
+  ¨Ï¥ÎredhatªºMakefileÀÉ®×
+­×§ïMakefile
+# ------------------------------------------------------
+# Linux : please remove -lrpcsvc in 'bbsrf' section
+# ------------------------------------------------------
+OS_DEF  = -DREDHAT -DLINUX -DTWO_LONGJMP_ARGS
+CC      = gcc
+CFLAGS  = -O2 -Wunused -I../include -pipe -fomit-frame-pointer -I/usr/include/bs
+d
+LDFLAGS = -ltermcap -lbsd -L../lib -ldao -export-dynamic -ldl -lcrypt [1;33m-lresolv[m
+CPROTO  = cproto -E"gcc -pipe -E -I../include"
+
+(2)­×§ïbbs.c
+¦b
+int
+do_post ()
+{
+ fileheader postfile;
+char fpath[80], buf[80];
+.............
+.......
+// Ptt ¬ÝªO³s¸p¨t²Î
+  if(!strcmp(currboard,VOTEBOARD))
+  {
+[1;33m-[m    do_voteboard();
+[1;33m+[m[m    DL_func("SO/votebrd.so:do_voteboard");
+    return RC_FULL;
+  }
+
+(3)­×§ïxchatd.c
+.......
+#include <fcntl.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+[1;33m+[m#include "../lib/shm.c"
+[1;33m+[m#include "../lib/sem.c"
+[1;33m+[m#include "../lib/str_time.c"
+[1;33m+[m#include "../lib/rec_get.c"
+.......
+
+(4)­×§ïin.zbbsd.c
+..............
+void
+fatalperror(f, msg)
+  int f;
+  char *msg;
+{
+  char buf[256];
+[1;33m-[m#ifndef BSD44
+[1;33m-[m  extern char *sys_errlist[];
+[1;33m-[m#endif
+
+  (void) sprintf(buf, "%s: %s\r\n", msg, sys_errlist[errno]);
+  fatal(f, buf);
+}
+
+ÁÙ¦³
+¤U­±³o¤@¬qmark°_¨Ó,À³¸Ó´N¨S°ÝÃD¤F...:P
+
+/*
+#ifndef FIONBIO
+#include <sys/filio.h>
+#endif
+*/
+
+
+
+(5)§ïmake clean update À³¸Ó¥i¥H¶¶§Qmake¹L
+
+
+4.
+(1)  ¨ì~src/util
+  ­×§ïMakefile§âFor FreeBSDªºmake rule mark°_¨Ó,§ï¦¨linux
+
+(2)¦³¤T­ÓÀÉ®×­n§ï
+ blookd.c
+ bpop3d.c
+ brdpop3d.c
+§âÀÉ®×¤¤³o¤T¦æ³£mark°_¨Ó..:P,¤@¦@¦³¤­­ÓÁÙ¬O¤»­Ó¦a¤è§a...:p
+#ifndef BSD44
+      extern char *sys_errlist[];
+#endif
+
+ (3)open_bet.c¦bredhat¤U¶]­n¤p¤p§ï¤@¤U¸ô®|
+    °Ñ¦Ò¤@¤UWD-BBS °ÝÃD»P¸Ñµª ª© 4002½g ¦³¼g¤@ÂI...¨S¦³¼g§¹¾ã
+
+ (4)make clean install
+
+5
+(1)
+  ¨ì~src/util/statool
+  ­×§ïMakefile§âFor FreeBSDªºmake rule mark°_¨Ó,§ï¦¨linux
+  ¦A­×§ïlibªº¸ô®|
+  °Ñ¦Ò¤@¤UWD-BBS °ÝÃD»P¸Ñµª ª© 4012½g
+(2)
+  ­×§ïaccount.c
+
+   /* Ptt ¾ú¥v¨Æ¥ó³B²z */
+    if(fp = fopen("etc/history.data","r"))
+     {                                  //³Ì¦h¦P®É¤W½u
+      if(fscanf(fp,"%d %d %d %d",&max_login,&max,&max_reg,&k))
+        {
+         int a;
+         resolve_fcache();
+         printf("¦¹®É¬q³Ì¦h¦P®É¤W½u:%d ¹L¥h:%d",a=fcache->max_user,k);
+[1;33m      //   fclose(fp);[m
+         if(a > k)
+                {
+                  ptime=localtime(&fcache->max_time);
+                  if(fp1=fopen("etc/history", "a"))
+                    {
+                      fprintf(fp1,
+                      "¡· ¡i%02d/%02d/%02d %02d:%02d¡j"
+                      "[[32m¦P®É¦b¯¸¤º¤H¼Æ[[m­º¦¸¹F¨ì [[1;36m%d[[m ¤H¦¸\n",
+                        ptime->tm_mon+1, ptime->tm_mday, ptime->tm_year % 100,
+                        ptime->tm_hour,ptime->tm_min,a);
+                      fclose(fp1);
+                    }
+[1;33m                   fclose(fp);[m
+
+  (3)¥´make clean install
+
+
+    ¦³ÂI²Ö.....¼g¨ì³o¼Ë´N¦n¤F..
+    ¤£¤@©w§¹¥þ¹ï.....
+    ¥u¬O§â§Úªº°µªk,µ¹¤j®a°Ñ¦Ò¤@¤U
+
+--
+[1;36m¡°Post by [37mluogen        [36mfrom [33mluogen.g2.ntu.edu.tw    [m
+
+--
+[1;37m¶®°Ç¥§®¦ [1;36mBBS[1;37m ¯¸[1;31m¡m[1;32minfor.org[1;31m¡n[0m
+[1;36mAthenaeum[1;31m B[0;37mB[1;33mS[1;37m  From: [1;33mAthena                   [0m
