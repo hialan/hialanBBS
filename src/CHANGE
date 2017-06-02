@@ -132,3 +132,7 @@
 
 [2003/02/01]
   1.將 bbs.c 整理一遍, 刪除註解
+
+[2003/02/03]
+  1.新增 i_read() 的 help 叫做 i_read_helper()
+  2.整理 i_read_key() , 將許多 case 獨立到 bbs.c

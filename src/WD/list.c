@@ -472,16 +472,16 @@ list_help(ent, fhdr, direct)
 
 
 struct one_key list_comm[] = {
-  'r', list_view, 		// 進入/檢視
-  'c', list_edit,		// 修改
-  'a', list_add,		// 新增
-  'd', list_del,		// 刪除   
+  'r', list_view, "進入/檢視",
+  'c', list_edit, "修改",
+  'a', list_add,  "新增",
+  'd', list_del,  "刪除",
 /* 會發生問題的地方.. */
-  'i', list_merge, 		// 引入其他名單
-  's', list_multi,		// 群組寄信
-  'm', list_move,		// 改變位置
-  'h', list_help,  		// 使用說明
-  '\0', NULL
+  'i', list_merge,"引入其他名單",
+  's', list_multi,"群組寄信",
+  'm', list_move, "改變位置",
+  'h', list_help, "使用說明",
+  '\0', NULL, NULL
 };
 
 /*Change For LightBar by hialan on 20020609*/

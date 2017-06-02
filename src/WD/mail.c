@@ -208,10 +208,6 @@ hold_mail(fpath, receiver)
   char *fpath;
   char *receiver;
 {
-//  char buf[4];
-
-//  getdata(b_lines - 1, 0, "已順利寄出，是否自存底稿(Y/N)？[N] ", buf, 4, LCECHO,0);
-
   if(getans2(b_lines - 1,0,"已順利寄出，是否自存底稿？",0,2,'n') == 'y')
     do_hold_mail(fpath, receiver, cuser.userid);
 /*
@@ -1295,25 +1291,29 @@ extern int edit_post();
 extern int mark();
 extern int del_range();
 extern int edit_title();
+extern int post_mail();
+extern int post_query();
 
 static struct one_key mail_comms[] = {
-  'z', man,
-  'c', cite,
-  'C', gem_tag,
-  's', mail_save,
-  'd', mail_del,
-  'D', del_range,
-  'r', mail_read,
-  'R', mail_reply,
-  'E', edit_post,
-  'm', mark,
-  't', add_tag,
-  'T', edit_title,
-  'x', m_forward,
-  'X', mail_cross_post,
-  Ctrl('D'), del_tag,
-  'y', multi_reply,
-  '\0', NULL
+  'z', man,		 "進入私人信件夾",
+  'c', cite,		 "將此信件進入私人信件夾",
+  'C', gem_tag,		 "gem_tag",
+  's', mail_save,	 "mail_save",
+  'd', mail_del,	 "殺掉此信",
+  'D', del_range,	 "殺掉指定範圍的信",
+  'r', mail_read,	 "讀信",
+  'R', mail_reply,	 "回覆信件",
+  'E', edit_post,	 "編輯文件",
+  'm', mark,		 "將信件標記, 以防信件被清除",
+  't', add_tag,		 "標記該信件",
+  'T', edit_title,	 "編輯標題",
+  'x', m_forward,	 "轉達信件",
+  'X', mail_cross_post,	 "轉錄文章到其他看板",
+  Ctrl('D'), del_tag,	 "刪除已標記信件",
+  'y', multi_reply,  	 "群組回信",
+  'F', post_mail,	 "將信傳送回您的電子信箱",
+  Ctrl('Q'), post_query, "q 該信人",
+  '\0', NULL, NULL
 };
 
 

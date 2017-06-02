@@ -30,9 +30,6 @@ int last_line;
 static int hit_thread;
 
 extern int search_num();
-#ifdef HAVE_NEWGEM
-extern char gem_mode;
-#endif
 #define FHSZ    sizeof(fileheader)
 
 
@@ -98,7 +95,6 @@ cursor_pos(locmem, val, from_top)
 
   if (val > last_line)
   {
-//    bell();
     if(HAS_HABIT(HABIT_CYCLE) || (currstat == ANNOUNCE))
       val = 1;
     else
@@ -106,7 +102,6 @@ cursor_pos(locmem, val, from_top)
   }
   if (val <= 0)
   {
-//    bell();
     if(HAS_HABIT(HABIT_CYCLE) || (currstat == ANNOUNCE))
       val = last_line;
     else
@@ -267,10 +262,11 @@ AskTag(msg)
 {
   char buf[80];
   int num;
+  char *choose[3] = {"aA.文章", "tT.標記", "qQ.沒事"};
 
   num = TagNum;
-  sprintf(buf, "◆ %s (A)文章 (T)標記 (Q)沒事？[%c] ", msg, num ? 'T' : 'A');
-  switch (getans(buf))
+  sprintf(buf, "◆ %s ", msg);
+  switch (getans2(b_lines, 0, buf, choose, 3, num ? 't' : 'a'))
   {
   case 'q':
     num = -1;
@@ -311,6 +307,7 @@ TagThread(direct, search, type)
     if (fimage == (char *) -1)
     {
       outs("MMAP ERROR!!!!");
+      close(fd); //hialan:是不是缺少這個..@@""
       abort_bbs();
     }
 
@@ -372,10 +369,8 @@ thread(locmem, stype)
   match = hit_thread = 0;
   now = pos = locmem->crs_ln;
 
-/*
-woju
-*/
-  if (stype == 'A') {
+  if (stype == 'A') 
+  {
      if (!*currowner)
         return RC_NONE;
      str_lower(a_ans, currowner);
@@ -383,7 +378,8 @@ woju
      circulate_flag = 0;
      stype = 0;
   }
-  else if (stype == 'a') {
+  else if (stype == 'a') 
+  {
      if (!*currowner)
         return RC_NONE;
      str_lower(a_ans, currowner);
@@ -391,14 +387,16 @@ woju
      circulate_flag = 0;
      stype = RS_FORWARD;
   }
-  else if (stype == '/') {
+  else if (stype == '/') 
+  {
      if (!*t_ans)
         return RC_NONE;
      query = t_ans;
      circulate_flag = 0;
      stype = RS_TITLE | RS_FORWARD;
   }
-  else if (stype == '?') {
+  else if (stype == '?') 
+  {
      if (!*t_ans)
         return RC_NONE;
      circulate_flag = 0;
@@ -443,9 +441,7 @@ woju
        (stype & RS_TITLE) ? "標題" : "作者", query);
     getdata(b_lines - 1, 0, s_pmt, ans, 30, DOECHO);
     if (*ans)
-    {
       strcpy(query, ans);
-    }
     else
     {
       if (*query == '\0')
@@ -459,9 +455,6 @@ woju
 
   do
   {
-/*
-woju
-*/
     if (!circulate_flag || stype & RS_RELATED)
     {
       if (stype & RS_FORWARD)
@@ -564,13 +557,15 @@ select_read(locmem,sr_mode)
     return -1;
   if(sr_mode == RS_TITLE)
     query = str_ttl(headers[locmem->crs_ln - locmem->top_ln].title);
-  else if (sr_mode == RS_FIRST) {
+  else if (sr_mode == RS_FIRST) 
+  {
     sprintf(genbuf,"SR.%s",cuser.userid);
     if(currstat == RMAIL)
       sethomefile(fpath,cuser.userid,genbuf);
     else      
       sprintf(fpath, "boards/%s/SR.thread", currboard);
-    if (stat(fpath, &st) == 0 && st.st_mtime > time(0) - 60 * 30) {
+    if (stat(fpath, &st) == 0 && st.st_mtime > time(0) - 60 * 30) 
+    {
        currmode ^= (MODE_SELECT | MODE_TINLIKE);
        strcpy(currdirect,fpath);
        return st.st_size;
@@ -583,7 +578,8 @@ select_read(locmem,sr_mode)
      query = "m";
   else if (sr_mode == RS_SCORE)  /*文章評分*/
      query = "0";
-  else {
+  else 
+  {
     query = (sr_mode == RS_RELATED) ? t_ans : a_ans;
     sprintf(fpath, "搜尋%s [%s] ",
         (sr_mode == RS_RELATED) ? "標題" : "作者", query);
@@ -600,9 +596,8 @@ select_read(locmem,sr_mode)
   if ((fd = open(currdirect,  O_RDONLY)) >= 0)
   {
     if ( !fstat(fd, &st) && S_ISREG(st.st_mode) && (fsize = st.st_size) > 0)
-    {
       fimage = mmap(NULL, fsize, PROT_READ, MAP_SHARED, fd, 0);
-    }
+
     close(fd);
   }
   else fimage = (char *) -1;
@@ -670,7 +665,8 @@ select_read(locmem,sr_mode)
 
   if(((fr = open(fpath,O_WRONLY | O_CREAT | O_TRUNC,0600)) != -1))
   {
-    do{
+    do
+    {
       fh = *head;
       switch(sr_mode)
       {
@@ -717,6 +713,219 @@ select_read(locmem,sr_mode)
   return st.st_size;
 }
 
+
+/*-----------------------------------------*/
+/* i_read_helper() : i_read() 線上求助    */
+/*-----------------------------------------*/
+
+/* 基本指令集 */
+struct one_key basic[]={
+KEY_LEFT, NULL, "離開。        其他相同的按鍵: q, e",
+KEY_UP,   NULL, "游標向上。    其他相同的按鍵: p, k",
+KEY_DOWN, NULL, "游標向下。    其他相同的按鍵: n, j",
+KEY_PGDN, NULL, "下一頁。      其他相同的按鍵: 空白鍵, N, Ctrl+f",
+KEY_PGUP, NULL, "上一頁。      其他相同的按鍵: P, Ctrl+b",
+KEY_END,  NULL, "跳到最後一項。其他相同的按鍵: $",
+KEY_RIGHT,NULL, "執行, 閱\讀。  其他相同的按鍵: Enter",
+'\0', NULL, NULL};
+
+
+/* 主題式閱讀指令集 */
+struct one_key sub_key[]={
+'/',      NULL, "找尋標題。              其他相同的按鍵: ?",
+'S',      NULL, "循序閱\讀新文章。",
+'L',      NULL, "閱\讀非轉信文章。",
+'u',      NULL, "標題式閱\讀。",
+'=',      NULL, "找尋首篇文章。",
+'\\',     NULL, "找尋游標該處之首篇文章。",
+'[',	  NULL, "向前搜尋相同標題之文章。其他相同的按鍵: +",
+']',	  NULL, "向後搜尋相同標題之文章。其他相同的按鍵: -",
+'<',	  NULL, "向前搜尋其他標題。      其他相同的按鍵: ,",
+'>',	  NULL, "向後搜尋其他標題。      其他相同的按鍵: .",
+'A', 	  NULL, "搜尋作者。              其他相同的按鍵: a",
+'X',	  NULL, "所有被加分過的文章。",
+'G',	  NULL, "所有被 mark 過的文章。",
+'\0', NULL, NULL};
+
+int 
+show_helplist_line(row, cmd, barcolor)
+  int row;
+  struct one_key cmd;
+  char *barcolor;
+{
+  char buf[128];
+  char key[10];
+  int i;
+
+  for(i='A';Ctrl(i) <= Ctrl('Z');i++)
+  {
+    if(Ctrl(i) == cmd.key) 
+    {
+      sprintf(key, "Ctrl+%c", i);
+      break;
+    }
+  }
+  if(i == 'Z'+1)
+    sprintf(key, "%c", cmd.key);
+  
+  switch(cmd.key)
+  {
+    case KEY_UP:
+      sprintf(key, "↑");
+      break;
+    case KEY_DOWN:
+      sprintf(key, "↓");
+      break;    
+    case KEY_LEFT:
+      sprintf(key, "←");
+      break;    
+    case KEY_RIGHT:
+      sprintf(key, "→");
+      break;    
+    case KEY_PGUP:
+      sprintf(key, "Page UP");
+      break;    
+    case KEY_PGDN:
+      sprintf(key, "Page DOWN");
+      break;    
+    case KEY_END:
+      sprintf(key, "End");
+      break;    
+    case KEY_TAB:
+      sprintf(key, "Tab");
+      break;    
+  }
+    
+  sprintf(buf, "    %s %9s \033[m     %s",  barcolor ? barcolor : "" , key, cmd.help);
+  move(3 + row, 0);
+  clrtoeol();
+  outs(buf);
+}
+
+int
+i_read_helper(rcmdlist)
+  struct one_key *rcmdlist;
+{
+  char page=0, cursor=0, i, draw=1;
+  char max_cursor, max_page;
+  char barcolor[10];
+  static char re_enter=0;
+  int ch;
+  
+  get_lightbar_color(barcolor);
+  for(max_cursor=0;rcmdlist[max_cursor].key;max_cursor++);
+  max_page = (--max_cursor / 20);
+  
+  while(1)
+  {
+    
+    if(draw == 1)
+    {
+      clear();
+
+      sprintf(tmpbuf,"%s [線上 %d 人]",BOARDNAME,count_ulist());
+      showtitle("線上求助", tmpbuf);
+
+      prints("[←]上一頁 [→]執行該指令 [↑↓]選擇\n");
+      prints(COLOR1"\033[1m    指令/按鍵       說          明%45s\033[0m\n", "");    
+
+      for(i=0;i<20 && rcmdlist[i+page*20].key;i++)
+        show_helplist_line(i, rcmdlist[i+page*20], 0);
+
+      draw = 2;
+    }
+    
+    if(draw == 2)
+    {
+      move(b_lines, 0);
+      clrtoeol();
+      prints(COLOR2"%12s\033[m"COLOR1"\033[1;33m  (b)\033[37m基本指令集 %-s", " 選擇功\能 ", "\033[33m(u)\033[37m主題式閱\讀指令集                   \033[m");            
+      draw = 0;
+    }
+    
+    if(HAS_HABIT(HABIT_LIGHTBAR))
+    {
+      show_helplist_line(cursor % 20, rcmdlist[cursor], barcolor);
+      cursor_show(3+ (cursor % 20), 0);
+      ch = igetkey();
+      show_helplist_line(cursor % 20, rcmdlist[cursor], 0);
+    }
+    else
+      ch = cursor_key(cursor+3, 0);
+    
+    switch(ch)
+    {
+      case KEY_LEFT:
+      case 'q':
+        return 0;
+      
+      case KEY_UP:
+        cursor--;
+        if(cursor<0)
+        {
+          cursor = max_cursor;
+          page = max_page;
+          draw = 1;
+        }
+        else if(page != cursor / 20)
+        {
+          page = cursor / 20;
+          draw = 1;
+        }
+        break;
+        
+      case KEY_DOWN:
+        cursor++;
+        if(cursor>max_cursor)
+        {
+          cursor = 0;
+          page = 0;
+          draw = 1;
+        }
+        else if(page != cursor / 20)
+        {
+          page = cursor / 20;        
+          draw = 1;
+        }
+        break;
+      
+      case '\r':
+      case KEY_RIGHT:
+      {
+        char buf[80];
+        
+        sprintf(buf,"請問你是否要執行 %s ?", rcmdlist[cursor].help);
+        if(getans2(b_lines, 0, buf, 0, 2, 'y') == 'y')
+          return (ch = rcmdlist[cursor].key);
+        draw = 2;
+        break;
+      }
+      
+      case 'b':
+        if(!re_enter)
+        {
+          re_enter = 1;
+          i_read_helper(basic);
+          re_enter = 0;
+          draw = 1;
+        }
+        break;
+      
+     case 'u':
+       if(!re_enter)
+       {
+         re_enter = 1;
+         i_read_helper(sub_key);
+         re_enter = 0;
+         draw = 1;
+       }
+       break;
+    }
+  }
+  
+  return RC_FULL;
+}
+
 int thread_title;
 static int
 i_read_key(rcmdlist, locmem, ch)
@@ -724,24 +933,27 @@ i_read_key(rcmdlist, locmem, ch)
   struct keeploc *locmem;
   int ch;
 {
-  int i, mode = RC_NONE;
+  int i;
 //  static thread_title;
+  
+  if(ch == 'h')
+  {
+    screenline* screen = (screenline *)calloc(t_lines, sizeof(screenline));    
 
+    vs_save(screen);    
+    ch = i_read_helper(rcmdlist);
+    vs_restore(screen);
+    if(!ch)
+      return RC_NONE;
+  }
 
   switch (ch)
   {
     case KEY_LEFT:
-//      ch = 'q';
     case 'q':
     case 'e':
     if ((currstat == RMAIL) || (currstat == READING) || (currstat == ANNOUNCE))
     {
-#ifdef HAVE_NEWGEM
-      if (currstat == ANNOUNCE)
-        return gem_quit() ? RC_NEWDIR : QUIT;
-      else
-#endif
-      {
         if (thread_title) 
         {
           --thread_title;
@@ -753,15 +965,16 @@ i_read_key(rcmdlist, locmem, ch)
         }
         return (currmode & MODE_SELECT) ? board_select() :
         (currmode & MODE_DIGEST) ? board_digest() : QUIT;
-      }
     }
     else
       return QUIT;
-    
+
+  case 'p':
   case 'k':
   case KEY_UP:
     return cursor_pos(locmem, locmem->crs_ln - 1, p_lines - 2);
 
+  case 'n':
   case 'j':
   case KEY_DOWN:
     return cursor_pos(locmem, locmem->crs_ln + 1, 1);
@@ -784,6 +997,7 @@ i_read_key(rcmdlist, locmem, ch)
     cursor_show(3 + locmem->crs_ln - locmem->top_ln, 0);
     break;
 
+  case 'P':
   case KEY_PGUP:
   case Ctrl('B'):
     if (locmem->top_ln > 1)
@@ -852,20 +1066,6 @@ i_read_key(rcmdlist, locmem, ch)
       if (HAS_PERM(PERM_SYSOP))
       {
         DL_func("SO/admin.so:m_user");
-        //m_user();
-        return RC_FULL;
-      }
-      break;
-
-    case 'w':
-      if (HAS_PERM(PERM_LOGINOK))
-      {
-        user_info *owneronline = (user_info *)searchowner(headers[locmem->crs_ln - locmem->top_ln].owner);
-
-        if (owneronline == NULL)
-          return RC_NONE;
-
-        my_write(owneronline->pid, "熱線 Call-In：");
         return RC_FULL;
       }
       break;
@@ -931,107 +1131,24 @@ i_read_key(rcmdlist, locmem, ch)
     case '>':
       return thread(locmem, THREAD_NEXT);
 
-    case 'F':
-    case 'U':
-      if (HAS_PERM(PERM_FORWARD))
-      {
-        char fname[MAXPATHLEN];
-        fileheader *fhdr = &headers[locmem->crs_ln - locmem->top_ln];
-       
-        setdirpath(fname, currdirect, fhdr->filename);
-#ifdef HAVE_NEWGEM
-        if (gem_perm(fname, fhdr) < 1)
-        {
-          pressanykey("沒有轉寄權限");
-          break;
-        }
-#endif        
-        if (dashf(fname))
-          mail_forward(&headers[locmem->crs_ln - locmem->top_ln],
-            currdirect, ch == 'U');
-        return RC_FULL;
-      }
-      break;
+    case 'A':
+    case 'a':
+      if (select_read(locmem,RS_AUTHOR))
+        return RC_NEWDIR;
+      else
+        return RC_FOOT;
 
-    case Ctrl('Q'):
-       return my_query(headers[locmem->crs_ln - locmem->top_ln].owner);
+    case 'X':
+      if (select_read(locmem,RS_SCORE))
+        return RC_NEWDIR;
+      else
+        return RC_FOOT;
 
-#ifdef HAVE_NEWGEM
-    case 't':
-      if ((currmode & MODE_TAG) && (currmode & MODE_BOARD))
-      {
-        int now;
-        fileheader *fhdr = &headers[locmem->crs_ln - locmem->top_ln];
-        
-        fhdr->filemode ^= FILE_TAGED;
-        now = getindex(currdirect, fhdr->filename);
-        substitute_record(currdirect, fhdr, sizeof(fileheader), now);
-        return POS_NEXT;
-      }
-      else 
-      {
-        if (gem_mode & GEM_TAG)
-          pressanykey("如不拷貝板面文章, 請先按 Ctrl-C 將板面標籤刪除");
-        else if (Tagger(atol(headers[locmem->crs_ln - locmem->top_ln].filename + 2), locmem->crs_ln, TAG_TOGGLE))
-          return POS_NEXT;
-      }
-      return RC_NONE; 
-
-    case 'l':	/* 將 '*' 轉為 'D' */
-      if (currmode & MODE_BOARD)
-      {
-        char genbuf[80];
-        
-        sprintf(genbuf, "(1)鎖定 * 標記 (2)使用 %c 標記 [Q]uit ?",
-          (currmode & MODE_TAG) ? '*' : 't');
-        switch(getans(genbuf))
-        {
-        case '1':
-          if (TagNum > 0)
-          {
-            int locus = 0, now;
-            fileheader fh;
-  
-            do
-            {
-              EnumTagFhdr(&fh, currdirect, locus);
-              locus++;
-              fh.filemode |= FILE_TAGED;
-              now = getindex(currdirect, fh.filename);
-              substitute_record(currdirect, &fh, sizeof(fileheader), now);
-            } while (locus < TagNum);
-            return RC_CHDIR;
-          }
-          return RC_FOOT;
-          
-        case '2':
-          currmode ^= MODE_TAG;
-        
-        default:
-          return RC_FOOT;
-        }
-      }
-      return RC_NONE;
-      
-    case Ctrl('C'):
-      if (TagNum)
-      {
-        TagNum = 0;
-        gem_mode &= ~GEM_TAG;
-        return RC_DRAW;
-      }
-      return RC_NONE;  
-#endif
-
-    case 'V':
-      if (currstat != ANNOUNCE)
-        DL_func("SO/vote.so:b_vote");
-      return RC_FULL;
-
-    case 'R':
-      if (currstat != ANNOUNCE)
-        DL_func("SO/vote.so:b_results");
-      return RC_FULL;
+    case 'G':
+      if (select_read(locmem,RS_THREAD)) /* marked articles */
+        return RC_NEWDIR;
+      else
+        return RC_FOOT;
 
     case Ctrl('X'):		/* terminator */
       if ((currstat == READING) && (HAS_PERM(PERM_ALLBOARD)) && (currstat != ANNOUNCE))
@@ -1080,46 +1197,6 @@ i_read_key(rcmdlist, locmem, ch)
       return RC_NONE;
     }
   }
-
-  switch(ch)
-  {
-  case 'A':
-  case 'a':
-    if (select_read(locmem,RS_AUTHOR))
-      return RC_NEWDIR;
-    else
-      return RC_FOOT;
-  case 'p':
-    return cursor_pos(locmem, locmem->crs_ln - 1, p_lines - 2);
-
-  case 'n':
-    return cursor_pos(locmem, locmem->crs_ln + 1, 1);
-
-  case 'X':
-    if (select_read(locmem,RS_SCORE))
-      return RC_NEWDIR;
-    else
-      return RC_FOOT;
-
-  case 'G':
-    if (select_read(locmem,RS_THREAD)) /* marked articles */
-      return RC_NEWDIR;
-    else
-      return RC_FOOT;
-
-  case 'P':
-    if (locmem->top_ln > 1)
-    {
-      locmem->top_ln -= p_lines;
-      if (locmem->top_ln <= 0)
-        locmem->top_ln = 1;
-      locmem->crs_ln = locmem->top_ln;
-      return RC_BODY;
-    }
-    break;
-
-  }
-  return mode;
 }
 
 
@@ -1188,14 +1265,6 @@ struct one_key *rcmdlist;
             }
             goto return_i_read;
           }                       
-#ifdef HAVE_NEWGEM
-          else if (currstat == ANNOUNCE)
-          {
-            if (!gem_none())	/* shakalaca.000525: 用 i_read 的缺點.. :X
-            			   得用另一個 function 模擬出空精華區的樣子.. :p */
-              goto return_i_read;
-          }                                                                
-#endif
           else if (currstat == LISTMAIN)
           {
             char *choose_list[2]={"nN.新增","qQ.離開"};
@@ -1287,8 +1356,6 @@ struct one_key *rcmdlist;
       {
         /*Change For LighteBar by hialan*/
           (*doentry) (locmem->top_ln + i, &headers[i], i+3, 0, 0);
-
-/*          (*doentry) (locmem->top_ln + i, &headers[i]);        */
       }
 
     case RC_FOOT:

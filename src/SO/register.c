@@ -94,7 +94,8 @@ getnewuserid()
           break;
 	if(i==1) continue;
 
-        if ((val = compute_user_value(&utmp, clock)) < 0) {
+        if ((val = compute_user_value(&utmp, clock)) < 0) 
+        {
            sprintf(genbuf, "#%d %-12s %15.15s %d %d %d",
              i, utmp.userid, ctime(&(utmp.lastlogin)) + 4,
              utmp.numlogins, utmp.numposts, val);

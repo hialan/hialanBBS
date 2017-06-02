@@ -1,0 +1,5 @@
+cat ./start.log | awk '{print $1}' | xargs kill -9
+echo "The process has been killed."
+
+echo "Now mbbsd is running in "$1.
+./start.sh $1

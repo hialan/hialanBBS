@@ -731,11 +731,9 @@ do_post ()
   }
   
   bp = getbcache (currboard);
-//  clear ();
   if (!(currmode & MODE_POST) || !brdperm (currboard, cuser.userid))
   {
     pressanykey ("對不起，您目前無法在此發表文章！");
-//    return RC_FULL;
     return RC_NONE;
   }
 
@@ -2464,37 +2462,121 @@ good_post (ent, fhdr, direct)
   return RC_DRAW;
 }
 
+
+/* hialan 整理 from i_read_key*/
+int
+write_msg (ent, fhdr, direct)
+  int ent;
+  fileheader * fhdr;
+  char *direct;
+{
+  if (HAS_PERM(PERM_LOGINOK))
+  {
+    user_info *owneronline = (user_info *)searchowner(fhdr->owner);
+
+    if (owneronline == NULL)
+      return RC_NONE;
+
+    my_write(owneronline->pid, "熱線 Call-In：");
+    return RC_FULL;
+  }
+}
+
+int
+post_mail_uncode (ent, fhdr, direct)
+  int ent;
+  fileheader * fhdr;
+  char *direct;
+{
+  if (HAS_PERM(PERM_FORWARD))
+  {
+    char fname[MAXPATHLEN];
+       
+    setdirpath(fname, direct, fhdr->filename);
+    if (dashf(fname))
+      mail_forward(fhdr, direct, 'U');
+    return RC_FULL;
+  }
+}
+
+int
+post_mail (ent, fhdr, direct)
+  int ent;
+  fileheader * fhdr;
+  char *direct;
+{
+  if (HAS_PERM(PERM_FORWARD))
+  {
+    char fname[MAXPATHLEN];
+       
+    setdirpath(fname, direct, fhdr->filename);
+    if (dashf(fname))
+      mail_forward(fhdr, direct, 'F');
+    return RC_FULL;
+  }
+}
+
+int
+post_query (ent, fhdr, direct)
+  int ent;
+  fileheader * fhdr;
+  char *direct;
+{
+  return my_query(fhdr->owner);
+}  
+
+int
+post_vote()
+{
+  if (currstat != ANNOUNCE)
+    DL_func("SO/vote.so:b_vote");
+  return RC_FULL;
+}
+
+int
+post_b_results()
+{
+  if (currstat != ANNOUNCE)
+    DL_func("SO/vote.so:b_results");
+  return RC_FULL;
+}
 /* ----------------------------------------------------- */
 /* 看板功能表                                            */
 /* ----------------------------------------------------- */
 
 struct one_key read_comms[] =
 {
-  KEY_TAB, board_digest,    /* 進入/退出 文摘 */
-  'b', b_notes,         /* 看進版畫面 */
-  'c', cite,            /* 收錄精華 */
-  'r', read_post,       /* 閱讀文章 */
-  'z', man,         /* 進入精華區 */
-  'D', del_range,       /* 大 D 砍信 */
-  Ctrl ('S'), save_mail,    /* 存入信箱 */
-  'E', edit_post,       /* 修改文章 */
-  'T', edit_title,      /* 修改標題 */
-  's', do_select,       /* 選擇看板 */
-  'B', board_edit,      /* 看板編輯 */
-  't', add_tag,         /* 標記文章 */
-  Ctrl ('D'), del_tag,      /* 刪除標記文章 */
-  'x', cross_post,      /* 轉貼 */
-  'g', good_post,       /* 收到文摘中 */
-  'y', reply_post,      /* 回覆文章 */
-  'd', del_post,        /* 刪除文章 */
-  'm', mark,            /* Mark 文章 */
-  'X', refusemark,      /* 文章加密 */
-  Ctrl ('P'), do_post,      /* 發表文章 */
-  'C', gem_tag,         /* 收錄標記文章 */
-  Ctrl ('C'), Cite_posts,   /* 直接收錄文章至精華區 */
-  '%', score,		/* 文章評分 */
-  'v', v_board,		/* 板內v板*/
-  '\0', NULL
+  KEY_TAB, board_digest, "進入/退出 文摘",
+  'b', b_notes,          "看進版畫面",
+  'c', cite,             "收錄精華",
+  'r', read_post,        "閱讀文章",
+  'z', man,         	 "進入精華區",
+  'D', del_range,	 "大 D 砍信",
+  Ctrl ('S'), save_mail, "存入信箱",
+  'E', edit_post,        "修改文章",
+  'T', edit_title,       "修改標題",
+  's', do_select,        "選擇看板",
+  'B', board_edit,       "看板編輯",
+  't', add_tag,          "標記文章",
+  Ctrl ('D'), del_tag,   "刪除標記文章",
+  'x', cross_post,       "轉貼",
+  'g', good_post,        "收到文摘中",
+  'y', reply_post,       "回覆文章",
+  'd', del_post,         "刪除文章",
+  'm', mark,             "Mark 文章",
+  'X', refusemark,       "文章加密",
+  Ctrl ('P'), do_post,   "發表文章",
+  'C', gem_tag,          "收錄標記文章",
+  Ctrl ('C'), Cite_posts,"直接收錄文章至精華區",
+  '%', score,		 "文章評分",
+  'v', v_board,		 "板內v板",
+  'w', write_msg,	 "板內丟水球",
+  'F', post_mail,	 "將文章寄回 Internet 郵箱",
+  'U', post_mail_uncode, "將文章 uncode 後寄回 Internet 郵箱",
+  Ctrl ('Q'), post_query,"板內 q 人",
+  'V', post_vote,	 "參與投票",
+  'R', post_b_results,	 "看投票結果",
+  '\0', NULL, NULL
 };
 
 void
