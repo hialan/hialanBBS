@@ -387,6 +387,8 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
         else
           cmd = cmdtable[lastcmdptr].desc[1];
         cmd0[cmdmode] = cmdtable[lastcmdptr].desc[0];
+        
+        get_lightbar_color(bar_color);//§ó·sbar_color
       }
 
       if (cmd >= 'a' && cmd <= 'z')

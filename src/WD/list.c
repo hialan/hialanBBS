@@ -228,7 +228,8 @@ list_view(ent, fhdr, direct)
   {
     setuserfile(buf, fhdr->filename);
     ListEdit(buf);
-  } else
+  } 
+  else
     my_query(fhdr->filename);
 
   return RC_FULL;

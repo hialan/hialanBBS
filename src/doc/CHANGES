@@ -172,3 +172,15 @@
 [2003/03/02]
   1.user.c 增加 showsig 顯示簽名檔
   2.MagicKey 啟用
+
+[2003/07/03]
+  1.more.c title 加入 decode
+  2.record.c substitute_record 加入 itoc 的 patch
+  3.bbs.c --> do_select()  會把板名放到currboard裡 by SugarII
+  4.bbs.c --> man()        ctrl-a, ctrl-g 會進到私人板精華區 by SugarII
+  5.announce.c --> AnnounceSelect() 會進到私人板精華區 by SugarII
+
+[2003/07/04]
+  1.新增檔案 color.c 專門負責顏色的設定
+  2.新增修改顏色的函式: color.c -> color_selector()
+  3.將 stuff.c 底下原本負責光棒的函式移到 color.c 

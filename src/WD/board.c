@@ -303,8 +303,7 @@ Ref: bbs.c: brdperm(char* brdname, char* userid)
 */
 
 int
-Ben_Perm(bptr)
-  boardheader *bptr;
+Ben_Perm(boardheader *bptr)
 {
   register int level,brdattr;
   register char *ptr;

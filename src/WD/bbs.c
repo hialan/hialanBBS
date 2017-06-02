@@ -290,13 +290,10 @@ cmpfowner (fhdr)
 }
 
 int
-do_select (ent, fhdr, direct)
-     int ent;
-     fileheader *fhdr;
-     char *direct;
+do_select()
 {
   char bname[20];
-  char bpath[60], buf[80];
+  char bpath[60];
   struct stat st;
 
   move (0, 0);
@@ -306,25 +303,20 @@ do_select (ent, fhdr, direct)
 
   setbpath (bpath, bname);
   if ((*bname == '\0') || (stat (bpath, &st) == -1))
-    {
-      move (2, 0);
-      clrtoeol ();
-      pressanykey (err_bid);
-      return RC_FULL;
-    }
+  {
+    move (2, 0);
+    clrtoeol ();
+    pressanykey (err_bid);
+    return RC_FULL;
+  }
 
-/*
-   board_visit_time = 0x7fffffff;
- */
-  brc_initial (bname);
-  setbfile (buf, bname, FN_LIST);
-  if (currbrdattr & BRD_HIDE && !belong_list(buf, cuser.userid))
+  if (Ben_Perm (&brdshm->bcache[getbnum (bname)] - 1) != 1) 
   {
     pressanykey (P_BOARD);
     return RC_FULL;
   }
+  brc_initial (bname);  
   set_board ();
-  setbdir (direct, currboard);
 
   move (1, 0);
   clrtoeol ();
@@ -593,9 +585,7 @@ getindex (fpath, fname, size)
 extern long wordsnum;    /* 計算字數 */
 #define PREFIXLEN 50	//文章類別最大長度
 
-char postprefix[10][PREFIXLEN] =
-  {"[公告]", "[新聞]", "[閒聊]", "[文件]", "[問題]", "[創作]", "[隨便]",
-   "[測試]", "[其他]",NULL};
+char postprefix[10][PREFIXLEN];
 
 int /*文章類別 by hialan 3.21.2002*/
 b_load_class(bname)
@@ -1283,7 +1273,10 @@ man()
     {
       setapath (fpath, xboard);
       setutmpmode (ANNOUNCE);
-      a_menu (xboard, fpath, HAS_PERM (PERM_ALLBOARD) ? 2 : is_BM (bp->BM) ? 1 : 0);
+      if (Ben_Perm (&brdshm->bcache[getbnum (xboard)] - 1) != 1)
+        pressanykey(P_BOARD);
+      else
+        a_menu (xboard, fpath, HAS_PERM (PERM_ALLBOARD) ? 2 : is_BM (bp->BM) ? 1 : 0);
     }
     else if(HAS_PERM(PERM_MAILLIMIT) || HAS_PERM(PERM_BM)) // wildcat : 之前忘記加 PERM 限制啦 ^^;
     {
@@ -2604,7 +2597,7 @@ Read ()
 void
 ReadSelect ()
 {
-  if (do_select (0, 0, NULL) == RC_NEWDIR)
+  if (do_select() == RC_NEWDIR)
     Read ();
 }
 
@@ -2612,10 +2605,8 @@ ReadSelect ()
 int
 Select ()
 {
-  char genbuf[512];
-
   setutmpmode (SELECT);
-  do_select (0, NULL, genbuf);
+  do_select ();
   return 0;
 }
 

@@ -658,6 +658,9 @@ select_read(locmem,sr_mode)
     }                                             
     currmode ^= (MODE_SELECT | MODE_TINLIKE);
     strcpy(currdirect,fpath);
+    
+    munmap(fimage, fsize);	// sby: 記憶體會越吃越多 @@"
+    
     return num;
   }
   else

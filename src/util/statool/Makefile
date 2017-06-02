@@ -29,7 +29,7 @@ LDFLAGS	= -s -L../../lib -ldao -lcrypt
 TOOL =	account poststat birth gnp horoscope topmsg voteboard\
 	topquery yearsold toppost toptime toplogin\
 	topmoney topboard topgold sexcount toplimit\
-	admin bm_check toppersonal post_open topexp
+	admin bm_check toppersonal topexp
 
 #	toprpg topexp topfive
 all: 	$(TOOL)
@@ -38,7 +38,7 @@ all: 	$(TOOL)
 
 install:$(TOOL)
 	strip $(TOOL)
-	chown bbs.bbs $(TOOL)
+	chown hialan.i89 $(TOOL)
 	cp -fp $(TOOL) $(BBSHOME)/bin
 
 clean:

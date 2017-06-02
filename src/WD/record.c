@@ -86,6 +86,8 @@ substitute_record(fpath, rptr, size, id)
 
   if (substitute_flag)
   {                                               // 旗標為真才可以進入  
+    if (id < 0)  return -1;  //itoc
+      
     if (fpath[1] == 'P' || fpath[1] == 'B') 
     {
       substitute_flag = 0;                        // 檔名第二個字為P or B時,  
@@ -114,6 +116,7 @@ substitute_record(fpath, rptr, size, id)
     substitute_flag = 1;           // 離開時設回來
     return 0;
   }
+  return -1;	//itoc:substitute_flag = 0 時要傳回 -1
 }
 
 #if !defined(_BBS_UTIL_C_)

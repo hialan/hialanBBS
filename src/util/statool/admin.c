@@ -14,11 +14,11 @@
 #include <time.h>
 #include <stdio.h>
 #include "bbs.h"
-#include "config.h"
+//#include "config.h"
 #include "record.c"
 int mannum;
-char *fn_board=".BOARDS";
-char *fn_passwd=".PASSWDS";
+//char *fn_board=".BOARDS";
+//char *fn_passwd=".PASSWDS";
 
 struct binfo
 {
@@ -492,6 +492,7 @@ main(argc, argv)
   if (inf == NULL)
   {
     printf("Sorry, the data is not ready.\n");
+    printf("1\n");
     /* exit(0) */;
   }
 
@@ -517,6 +518,7 @@ main(argc, argv)
   if (inf2 == NULL)
   {
     printf("Sorry, the data is not ready.\n");
+    printf("2\n");
     /* exit(0) */;
   }
 
@@ -926,27 +928,33 @@ main(argc, argv)
     fscanf(fpf, "%d", &maxtoday);
     fclose(fpf);
   }
+  
+
 
   if ((fp = fopen(BBSHOME "/log/admin.log", "w")) == NULL)
   {
     printf("cann't open admin.log\n");
     /* return 0*/;
   }
+
   if ((fp1 = fopen(BBSHOME "/log/func.log", "w")) == NULL)
   {
     printf("cann't open func.log\n");
     /* return 0*/;
   }
+
   if((fp2 = fopen(BBSHOME "/log/board.log", "w")) == NULL)
   {
     printf("cann't open board.log\n");
     /* return 0*/;
   }
+
   if((fp3 = fopen(BBSHOME "/log/personal.log", "w")) == NULL)
   {
     printf("cann't open personal.log\n");
     /* return 0*/;
   }
+
 
   for(i=0; i<=n; i++)
   {
@@ -996,25 +1004,34 @@ main(argc, argv)
 
   fprintf(fp, "    [1;31m%s[m %s ³ø§i\n",
      BOARDNAME,Ctime(&now));
+  printf("hialan test\n");             
   fprintf(fp, "\n");
   fprintf(fp, "    ¨´¤µ ¤w¦³ [1;33m%10d[m ¤H¤W¯¸¹L [1;33m%10d[m ¦¸, ¥­§¡¨C¤H [1;33m%5d[m ¦¸\n",
      userlog, numlog, numlog/userlog);
+  printf("hialan test\n");             
   fprintf(fp, "    ¨´¤µ ¤w¦³ [1;33m%10d[m ¤Hµoªí¹L [1;33m%10d[m ½g, ¥­§¡¨C¤H [1;33m%5d[m ½g\n\n",
      userpo, numpo, numpo/userlog);
+  printf("hialan test userlog2=%d, numlog2=%d\n", userlog2, numlog2);             
   fprintf(fp, "    ¤µ¤Ñ ¤w¦³ [1;33m%10d[m ¤H¤W¯¸¹L [1;33m%10d[m ¦¸, ¥­§¡¨C¤H [1;33m%5d[m ¦¸\n",
-     userlog2, numlog2, numlog2/userlog2);
+     userlog2, numlog2,/* numlog2/userlog2*/ 1);
+  printf("hialan test\n");             
   fprintf(fp, "    ¤µ¤Ñ ¤w¦³ [1;33m%10d[m ¤Hµoªí¹L [1;33m%10d[m ½g, ¥­§¡¨C¤H [1;33m%5d[m ½g\n\n",
-     userpo2, numpo2, numpo2/userlog2);
+     userpo2, numpo2, /*numpo2/userlog2*/1);
+  printf("hialan test\n");             
   fprintf(fp, "    ¤µ¤Ñ ¤W¯¸ ³Ì¦h¦¸ªº¤H¬O [1;33m%13s[m ¦³ [1;33m%10d[m ¦¸\n",
      maxlogid2, maxlog2);
+  printf("hialan test\n");             
   fprintf(fp, "    ¤µ¤Ñ µoªí ³Ì¦h¦¸ªº¤H¬O [1;33m%13s[m ¦³ [1;33m%10d[m ½g\n",
      maxpoid2, maxpo2);
+  printf("hialan test\n");             
   fprintf(fp, "    ¤µ¤Ñ Åªª© [1;33m%8d[m ¦¸ ¦@ [1;33m%8d[m ¤À"
              " ¥­§¡¨Cª© [1;33m%5d[m ¤H¦¸ ¦@ [1;33m%5d[m ¤À \n",
      ave[0], ave[1]/60, ave[0]/numboards, ave[1]/(numboards*60));
+  printf("hialan test\n");             
   fprintf(fp, "    ¤µ¤Ñ Åªª© ¦¸¼Æ³Ì°ª¬O [1;33m%-13s[m ª© ¦@ [1;33m%5d[m ¦¸ ¤@¯ëª©­Ó¼Æ¬° [1;33m%5d[m ­Ó \n"
               "    ¤µ¤Ñ Åªª© ®É¶¡³Ì°ª¬O [1;33m%-13s[m ª© ¦@ [1;33m%5d[m ¤À ¤@¯ë¸s²Õ¼Æ¬° [1;33m%5d[m ­Ó\n\n",
      timesbname, max[0], numboards-1, sumbname, max[1]/60, numgroups);
+  printf("hialan test\n");             
 /*
   fprintf(fp, "    ¤µ¤Ñ Á`¦@¦³ [1;33m%6d[m ­Ó°T®§ ¨ä¤¤ ¦³ [1;33m%5d[m ­Ó¤Hµo ¦³ [1;33m%5d[m ­Ó¤H¦¬\n"
               "    µo³Ì¦hªº¬O [1;33m%13s[m ¦³ [1;33m%4d[m ¦¸"
@@ -1025,19 +1042,22 @@ main(argc, argv)
               " ¥þ³¡ªá¤F [1;33m%8d[m ¤ÀÄÁ\n"
               "    ¤µ¤Ñ ³Ì°ª¦³ [1;33m%5d[m ¦P®É¤W¯¸ ¥­§¡¦³ [1;33m%5d[m ¤H¤W¯¸\n",
      newreg, /* act[25]-numlog2 */  guestnum , act[24], maxtoday, act[24]/1440);
+  printf("hialan test\n");             
   fprintf(fp, "    ¤µ¤Ñ ¦³ [1;33m%5d[m ­Ó±b¸¹¹L´Á ¦³ [1;33m%5d[m ³Q²M\n",
      numdated, numclean);
-
+  printf("hialan test\n");        
   fprintf(fp, "\n    ¦³ [1;33m%5d[m ­Ó ¦³­­¨îªº ª© ¤Î [1;33m%5d[m ­Ó ¦³­­¨îªº ¸s²Õ",
       numhide-numhideg, numhideg);
-
+  printf("hialan test\n");        
   fprintf(fp, "\n    ¯¸ªø¦³ [1;33m%3d[m ¤H, ±b¸¹Á`ºÞ¦³ [1;33m%3d[m ¤H, "
               "¬Ýª©Á`ºÞ¦³ [1;33m%3d[m ¤H, ²á¤Ñ«ÇÁ`ºÞ¦³ [1;33m%3d[m ¤H\n",
     numsysop, numaccount, numboard, numchatroom);
+  printf("hialan test\n");            
   fprintf(fp, "    ª©¥D¦³ [1;33m%3d[m ¤H, ¬Ý¨£§ÔªÌ¦³ [1;33m%3d[m ¤H, "
               "¦³Áô¨­³N¦³ [1;33m%3d[m ¤H, §¹¦¨µù¥U¦³ [1;33m%5d[m ¤H\n",
     numbm, numsee, numcloak, numloginok);
 
+  printf("hialan test\n");        
   fprintf(fp1,"\
 [1;46m                               ¦U¶µ¥\\¯à¨Ï¥Î²Î­p                                [m");
   fprintf(fp1,"\n\

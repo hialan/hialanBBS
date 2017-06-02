@@ -17,8 +17,6 @@
 
 #include "bbs.h"
 
-#undef USER_ALLPOST	//使用者所有文章紀錄 by hialan
-
 #define FHSZ            sizeof(fileheader)
 
 #define ADDITEM         0
@@ -26,7 +24,6 @@
 #define ADDGOPHER       2
 #define ADDLINK         3
 #define ADDFILE         4
-//#define MAXPATHLEN	1024  /* 移至 config.h */
 char trans_buffer[256];
 
 enum
@@ -41,6 +38,8 @@ static char copyowner[IDLEN + 2];
 static char *mytitle = BOARDNAME "佈告欄";
 static char *a_title;
 static char paste_fname[200];
+
+extern struct BCACHE *brdshm;	//by SugarII for 按s 進精華區
 
 static int
 a_perm(fname,fhdr,me)
@@ -1976,12 +1975,15 @@ AnnounceSelect ()
   namecomplete ("選擇精華區看板：", buf);
   if (*buf)
     strcpy (xboard, buf);
-  if (*xboard && (bp = getbcache (xboard)))
-    {
+  
+  if (Ben_Perm (&brdshm->bcache[getbnum (xboard)] - 1) != 1) //by SugarII
+    pressanykey(P_BOARD);
+  else if (*xboard && (bp = getbcache (xboard)))
+  {
       setapath (fpath, xboard);
       setutmpmode (ANNOUNCE);
       a_menu (xboard, fpath, (HAS_PERM (PERM_ALLBOARD) || HAS_PERM (PERM_BM) && is_BM (bp->BM)) ? 1 : 0);
-    }
+  }
   return RC_FULL;
 }
 
@@ -2045,21 +2047,6 @@ user_gem(char *uid)
   return 0;
 }
 
-#ifdef USER_ALLPOST  // by hialan
-int
-user_allpost(char *uid)
-{
-  sethomefile(genbuf, uid, "allpost");
-  if(!dashd(genbuf))
-    mkdir(genbuf, 0755);
-  if(HAS_PERM(PERM_SYSOP) || !strcmp(cuser.userid,uid))
-    a_menu("張貼文章",genbuf,
-      HAS_PERM(PERM_SYSOP) ? 2 : !strcmp(cuser.userid,uid) ? 1 : 0);
-  else
-    pressanykey("限制進入");
-  return 0;
-}
-#endif
 void
 my_gem()
 {
@@ -2067,11 +2054,3 @@ my_gem()
   user_gem(cuser.userid);
 }
 
-#ifdef USER_ALLPOST //by hialan
-void
-my_allpost()
-{
-  more(BBSHOME"/etc/my_allpost");
-  user_allpost(cuser.userid);
-}
-#endif

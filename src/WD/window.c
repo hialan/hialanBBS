@@ -13,13 +13,13 @@
 show_winline(x, y, 視窗長度/2, 字串, 背景顏色, 光棒顏色);
 show_winbox(直,寬,標題,提示字串,顯示模式);
 msgbox(直,寬,標題,提示字串,顯示模式);
-win_select(標題,提示字串,選項,選項數,顯示模式,預設字元);
+win_select(標題,提示字串,選項,選項數,預設字元);
 
 EX:  win_select("加密文章", "是否編輯可看見名單? ", 0, 2, 1, 'n')
 
 */
 
-void
+static void
 show_winline(x, y, win_len, words, bgcolor, barcolor)
   char *words, *bgcolor, *barcolor;
   int x, y, win_len;
@@ -37,7 +37,7 @@ show_winline(x, y, win_len, words, bgcolor, barcolor)
   move(b_lines, 0);
 }
 
-int
+static int
 show_winbox(x, y, line, width, title, prompt)
   char *title,*prompt;
   int line, width, x, y;

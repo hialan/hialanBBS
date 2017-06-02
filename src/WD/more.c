@@ -268,7 +268,10 @@ more(fpath, promptend)
               prints("\033[m[34;47m%s\033[1m[37;44m%-53.53s\033[m[34;47m %.4s \033[m[37;44m%-13s[0m\n", head[0], word, ptr, ptr + 5);
             }
             else if (pos < (local ? 3 : 4))
+            {
+              if(!local && pos == 1) str_decode(word);
               prints("\033[m[34;47m%s\033[1m[37;44m%-72.72s[m\n", head[pos], word);
+            }
 
             viewed += numbytes;
             numbytes = readln(fp, buf);

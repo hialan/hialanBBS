@@ -67,7 +67,14 @@ int XFile();
 int m_mclean();
 #endif
 
+int hialan_test()
+{
+  char ch[5];
+  color_selector(ch);
+}
+
 static struct one_key adminlist[] = {
+'H',  hialan_test, 0, "HHialan test", 0,
 'U',  m_user_admin, PERM_ACCOUNTS,	"UUser Menu     [使用者設定]",0,
 'N',  "SO/admin.so:m_newbrd",
                 PERM_BOARD,     "NNew Board     [開啟新看板]",1,
