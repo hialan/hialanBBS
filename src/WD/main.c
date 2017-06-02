@@ -792,12 +792,15 @@ Ptt
        do_post();
      }
    }
+/*   
   if(HAS_HABIT(HABIT_NOTE))
     more("note.ans",YEA);
   if(HAS_HABIT(HABIT_SEELOG))
     Announce();
   if(!HAS_HABIT(HABIT_ALREADYSET) && cuser.userlevel)
     u_habit();
+*/
+  login_plan();
 }
 
 void

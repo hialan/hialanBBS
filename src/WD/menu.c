@@ -1,10 +1,10 @@
-
 /*-------------------------------------------------------*/
 /* menu.c       ( NTHU CS MapleBBS Ver 2.36 )            */
 /*-------------------------------------------------------*/
 /* target : menu/help/movie routines                     */
 /* create : 95/03/29                                     */
-/* update : 95/12/15                                     */
+/* update : 03/07/12                                     */
+/* change : hialan.nation@infor.org		         */
 /*-------------------------------------------------------*/
 
 
@@ -17,10 +17,7 @@
 int refscreen = NA;
 extern char *boardprefix;
 
-
-void
-showtitle(title, mid)
-  char *title, *mid;
+void showtitle(char *title, char *mid)
 {
   char buf[40];
   int spc, pad;
@@ -32,12 +29,7 @@ showtitle(title, mid)
    else if (chkmail(0))
   {
     mid = "\033[41;33;5m   信箱裡面有新信唷！  \033[m\033[1m"COLOR1;
-
-/*
- * CyberMax:
- *           spc 是匹配 mid 的大小.
- */
-    spc = 22;
+    spc = 22;      // CyberMax: spc 是匹配 mid 的大小.
   }
   else if(check_personal_note(1,NULL))
   {
@@ -80,9 +72,7 @@ char mystatus[256];
 
 /* wildcat 1998.8.7 */
 
-void
-movie(i)
-  int i;
+void movie(int i)
 {
   extern struct FILMCACHE *film;
   static short history[MAX_HISTORY];
@@ -161,8 +151,7 @@ is_menu_stat()	/*判斷特定看板  by hialan 02/04/20*/
   return 0;
 }
 
-int
-show_movie2()  /*show note2 by hialan 02/04/20*/
+int show_movie2()  //小看板
 {
   int i;
   char fn[256];
@@ -184,9 +173,8 @@ show_movie2()  /*show note2 by hialan 02/04/20*/
   return 1;
 }
 
-static int
-show_menu(p)
-  struct one_key *p;
+static int 
+show_menu(struct one_key *p)
 {
   register int n = 0, m = 0;
   register char *s;
@@ -214,10 +202,8 @@ show_menu(p)
     {
       if (HAS_PERM(p[n].level))
       {
-        sprintf(buf,s+2);
-
-        prints("%*s  [\033[1;36m%c\033[m]", menu_column, "", s[1]);
-
+        prints("%*s  [\033[1;36m%c\033[m]", menu_column, "", s[0]);
+        strcpy(buf,s+1);
         if(!is_menu_stat() || movie2[m][0]=='\0')
         {
           outs(buf);
@@ -225,17 +211,11 @@ show_menu(p)
         }
         else
           prints("%-28s%s", buf,movie2[m++]);
-                                      
       }
       n++;
     }
-    else  /*看板說明是 NULL , 所以只顯示 movie2*/
-    {
-      if (!is_menu_stat() )
-        break;
-      else
-        prints("%37s%-s", "", movie2[m++] );
-    }
+    else if (is_menu_stat() ) /*看板說明是 NULL , 所以只顯示 movie2*/
+      prints("%37s%-s", "", movie2[m++] );
   }
   
   if (currstat == GAME) menu_row = old_menu_row;  /*game 有移位..移回來*/
@@ -244,14 +224,11 @@ show_menu(p)
 
 
 void
-domenu(cmdmode, cmdtitle, cmd, cmdtable)
-  char *cmdtitle;
-  int cmdmode, cmd;
-  struct one_key *cmdtable;
+domenu(int cmdmode, char *cmdtitle, int cmd, struct one_key *cmdtable)
 {
 #define OLD_MENU_ROW (b_lines - (24 - old_menu_row) + 1)
 
-  int lastcmdptr;  // cmdtable 的指標, 用來指到現在游標所在的陣列位置
+  int lastcmdptr;  	// cmdtable 的指標, 用來指到現在游標所在的陣列位置
   int n, pos, total, i; // pos   在 switch 完 cmd 後, 重新計算顯示位置用
   			// n     和 pos 相同用途, 給回圈用
   			// total 總共有幾個可見項目
@@ -339,7 +316,8 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
         cmd = 'G';
       else if ((cmdmode == MAIL) && chkmailbox())
         cmd = 'R';
-      else return;
+      else 
+        return;
     default:
        if ((cmd == Ctrl('G') || cmd == Ctrl('S')) && (currstat == MMENU || currstat == TMENU || currstat == XMENU))  
        {
@@ -353,15 +331,16 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
        }
       if (cmd == '\n' || cmd == '\r' || cmd == KEY_RIGHT)
       {
-
         boardprefix = cmdtable[lastcmdptr].desc;
 
         //轉換 so 的函式
         if(cmdtable[lastcmdptr].mode && DL_get(cmdtable[lastcmdptr].fptr))
         {
           void *p = (void *)DL_get(cmdtable[lastcmdptr].fptr);
-          if(p) cmdtable[lastcmdptr].fptr = p;
-          else break;
+          if(p) 
+            cmdtable[lastcmdptr].fptr = p;
+          else 
+            break;
         }
 
         currstat = XMODE;
@@ -382,12 +361,7 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
         else if (err != XEASY + 1 || err == RC_FULL)
           refscreen = YEA;
 
-        if (err != -1)
-          cmd = cmdtable[lastcmdptr].desc[0];
-        else
-          cmd = cmdtable[lastcmdptr].desc[1];
-        cmd0[cmdmode] = cmdtable[lastcmdptr].desc[0];
-        
+        cmd = cmd0[cmdmode] = cmdtable[lastcmdptr].key;
         get_lightbar_color(bar_color);//更新bar_color
       }
 
@@ -395,15 +369,13 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
         cmd &= ~0x20;
       while (++i <= total)
       {
-        if (cmdtable[i].desc[1] == cmd)
+        if (cmdtable[i].key == cmd)
           break;
       }
     }  //end of switch.
 
     if (i > total || !HAS_PERM(cmdtable[i].level))
-    {
       continue;
-    }
 
     if (refscreen)
     {
@@ -421,7 +393,7 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
       move(OLD_MENU_ROW + pos, 0);
       clrtoeol();
       prints("%*s  \033[0;37m[\033[1;36m%c\033[0;37m]%-27s\033[m ",
-        menu_column,"",cmdtable[lastcmdptr].desc[1],cmdtable[lastcmdptr].desc + 2);
+        menu_column,"",cmdtable[lastcmdptr].desc[0],cmdtable[lastcmdptr].desc + 1);
       if(is_menu_stat())
         outs(movie2[pos]);
     }
@@ -442,7 +414,7 @@ domenu(cmdmode, cmdtitle, cmd, cmdtable)
       cursor_show(OLD_MENU_ROW+pos, menu_column);
       move(OLD_MENU_ROW + pos, menu_column+2);
       prints("\033[m%s[%c]%-27s\033[m ",
-        bar_color, cmdtable[lastcmdptr].desc[1], cmdtable[lastcmdptr].desc+2);     
+        bar_color, cmdtable[lastcmdptr].desc[0], cmdtable[lastcmdptr].desc+1);     
       if(is_menu_stat())
         outs(movie2[pos]);
       move(b_lines, 0);

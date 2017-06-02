@@ -24,28 +24,28 @@ SRC =	announce.c bbs.c board.c cache.c edit.c \
 	io.c mail.c main.c menu.c more.c name.c read.c record.c\
 	register.c screen.c stuff.c talk.c user.c term.c\
 	money.c list.c hialan.c votebrd.c\
-	window.c msg.c color.c\
+	window.c msg.c color.c loginplan.c\
 	#convcode.c admin.c
 
 OBJ =	announce.o bbs.o board.o cache.o edit.o \
 	io.o mail.o main.o menu.o more.o name.o read.o record.o\
 	register.o screen.o stuff.o talk.o user.o term.o\
 	money.o list.o hialan.o votebrd.o\
-	window.o msg.o color.o\
+	window.o msg.o color.o loginplan.o\
 	#convcode.o admin.o
 
 MOBJ =	announce.o bbs.o board.o cache.o edit.o \
 	io.o mail.o mbbsd.o login.o menu.o more.o name.o read.o record.o\
 	register.o screen.o stuff.o talk.o user.o term.o\
 	money.o list.o hialan.o votebrd.o\
-	window.o msg.o color.o\
+	window.o msg.o color.o loginplan.o\
 	#convcode.o admin.o
 
 PRO =	announce.x bbs.x board.x cache.x edit.x \
 	io.x mail.x main.x login.x menu.x more.x name.x read.x record.x\
 	register.x screen.x stuff.x talk.x user.x term.x\
 	money.x list.x hialan.x votebrd.x\
-	window.x msg.x color.o\
+	window.x msg.x color.x loginplan.x\
 	#convcode.x admin.x
 
 EXE =	bbs
@@ -139,4 +139,5 @@ clean: /tmp
 	rm -fr $(GARBAGE) $(OBJ) $(ALL) $(PRO) proto.x $(LNFILES) *~ DEADJOE mbbsd mbbsd.o login.o
 
 tags:
+	rm -f tags
 	ctags $(SRC)

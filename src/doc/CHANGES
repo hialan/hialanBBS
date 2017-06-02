@@ -185,3 +185,14 @@
   1.新增檔案 color.c 專門負責顏色的設定
   2.新增修改顏色的函式: color.c -> color_selector()
   3.將 stuff.c 底下原本負責光棒的函式移到 color.c 
+
+[2003/07/11]
+  1.增加上站劇本 loginplan.c
+  2.修改使用者喜好設定目錄
+
+[2003/07/12]
+  1.修改 loginplan.c 中的介面 (光棒, 檔案亂掉的話就整理)
+  2.修改 mail.c -> mail_read() 無窮回圈 by BuriBuri.bbs@wdbbs.net
+  3.修改 menu.c -> domenu() 
+	 取消 判斷下一個指令, 
+	 使用結構 one_key

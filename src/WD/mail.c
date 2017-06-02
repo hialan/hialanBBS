@@ -1008,32 +1008,25 @@ mail_del(ent, fhdr, direct)
 }
 
 
-/*
-woju
 static int
-*/
 mail_read(ent, fhdr, direct)
   int ent;
   fileheader *fhdr;
   char *direct;
 {
   char buf[64];
-  char done, delete_it, replied;
+  int more_result;
 
   clear();
   setdirpath(buf, direct, fhdr->filename);
   strncpy(currtitle, str_ttl(fhdr->title), 40);
-  done = delete_it = replied = NA;
-  while (!done)
-  {
-/*
-woju
-*/
-    int more_result =  more(buf, YEA);
-    if (more_result != -1) {
-       fhdr->filemode |= FILE_READ;
-       if (!strncmp("[·s]", fhdr->title, 4) && !(fhdr->filemode & FILE_MARKED))
-          fhdr->filemode |= FILE_TAGED;
+  
+  more_result =  more(buf, YEA);
+  if (more_result != -1) 
+  {  
+     fhdr->filemode |= FILE_READ;
+     if (!strncmp("[·s]", fhdr->title, 4) && !(fhdr->filemode & FILE_MARKED))
+        fhdr->filemode |= FILE_TAGED;
      if ( currmode & MODE_SELECT )
      {
         int now;
@@ -1042,8 +1035,9 @@ woju
      }
      else
        substitute_record(currmaildir, fhdr, sizeof(*fhdr), ent);
-    }
-    switch (more_result) {
+  }
+  switch (more_result) 
+  {
     case 1:
        return RS_PREV;
     case 2:
@@ -1062,11 +1056,8 @@ woju
     case 8:
       multi_reply(ent, fhdr, direct);
       return RC_FULL;
-    }
-    move(b_lines, 0);
-    clrtoeol();
-    refresh();
-    outs(msg_mailer);
+    default:
+      return RC_FULL;
   }
 }
 

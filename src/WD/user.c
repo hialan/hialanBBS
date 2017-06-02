@@ -643,10 +643,6 @@ u_editfile()
       ListEdit(buf);
       return 0;
       
-    case 'w':
-      win_formchange();
-      return 0;
-
     default:
       return;
   }
