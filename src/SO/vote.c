@@ -1009,11 +1009,7 @@ struct one_key vote_comms[] = {
   '\0', NULL, 0, NULL,0};
 
 
-void
-votedoent(num, ent, row, bar, bar_color)
-  int num, row, bar;
-  fileheader *ent;
-  char *bar_color;
+void votedoent(int num, fileheader *ent, int row, char *bar_color)
 {
   char closeday[9];
   struct tm *ptime;

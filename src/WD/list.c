@@ -380,7 +380,7 @@ static int list_move(int ent, fileheader *fhdr, char *direct)
   return RC_NEWDIR;
 }
 
-struct one_key list_comm[] = {
+static struct one_key list_comm[] = {
   'r', list_view, 0, "進入/檢視",0,
   'c', list_edit, 0, "修改",0,
   'a', list_add,  0, "新增",0,
@@ -392,7 +392,7 @@ struct one_key list_comm[] = {
   '\0', NULL, 0, NULL,0};
 
 /*Change For LightBar by hialan on 20020609*/
-void listdoent(int num, fileheader *ent, int row, int bar, char *bar_color)
+static void listdoent(int num, fileheader *ent, int row, char *bar_color)
 {
   move(row, 0);
   clrtoeol();
@@ -405,13 +405,14 @@ void listdoent(int num, fileheader *ent, int row, int bar, char *bar_color)
 	   ent->filemode & M_ALOHA ? 'a' : ' ',
 	   is_alnum(ent->date[0]) ? ent->date : "      ", 
 	   (bar_color) ? bar_color : "", ent->filename, ent->title);
-  } else
+  } 
+  else
     prints(" %4d %-6s %s%-13s\033[m %-40s\n", 
-                num, ent->date, (bar) ? bar_color : "", ent->filename, ent->title);
+                num, ent->date, (bar_color) ? bar_color : "", ent->filename, ent->title);
 }
 
 
-void listtitle()
+static void listtitle()
 {
   char buf[256];
   sprintf(buf, "%s [線上 %d 人]", BOARDNAME, count_ulist());

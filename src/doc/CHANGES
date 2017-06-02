@@ -213,3 +213,17 @@
   1.介面大致上修改成 AT-BBS
   2.修改 使用者檔案, 改用 win_select() , 捨棄 etc/userfile
   3.修正 menu.c --> domenu() 第一項會顯示出不應該看到的東西
+
+[2003/07/22]
+  1.標籤增加 "系列"
+  2.新增 soman.c 就是 DSO 管理套件
+  3.將 loginplan.c 定義檔名的地方移到 global.h
+
+[2003/07/25]
+  1.修改 加分一定要說明原因
+  2.重寫 i_read_helper() 不顯示沒有權限的項目, 可用 PG_DOWN, PG_UP
+
+[2003/07/26]
+  1,將 src/include/perm.h 的 _ADMIN_C_ 改成 _MAIN_C_ 並刪除 admin.c _ADMIN_C_
+  2.將 i_read_help() 加入顯示使用權限的部分 by spy
+  3.將 soman.c 取消顯示 程式位置:程式進入點, 增加功能鍵 'Q' 顯示內容

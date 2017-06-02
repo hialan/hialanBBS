@@ -1,0 +1,156 @@
+#############################
+#     CronTAB for WDBBS     #
+#                           #
+#                by wildcat #
+#############################
+
+#############################
+#    DownLoad Maple CVS     #
+#############################
+#0 3 * * * /home/nation/bin/m3cvs.sh
+
+#############################
+# backup board Mail routine #
+#############################
+
+12 4,16 * * * bin/backup_board.sh > /dev/null 2>&1
+0 0,12 * * * bin/jobsquery.sh > /dev/null 2>&1
+
+#############################
+# Netflow / mrtg post board #
+#############################
+
+0 12 * * * bin/netflow.sh > /dev/null 2>&1
+
+#############################
+#         轉信設定          #
+#############################
+
+*/5 * * * * innd/bbsnnrp news.wdbbs.net /home/nation/innd/wd.active.bbs > /dev/null 2>&1
+*/5 * * * * innd/bbsnnrp llama.ck.tp.edu.tw /home/nation/innd/CKNews.active > /dev/null 2>&1
+*/10 * * * * innd/bbsnnrp News.Math.NCTU.edu.tw /home/nation/innd/News.Math.active > /dev/null 2>&1
+*/5 * * * * innd/bbsnnrp Group.NCTU.edu.tw /home/nation/innd/Group.NCTU.active > /dev/null 2>&1
+*/5 * * * * innd/bbsnnrp summer.ck.tp.edu.tw /home/nation/innd/News.ckbbs.active > /dev/null 2>&1
+*/10 * * * * innd/bbsnnrp news.tfcis.org /home/nation/innd/TFCIS.active > /dev/null 2>&1
+10 1 * * * innd/bbsnnrp news.ncu.edu.tw /home/nation/innd/News.NCU.active > /dev/null 2>&1
+#*/5 * * * * innd/bbsnnrp Randy.Math.NCTU.edu.tw /home/nation/innd/News.AT.active > /dev/null 2>&1
+*/10 * * * * innd/bbsnnrp news.scouting.idv.tw /home/nation/innd/Scouting.active > /dev/null 2>&1
+*/5 * * * * innd/bbsnnrp news.ncio.org /home/nation/innd/NCIO.active > /dev/null 2>&1
+# bbsnnrp 轉入文章（依信量決定時間）
+
+*/3 * * * * innd/bbslink /home/nation > /dev/null 2>&1
+# 每 3 分執行 bbslink 轉出文章
+
+
+#############################
+#    看板、文章相關程式     #
+#############################
+
+30 4 * * * bin/mandex > /dev/null 2>&1
+# 每天早上執行精華區排名、索引更新
+
+19,39,59 * * * * bin/admin > /dev/null 2>&1
+# 執行系統狀態程式
+
+3 5 * * * bin/expire > /dev/null 2>&1
+# 每天早上執行看板期限砍多出來的文章
+
+5 * * * * bin/topboard 200 etc/topboard > /dev/null 2>&1
+# 每小時跑中文看板爬行榜
+
+4 * * * * bin/poststat /home/nation > /dev/null 2>&1
+# 每個小時執行熱門話題統計
+
+5,25,45 * * * * bin/cna Today news01 9 > /dev/null 2>&1
+# 每小時執行即時新聞看板
+
+0 3 * * 1 bin/BM_money > etc/BM_money
+# 每週發薪水給板主
+
+#############################
+#       RPG  資料統計       #
+#############################
+13 * * * * bin/toprpg 1 100 log/toprpg/1 >/dev/null 2>&1
+13 * * * * bin/toprpg 2 100 log/toprpg/2 >/dev/null 2>&1
+13 * * * * bin/toprpg 3 100 log/toprpg/3 >/dev/null 2>&1
+13 * * * * bin/toprpg 4 100 log/toprpg/4 >/dev/null 2>&1
+13 * * * * bin/toprpg 5 100 log/toprpg/5 >/dev/null 2>&1
+13 * * * * bin/toprpg 6 100 log/toprpg/6 >/dev/null 2>&1
+13 * * * * bin/toprpg 7 100 log/toprpg/7 >/dev/null 2>&1
+# 每個小時執行使用者排行榜更新
+
+#############################
+#   系統相關統計資料更新    #
+#############################
+
+2 * * * * bin/xchatd
+
+0 * * * * bin/account > /dev/null 2>&1
+# 每個小時 0 分執行上站人次統計
+
+30 0,12 * * * bin/openticket
+# 每天兩次賭盤開票
+
+12 * * * * bin/toppost 100 etc/toppost > /dev/null 2>&1
+12 * * * * bin/toplogin 100 etc/toplogin > /dev/null 2>&1
+12 * * * * bin/toplimit 100 etc/toplimit > /dev/null 2>&1
+12 * * * * bin/toptime 100 etc/toptime > /dev/null 2>&1
+12 * * * * bin/topmoney 100 etc/topmoney > /dev/null 2>&1
+12 * * * * bin/topgold 100 etc/topgold > /dev/null 2>&1
+13 * * * * bin/toprpg 7 100 etc/toprpg >/dev/null 2>&1
+14 * * * * bin/topmsg 40 etc/topmsg > /dev/null 2>&1
+15 * * * * bin/topquery 40 etc/topquery > /dev/null 2>&1
+# 每個小時執行使用者排行榜更新
+
+30 * * * * bin/gnp > /dev/null 2>&1
+# 每小時執行生產毛額更新
+
+0 0 * * * bin/birth > /dev/null 2>&1
+1 0 * * * bin/horoscope > /dev/null 2>&1
+2 0 * * * bin/yearsold > /dev/null 2>&1
+3 0 * * * bin/sexcount > /dev/null 2>&1
+# 每天執行生日、星座、年齡統計、氣象更新
+
+#30 * * * * /home/nation/bin/weather.sh
+# 每小時跑天氣預報更新
+
+0 9,10,11,12,13,14 * * * /home/nation/bin/stock.sh
+# 每天跑股市資料更新
+
+#############################
+#    系統資料備份、清除     #
+#############################
+
+0 0 * * * cp -f .PASSWDS .PASSWDS.yes
+0 0 * * * cp -f .BOARDS .BOARDS.yes
+0 0 * * * cp -f .zero .maxtoday
+0 * * * * tar czf /home/nation/backup/bbs/pwd/pwd_hr`date +\%H`.tgz .PASSWDS 
+0 * * * * tar czf /home/nation/backup/bbs/brd/brd_hr`date +\%H`.tgz .BOARDS
+# 每小時備份看板、使用者資料一次
+
+30 3 * * 2 tar czf /home/nation/backup/bbs/man/man_all`date +\%H`.tgz man/
+# 每週二早上，將 BBS 中精華區全部備份
+
+40 5 * * 0 /usr/bin/find /home/nation/home -size 0 -exec /bin/rm -f {} \;
+40 5 * * 0 /usr/bin/find /home/nation/boards -size 0 -exec /bin/rm -f {} \;
+40 5 * * 0 /usr/bin/find /home/nation/man -size 0 -exec /bin/rm -f {} \;
+# 每週日早上，將 BBS 系統中長度為零的檔案砍掉
+
+40 5 * * 0 tar czf /home/nation/backup/bbs/src/src_we`date +\%H`.tgz src/
+# 每週日早上，將 BBS 原始碼備份
+
+30 4 * * 1 /usr/bin/find /home/nation/home/ \! -ctime 7 \( -name chat_\* -o -name talk_\* -o -name ve_\* -o -name .DIR.\* -o -name SR.\* -o \) | xargs rm -f
+# 每週一早上，將 BBS home 中超過七天的chatlog & talklog & buf的檔案砍掉
+30 5 * * 3 /usr/bin/find /home/nation/boards/ \! -ctime 3 \( -name .DIR.\* -o -name SR.\* -o \) | xargs rm -f
+30 5 * * 3 /usr/bin/find /home/nation/man/ \! -ctime 3 \( -name .DIR.\* -o \) | xargs rm -f
+# 每週三早上，將 BBS board/man 中超過三天的 .DIR.* & SR.* 砍掉
+
+# zi板的BC服務
+#*/2 * * * * /home/nation/boards/zi/cal
+
+#############################
+# Web			    #
+#############################
+
+# UserList
+#*/2 * * * * /home/nation/src/util/makeuserlist.sh

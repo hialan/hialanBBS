@@ -80,7 +80,7 @@
 
 #define NUMPERMS        32
 
-#ifndef _ADMIN_C_
+#ifndef _MAIN_C_
 extern char *permstrings[];
 
 #else

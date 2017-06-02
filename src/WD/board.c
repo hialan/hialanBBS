@@ -345,11 +345,7 @@ Ben_Perm(boardheader *bptr)
 }
 
 
-static void
-cp_board(ptr, bptr, n)
-  boardheader *bptr;
-  boardstat *ptr;
-  int n;
+static void cp_board(boardstat *ptr, boardheader *bptr, int n)
 {
       ptr->name = bptr->brdname;
       ptr->title = bptr->title;
@@ -364,8 +360,7 @@ cp_board(ptr, bptr, n)
       ptr->zap = (zapbuf[n] == 0);      
 }
 
-static void
-load_boards(char *bname , usint mode)
+static void load_boards(char *bname , usint mode)
 {
   boardheader *bptr;
   boardstat *ptr;
@@ -398,7 +393,7 @@ load_boards(char *bname , usint mode)
         if(strncmp(bptr->title, "­Ó¤H", 4)!=0 && !(bptr->brdattr & mode)) 
           continue;
       }
-      if(!(bptr->brdattr & mode))
+      else if(!(bptr->brdattr & mode))
         continue;
     }
     else if (boardprefix)
@@ -454,8 +449,7 @@ load_boards(char *bname , usint mode)
 }
 
 
-static int
-search_board(num)
+static int search_board(int num)
 {
   char genbuf[IDLEN + 2];
 
@@ -647,7 +641,7 @@ static void brdlist_foot()
 {
   move(b_lines, 0);
   clrtoeol();
-  prints("%s  ¿ï¾Ü¬ÝªO  %s                         ¡ö¡ô¡õ¡÷|PgUp|PgDn|Home|End)¾ÉÄý  h)»¡©ú [m", 
+  prints("%s  ¿ï¾Ü¬ÝªO  %s           ¡ö¡ô¡õ¡÷|PgUp|PgDn|Home|End)¾ÉÄý  c)·s¤å³¹¼Ò¦¡  h)»¡©ú [m", 
     	 COLOR2, COLOR3);
 }
 
@@ -660,8 +654,8 @@ static void show_brdlist(head, clsflag, newflag)
 
     move(1,0);
     clrtoeol();
-    prints("%s¢«¬ÝªO\033[0;37m%s¢©¤å³¹¢@¤åºK¢@ºëµØ°Ï\033[30m¢ª\033[m S)±Æ§Ç  c)·s¤å³¹¼Ò¦¡  v|V)¼Ð°O¤wÅª/¥¼Åª      %s", 
-    	   COLOR3, COLOR1, yank_flag ? "­q¾\\" : "¥þ³¡");
+    prints("%s¢«¬ÝªO\033[0;37m%s¢©¤å³¹¢@¨t¦C¢@¤åºK¢@ºëµØ°Ï\033[30m¢ª\033[m         S)±Æ§Ç  v|V)¼Ð°O¤wÅª/¥¼Åª      %s", 
+    	   COLOR3, COLOR1, yank_flag ? "¥þ³¡" : "­q¾\\");
     
     move(2, 0);
     clrtoeol();

@@ -83,8 +83,7 @@ valid_ident(ident)
 woju
 */
 int
-userid_is_BM(userid, list)
-  char *userid, *list;                  /* ªO¥D¡GBM list */
+userid_is_BM(char *userid, char *list)     /* ªO¥D¡GBM list */
 {
   register int ch, len;
 

@@ -372,13 +372,12 @@ bmw_refresh()
 
 extern int write_msg();  //bbs.c
 
-struct one_key bmwlist_key[]={
+static struct one_key bmwlist_key[]={
 'w' , write_msg, PERM_LOGINOK, "丟水球",0,
-'s' , bmw_refresh,       0, "更新畫面",0,
+'s' , bmw_refresh,          0, "更新畫面",0,
 '\0', NULL, 0, NULL,0};
 
-void
-bmwtitle()
+static void bmwtitle()
 {
   char buf[256];
   
@@ -390,11 +389,7 @@ bmwtitle()
          "                                         時間 \033[m\n");
 }
 
-void
-bmw_lightbar(num, bmw, row, bar, barcolor)
-   fileheader *bmw;
-   int bar, row, num;
-   char *barcolor;
+static void bmw_lightbar(int num, fileheader *bmw, int row, char *barcolor)
 {
   move(row, 0);
   clrtoeol();

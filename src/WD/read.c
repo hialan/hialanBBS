@@ -745,7 +745,23 @@ struct one_key sub_key[]={
 'G',	  NULL, 0, "所有被 mark 過的文章。",0,
 '\0', NULL, 0, NULL,0};
 
-int show_helplist_line(int row, struct one_key cmd, char *barcolor)
+static char *show_cmd_level(usint level)  //顯示權限 by spy
+{
+  register int i = -1;
+  static char *none = "無限制";
+
+  if (!level) return none;
+
+  while (level)
+  {
+    level >>= 1;
+    i++;
+  }
+  return permstrings[i];
+}
+                      
+
+static int show_helplist_line(int row, struct one_key *cmd, char *barcolor)
 {
   char buf[128];
   char key[10];
@@ -753,16 +769,16 @@ int show_helplist_line(int row, struct one_key cmd, char *barcolor)
 
   for(i='A';Ctrl(i) <= Ctrl('Z');i++)
   {
-    if(Ctrl(i) == cmd.key) 
+    if(Ctrl(i) == cmd->key) 
     {
       sprintf(key, "Ctrl+%c", i);
       break;
     }
   }
   if(i == 'Z'+1)
-    sprintf(key, "%c", cmd.key);
+    sprintf(key, "%c", cmd->key);
   
-  switch(cmd.key)
+  switch(cmd->key)
   {
     case KEY_UP:
       sprintf(key, "↑");
@@ -793,7 +809,8 @@ int show_helplist_line(int row, struct one_key cmd, char *barcolor)
       break;
   }
     
-  sprintf(buf, "    %s %9s \033[m     %s",  barcolor ? barcolor : "" , key, cmd.desc);
+  sprintf(buf, "    %s %9s \033[m %-12s %s",  barcolor ? barcolor : "" , 
+	       key, show_cmd_level(cmd->level), cmd->desc);
   move(3 + row, 0);
   clrtoeol();
   outs(buf);
@@ -801,90 +818,118 @@ int show_helplist_line(int row, struct one_key cmd, char *barcolor)
 
 int i_read_helper(struct one_key *rcmdlist)
 {
-  char page=0, cursor=0, i, draw=1;
-  char max_cursor, max_page;
+  char cursor=0, i, draw=1, pos;
+  char max_cursor;
   char barcolor[10];
   static char re_enter=0;
   int ch;
-  
+  char top, bottom;	//hialan: 一頁的最上面和最下面 , for 根據權限顯示
+
   get_lightbar_color(barcolor);
+  top = bottom = cursor = pos = 0;
   for(max_cursor=0;rcmdlist[max_cursor].key;max_cursor++);
-  max_page = (--max_cursor / 20);
-  
+
   while(1)
   {
-    
-    if(draw == 1)
+    switch(draw)
     {
-      clear();
+      case 1:
+        clear();
+  
+        sprintf(tmpbuf,"%s [線上 %d 人]",BOARDNAME,count_ulist());
+        showtitle("線上求助", tmpbuf);
 
-      sprintf(tmpbuf,"%s [線上 %d 人]",BOARDNAME,count_ulist());
-      showtitle("線上求助", tmpbuf);
+        prints("[←]上一頁 [→]執行該指令 [↑↓]選擇\n");
+        prints("%s    指令/按鍵   權    限     說          明%36s\033[0m\n", COLOR3, "");
 
-      prints("[←]上一頁 [→]執行該指令 [↑↓]選擇\n");
-      prints("%s    指令/按鍵       說          明%45s\033[0m\n", COLOR3, "");
+      case 2:
+        bottom = top-1;
+        ch=0;	//借用來記數
+        for(i=0;i<p_lines && bottom<max_cursor;i++)
+        {
+          for(bottom++;bottom<max_cursor;bottom++)
+            if(HAS_PERM(rcmdlist[bottom].level))
+            {
+              show_helplist_line(i, rcmdlist+bottom, 0);
+              ch++;
+              break;
+            }
+        }
+        if(!ch) return -1;
 
-      for(i=0;i<20 && rcmdlist[i+page*20].key;i++)
-        show_helplist_line(i, rcmdlist[i+page*20], 0);
-
-      draw = 2;
-    }
-    
-    if(draw == 2)
-    {
-      move(b_lines, 0);
-      clrtoeol();
-      prints("%s  選擇功\能  %s  b)基本指令集 %-40.40s  \033[m", COLOR2, COLOR1, "u)主題式閱\讀指令集");
-      draw = 0;
+      case 3:
+        move(b_lines, 0);
+        clrtoeol();
+        prints("%s  選擇功\能  %s  b)基本指令集 %-40.40s  \033[m", COLOR2, COLOR3, "u)主題式閱\讀指令集");
+        draw = 0;
+        break;
     }
     
     if(HAS_HABIT(HABIT_LIGHTBAR))
     {
-      show_helplist_line(cursor % 20, rcmdlist[cursor], barcolor);
-      cursor_show(3+ (cursor % 20), 0);
+      show_helplist_line(pos, rcmdlist+cursor, barcolor);
+      cursor_show(3+pos, 0);
       ch = igetkey();
-      show_helplist_line(cursor % 20, rcmdlist[cursor], 0);
+      show_helplist_line(pos, rcmdlist+cursor, 0);
     }
     else
-      ch = cursor_key(cursor+3, 0);
-    
+      ch = cursor_key(3 + pos, 0);
+  
     switch(ch)
     {
       case KEY_LEFT:
       case 'q':
         return 0;
-      
+
+      case KEY_PGUP:
+        cursor=top;
       case KEY_UP:
         cursor--;
+        pos--;
+        
+        draw=0;
         if(cursor<0)
         {
-          cursor = max_cursor;
-          page = max_page;
-          draw = 1;
+          top = max_cursor;
+          cursor = top-1;
         }
-        else if(page != cursor / 20)
+        if(cursor<top)
         {
-          page = cursor / 20;
-          draw = 1;
+          for(pos=0;pos<p_lines && top>0;pos++)
+            for(top--;top>0 && !HAS_PERM(rcmdlist[top].level);top--);
+
+          pos--;
+          draw=1;
         }
+        for(;!HAS_PERM(rcmdlist[cursor].level) && cursor>=0;cursor--);        
         break;
-        
+
+      case KEY_PGDN:
+        cursor=bottom;
       case KEY_DOWN:
         cursor++;
-        if(cursor>max_cursor)
+        pos++;
+
+        draw=0;
+        for(;!HAS_PERM(rcmdlist[cursor].level) && cursor < max_cursor;cursor++);        
+
+        if(cursor > bottom || cursor >= max_cursor)
         {
-          cursor = 0;
-          page = 0;
-          draw = 1;
-        }
-        else if(page != cursor / 20)
-        {
-          page = cursor / 20;        
-          draw = 1;
+          for(top=bottom+1;!HAS_PERM(rcmdlist[top].level) && top < max_cursor;top++);
+
+          if(top >= max_cursor)
+          {
+            top = 0;
+            for(;!HAS_PERM(rcmdlist[top].level);top++);
+          }
+          cursor = top;
+          pos=0;
+          draw=1;
         }
         break;
       
       case '\r':
+      case '\n':
       case KEY_RIGHT:
       {
         char buf[80];
@@ -892,10 +937,10 @@ int i_read_helper(struct one_key *rcmdlist)
         sprintf(buf,"請問你是否要執行 %s ?", rcmdlist[cursor].desc);
         if(getans2(b_lines, 0, buf, 0, 2, 'y') == 'y')
           return (ch = rcmdlist[cursor].key);
-        draw = 2;
+        draw = 3;
         break;
       }
-      
+
       case 'b':
         if(!re_enter)
         {
@@ -1256,9 +1301,8 @@ struct one_key *rcmdlist;
                 DL_func("SO/vote.so:make_vote");
             }
             else
-            {
               pressanykey("尚未有投票");
-            }
+
             goto return_i_read;
           }                       
           else if (currmode & MODE_DIGEST)
@@ -1274,6 +1318,11 @@ struct one_key *rcmdlist;
           else if (curredit & EDIT_MAIL)
           {
             pressanykey("沒有來信");
+            goto return_i_read;
+          }
+          else if (cmdmode == GAME)
+          {
+            soman_add();
             goto return_i_read;
           }
           else
@@ -1330,7 +1379,7 @@ struct one_key *rcmdlist;
       for (i = 0; i < entries; i++)
       {
         /*Change For LighteBar by hialan*/
-          (*doentry) (locmem->top_ln + i, &headers[i], i+3, 0, 0);
+          (*doentry) (locmem->top_ln + i, &headers[i], i+3, 0);
       }
 
     case RC_FOOT:
@@ -1365,12 +1414,12 @@ struct one_key *rcmdlist;
        row=3 + locmem->crs_ln - locmem->top_ln;
        
        if(HAVE_HABIT(HABIT_LIGHTBAR))
-         (*doentry) (locmem->crs_ln, &headers[locmem->crs_ln - locmem->top_ln], row, 1, bar_color);
+         (*doentry) (locmem->crs_ln, &headers[locmem->crs_ln - locmem->top_ln], row, bar_color);
        cursor_show(row, 0);
 
        ch = igetkey();
        if(HAVE_HABIT(HABIT_LIGHTBAR))
-         (*doentry) (locmem->crs_ln, &headers[locmem->crs_ln - locmem->top_ln], row, 0, 0);
+         (*doentry) (locmem->crs_ln, &headers[locmem->crs_ln - locmem->top_ln], row, 0);
        
        mode = RC_NONE;
     }

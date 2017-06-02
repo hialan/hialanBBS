@@ -27,6 +27,8 @@
 #define FN_POSTPREFIX	".POSTPREFIX"	/* 標題類別 by hialan 3/21/2002*/
 #define FN_POST_NOTE	".POSTNOTE"	/* ychia.021212:看板自訂文章發表要領 */
 #define FN_WINFORM	".WINFORM"	/* hialan.030705:視窗外框設定*/
+#define FN_LOGINPLAN	".LOGINPLAN"    /* 上站執行劇本 */
+#define FN_SOMAN	"soman"		/* DSO 管理員 */
 #define FN_MAGICKEY	"MagicKey"	/* 認證碼檔案 */
 #define FN_PAL		"pal"
 #define FN_ALOHA	"aloha"

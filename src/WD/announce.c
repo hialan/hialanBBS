@@ -734,7 +734,7 @@ static int a_showmenu (AMENU *pm)
   showtitle ("精華文章", pm->mtitle);
   move(1, 0);
   clrtoeol();
-  prints("%s\033[30m◤\033[37m看板＼文章＼文摘◢%s精華區\033[m◣                                      ^Z)快速選單",
+  prints("%s\033[30m◤\033[37m看板＼文章＼系列＼文摘◢%s精華區\033[m◣                                ^Z)快速選單",
   	 COLOR1, 
   	 COLOR3);
   	 

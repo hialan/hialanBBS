@@ -6,8 +6,6 @@
 /* update : 00/08/03					 */
 /*-------------------------------------------------------*/
 
-#define _ADMIN_C_
-
 #include "bbs.h"
 #include<stdarg.h>
 

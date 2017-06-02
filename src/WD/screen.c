@@ -307,8 +307,7 @@ clrtobot()
   }
 }
 
-void
-clrtoeol()
+void clrtoeol()
 {
   if (!dumb_term)
   {

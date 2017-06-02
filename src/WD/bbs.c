@@ -166,13 +166,16 @@ static void readtitle ()
   move(1, 0);
   clrtoeol();
   
-  if(currmode & MODE_SELECT || currmode & MODE_DIGEST)
-    prints("%s\033[30m◤\033[37m看板＼文章◢%s%s%s\033[37m◣精華區\033[36;40m◣\033[m",
-    	   COLOR1, COLOR3, (currmode & MODE_SELECT) ? "系列" : "文摘", COLOR1);
-  else
-    prints("%s\033[30m◤\033[37m看板◢%s文章%s\033[37m◣文摘＼精華區\033[36;40m◣\033[m",
+  if(currmode & MODE_SELECT)
+    prints("%s\033[30m◤\033[37m看板＼文章◢%s系列%s\033[37m◣文摘＼精華區\033[36;40m◣\033[m",
     	   COLOR1, COLOR3, COLOR1);
-  outs(" ^P)發表  z)精華區  TAB)文摘  V)投票  ^X)快速選單 ");
+  else if(currmode & MODE_DIGEST)
+    prints("%s\033[30m◤\033[37m看板＼文章＼系列◢%s文摘%s\033[37m◣精華區\033[36;40m◣\033[m",
+    	   COLOR1, COLOR3, COLOR1);  
+  else
+    prints("%s\033[30m◤\033[37m看板◢%s文章%s\033[37m◣系列＼文摘＼精華區\033[36;40m◣\033[m",
+    	   COLOR1, COLOR3, COLOR1);
+  outs("   ^P)發表  z)精華區  TAB)文摘  ^X)快速選單 ");
 
   move(2, 0);  
   prints("%s  編號 ", COLOR3);
@@ -201,11 +204,7 @@ void readfoot(char tag)
   }
 }
 /*Change For LightBar by  hialan on 20020609*/
-void
-doent (num, ent, row, bar, bar_color)
-     int num, row, bar;
-     fileheader *ent;
-     char *bar_color;
+void doent (int num, fileheader *ent, int row, char *bar_color)
 {
   user_info *checkowner;
   char *mark, *title, color, type[10], buf[255];
@@ -216,7 +215,7 @@ doent (num, ent, row, bar, bar_color)
 
   if(currstat == RMAIL && ent->filemode & FILE_REPLYOK) //hialan:判斷'R'的地方
   							//因為RMAIL沒用到評分
-    sprintf(buf , "\033[1;31mR  %s",
+    sprintf(buf , "\033[1;31mR %s",
       colors[(unsigned int) (ent->date[4] + ent->date[5]) % 7]);
   else if(ent->score != 0)
     sprintf(buf , "%s%02d%s",
@@ -672,7 +671,7 @@ int make_cold(char *board, char *save_title, int money, char *fpath)
     cold = 9;
   
   if(cold == 9)
-    do_copy_post("ColdKing", fpath, FILE_MARKED); // 轉錄文章
+    do_copy_post("ColdKing", fpath, 0); // 轉錄文章
     
   return cold;
 }
@@ -1613,10 +1612,8 @@ mark (ent, fhdr, direct)
 
 int v_board (int, fileheader*, char*);
 
-void
-score_note(prompt, fhdr, direct)	//推薦加分!! 學 ptt by hialan
-  fileheader * fhdr;
-  char *direct, *prompt;
+static int
+score_note(char *prompt, fileheader *fhdr, char *direct)	//推薦加分!! 學 ptt by hialan
 {
     char genbuf[80], fpath[80];
     time_t now = time(NULL);
@@ -1625,13 +1622,13 @@ score_note(prompt, fhdr, direct)	//推薦加分!! 學 ptt by hialan
     int fd;
     
     getdata(b_lines, 0, prompt, genbuf, 56-IDLEN-4, DOECHO, 0);
-    if(*genbuf == 0) return;
+    if(*genbuf == 0) return -1;
 
     setdirpath (fpath, direct, fhdr->filename);
     if((fd = open(fpath, O_RDONLY)) == -1) 
     {
       pressanykey("推薦失敗!!檔案有問題或有人正在推薦, 請重新推薦:)");
-      return;
+      return -1;
     }
           
     fp = fopen(fpath, "a");
@@ -1645,18 +1642,16 @@ score_note(prompt, fhdr, direct)	//推薦加分!! 學 ptt by hialan
     fclose(fp);
     
     pressanykey("推薦成功\!!");
+    return 1;
 }
 
 /*文章評分*/
 int
-score (ent, fhdr, direct)
-  int ent;
-  fileheader * fhdr;
-  char *direct;
+score (int ent, fileheader *fhdr, char *direct)
 {
   char buf[128];
   time_t now = time(0);
-  char *choose[4] = {"11)加分","22)扣分", "33)推薦文章", msg_choose_cancel};
+  char *choose[3] = {"11)加分","22)扣分", msg_choose_cancel};
   
   if (currstat == RMAIL)
     return RC_NONE;
@@ -1678,15 +1673,17 @@ score (ent, fhdr, direct)
     return RC_DRAW;
   else if(buf[0] == '1' && fhdr->score < 99)
   {
-    fhdr->score++;
-    score_note("推薦內容(不輸入跳過): ", fhdr, direct);
+    if(score_note("加分原因: ", fhdr, direct) < 0)
+      return RC_FULL;
+    else
+      fhdr->score++;
   }
   else if(buf[0] == '2' && fhdr->score > -9)
-    fhdr->score--;
-  else if(buf[0] == '3')	// 推薦 ....:) 學 ptt by hialan
   {
-    score_note("推薦內容: ", fhdr, direct);
-    return RC_DRAW;
+    if(score_note("扣分原因: ", fhdr, direct) < 0)
+      return RC_FULL;
+    else
+      fhdr->score--;
   }
   else if(buf[0] != 'q')
   {
@@ -1703,6 +1700,7 @@ score (ent, fhdr, direct)
     ingold(1);                                                   // 不加錢
     cuser.scoretimes--;
   }
+
   if (currmode & MODE_SELECT)                                    // 在搜尋文章
   {                                                              // 情況下處理
     int now;

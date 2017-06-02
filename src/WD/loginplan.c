@@ -8,7 +8,6 @@
 /*-------------------------------------------------------*/
 
 #include "bbs.h"
-#define FN_LOGINPLAN ".LOGINPLAN"
 
 typedef struct planinfo{
   int num;		//½s¸¹

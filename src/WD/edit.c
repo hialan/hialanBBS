@@ -284,8 +284,7 @@ n2ansi(int nx, textline * line)
 /* ¿Ã¹õ³B²z¡G»²§U°T®§¡BÅã¥Ü½s¿è¤º®e                      */
 /* ----------------------------------------------------- */
 
-static void
-edit_msg(void)
+static void edit_msg(void)
 {
   static char *edit_mode[2] = {"¨ú¥N", "´¡¤J"};
   register int n = currpnt;
@@ -295,8 +294,17 @@ edit_msg(void)
   n++;
   move(b_lines, 0);
   clrtoeol();
-  prints(COLOR2" ½s¿è¤å³¹ [1m"COLOR1" [33m(Ctrl-Z)[37m»²§U»¡©ú \
+#if 0
+  prints("%s  ½s¿è¤å³¹  %s [33m(Ctrl-Z)[37m»²§U»¡©ú \
 [33m(^G)[37m´¡¤J¹Ï¤å®w [33m(^X,^Q) [37mÂ÷¶}ùø%s¢x%c%c%c%cùø %3d:%3d  [m",
+    COLOR2, COLOR3
+    edit_mode[insert_character],
+    my_ansimode ? 'A' : 'a', indent_mode ? 'I' : 'i',
+    phone_mode ? 'P' : 'p', raw_mode ? 'R' : 'r',
+    currln + 1, n);
+#endif
+  prints("%s  ½s¿è¤å³¹  %s  ùø%s¢x%c%c%c%cùø %3d:%3d     ^G)´¡¤J¹Ï¤å®w  ^X|^Q)Â÷¶}  Ctrl-Z)»¡©ú \033[m",
+    COLOR2, COLOR3,
     edit_mode[insert_character],
     my_ansimode ? 'A' : 'a', indent_mode ? 'I' : 'i',
     phone_mode ? 'P' : 'p', raw_mode ? 'R' : 'r',

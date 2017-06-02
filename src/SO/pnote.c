@@ -26,8 +26,8 @@ Del(char *dst) {
 
 void
 rebuild_pnote_ansi(int newflag) {
-  char fname[MAXPATHLEN];
-  char fpath[MAXPATHLEN];
+  char fname[PATHLEN];
+  char fpath[PATHLEN];
   char buf[256], buf2[80];
   int total, len, i;
   int fd;
@@ -87,7 +87,7 @@ do_pnote(char *userid) {
   int total, i, collect, len;
   struct stat st;
   char buf[256], buf2[80];
-  char fname[MAXPATHLEN], fpath[MAXPATHLEN], fname2[MAXPATHLEN];
+  char fname[PATHLEN], fpath[PATHLEN], fname2[PATHLEN];
   int fd, fx;
   FILE *fp;
   notedata myitem;
@@ -195,8 +195,8 @@ Cdate(&(pitem->date)));
 
 void
 del_pnote(notedata *pitem, int newflag) {
- char fpath[MAXPATHLEN];
- char fold[MAXPATHLEN];
+ char fpath[PATHLEN];
+ char fold[PATHLEN];
  FILE *fp1, *fp2;
  notedata item;
 
@@ -291,7 +291,7 @@ get_pnote(notedata *pitem, int newflag) {
  FILE *fp;
  int  total = 0;
  notedata myitem;
- char fpath[MAXPATHLEN];
+ char fpath[PATHLEN];
 
  if (newflag)
    sethomefile(fpath, cuser.userid, fn_note_dat);
@@ -316,7 +316,7 @@ Pnote(int newflag) {
   char ans[4], prompt[STRLEN];
   notedata item_array[MAX_PNOTE + 1];
   uschar mode0 = currutmp->mode;
-  char fpath[MAXPATHLEN];
+  char fpath[PATHLEN];
   FILE *fp;
 
   if ((num = get_pnote(item_array, newflag)) == 0)
