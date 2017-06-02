@@ -1006,7 +1006,7 @@ i_read_key(struct one_key *rcmdlist, struct keeploc *locmem, int ch)
           }
         }
         return (currmode & MODE_SELECT) ? board_select() :
-        (currmode & MODE_DIGEST) ? board_digest() : QUIT;
+               (currmode & MODE_DIGEST) ? board_digest() : QUIT;
     }
     else
       return QUIT;

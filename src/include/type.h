@@ -45,8 +45,8 @@ char *ModeTypeTable[] =
   "各種記錄統計",		/* GAMELOG */
   "打大老二",                   /* BIG2 */
   "回應",                       /* REPLY */
-  "被天音丟中",                 /* HIT */
-  "天音準備中",                 /* DBACK */
+  "被水球丟中",                 /* HIT */
+  "水球準備中",                 /* DBACK */
   "筆記本",                     /* NOTE */
   "編輯文章",                   /* EDITING */
   "發系統通告",                 /* MAILALL */
@@ -63,7 +63,7 @@ char *ModeTypeTable[] =
   "編輯座右銘",			/* PROVERB */
   "精華區",                     /* ANNOUNCE */
   "刻留言板",
-  "神殿育樂中心",               /* GAME */
+  "育樂中心",                   /* GAME */
   "小瑪麗賭場",                 /* MARIE */
   "風塵電子雞",                 /* CHICKEN */
   "看板統計",                   /* XBOARDS */
@@ -80,7 +80,7 @@ char *ModeTypeTable[] =
   "盈月黑傑克",
   "點歌選單",
 
-  "角色扮演選單",		/* RMENU */
+  "快速選單",			/* QMENU */
   "職業工會",
   "ＲＰＧ訓練場",
   "使用者RPG資料",

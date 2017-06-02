@@ -985,29 +985,3 @@ int game_log(va_alist)
   
   return 0;
 }
-
-//hialan: 從 At 的menu.c 移植過來的
-int every_menu() 
-{
-  char ch;
-  char *choose[4]={"mM)信件列表", "fF)我的最愛", "uU)使用者名單", msg_choose_cancel};
-
-  if (!cuser.userlevel)
-    return RC_FULL;
-  ch = getans2(b_lines, 0, "快速選單", choose, 4, 'q');
-  switch(ch)
-  {
-   case 'm':
-         m_read();
-         break;
-   case 'f':
-         Favor();
-         break;
-   case 'u':
-         t_users();
-         break;
-   default:
-         break;
-  }
-  return RC_FULL;
-}

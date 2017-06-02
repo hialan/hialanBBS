@@ -278,4 +278,9 @@
   8.visio.c --> igetch() 刪除 case Ctrl('Z') 區段
   9.加入快速選單 : stuff.c --> every_menu()
 		   visio.c --> igetch() --> case Ctrl('Z')
-		
+
+[2003/08/27]
+  1.將 stuff.c --> every_menu() 加入 visio.c --> igetch() 裡
+    並增加其他功能
+  2.window.c --> win_select() 增加許多功能鍵! 左右 HOME, END, PGUP, PGDN
+  3.修正所有看板中, 不會出現個人板的 bug

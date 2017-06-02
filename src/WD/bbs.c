@@ -690,7 +690,7 @@ int do_post ()
       board_class[i] = postprefix[i];
     }
     board_class[9] = "wW)自行輸入";
-    board_class[10] = "qQ)不輸入";
+    board_class[10] = msg_choose_cancel;
   
     memset (save_title, 0, TTLEN);
     

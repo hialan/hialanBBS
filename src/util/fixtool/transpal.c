@@ -9,6 +9,8 @@
 #define WATER	0x02
 #define CANVOTE	0x04 
 
+#define FN_REJECT       "reject"
+
 dashf(fname)
   char *fname;
 {

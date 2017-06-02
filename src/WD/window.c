@@ -9,7 +9,6 @@
 
 #include "bbs.h"
 
-
 #if 0
 show_winline(x, y, 視窗長度/2, 字串, 背景顏色, 光棒顏色);
 show_winbox(直,寬,標題,提示字串,顯示模式);
@@ -33,8 +32,7 @@ static Win_form winform;
 /*------------------------------*/
 /*  使用者設定檔案存取          */
 /*------------------------------*/
-static int
-load_winform(Win_form *woutput)
+static int load_winform(Win_form *woutput)
 {
   char fpath[PATHLEN];
 
@@ -54,14 +52,14 @@ load_winform(Win_form *woutput)
     woutput->body[3]=0;
     woutput->body[4]=0;
     
-    strcpy(woutput->border[0], "═");
-    strcpy(woutput->border[1], "╔");
-    strcpy(woutput->border[2], "╗");
-    strcpy(woutput->border[3], "╠");
-    strcpy(woutput->border[4], "╣");    
-    strcpy(woutput->border[5], "╚");
-    strcpy(woutput->border[6], "╝");
-    strcpy(woutput->border[7], "║");
+    strcpy(woutput->border[0], "─");
+    strcpy(woutput->border[1], "╭");
+    strcpy(woutput->border[2], "╮");
+    strcpy(woutput->border[3], "├");
+    strcpy(woutput->border[4], "┤");    
+    strcpy(woutput->border[5], "╰");
+    strcpy(woutput->border[6], "╯");
+    strcpy(woutput->border[7], "│");
   }
   if(currutmp && (woutput == &winform))
     win_load=0;	//設成已讀取
@@ -69,8 +67,7 @@ load_winform(Win_form *woutput)
   return 1;
 }
 
-static int
-save_winform(Win_form *winput)
+static int save_winform(Win_form *winput)
 {
   char fpath[PATHLEN];
   int fd;
@@ -200,21 +197,11 @@ win_select(char *title, char *prompt, char **choose, int many, char def)
   int x, y, i;
   int win_len, ch;
   int width;
-  char *p;
+  char *p, leave=-1;
   char barcolor[50], bgcolor[40];
   
   if(!choose)
     choose = msg_choose;
-
-  for(i = 0;i < many;i++)
-  {
-    p = choose[i];
-    if(def == *p)
-    {
-      def = i;
-      break;
-    }
-  }
 
   /*init window*/
   width = strlen(title);
@@ -237,6 +224,8 @@ win_select(char *title, char *prompt, char **choose, int many, char def)
   for(i = 0;i < many;i++)
   {
     p = choose[i];
+    if(def == *p) def = i;
+    if(p == msg_choose_cancel) leave=i;
     show_winline(x + 4 + i, y, win_len, p+1, bgcolor, 0, &winform);
   }
 
@@ -247,21 +236,41 @@ win_select(char *title, char *prompt, char **choose, int many, char def)
     p = choose[i];
     show_winline(x + 4 + i, y, win_len, p+1, bgcolor, barcolor, &winform);
     ch = igetkey();
+    show_winline(x + 4 + i, y, win_len, p+1, bgcolor, 0, &winform);
     
     switch(ch)
     {
       case KEY_UP:
-        show_winline(x + 4 + i, y, win_len, p+1, bgcolor, 0, &winform);
         i--;
         if(i < 0) i = many -1;
         break;
 
       case KEY_DOWN:
-        show_winline(x + 4 + i, y, win_len, p+1, bgcolor, 0, &winform);
         i++;
         if(i >= many) i = 0;
         break;
         
+      case KEY_RIGHT:
+        ch = '\r';
+        break;
+      
+      case KEY_LEFT:
+        if(leave<0) 
+          i=def;
+        else
+          i=leave;
+        break;
+
+      case KEY_PGUP:
+      case KEY_HOME:
+        i=0;
+        break;
+        
+      case KEY_PGDN:
+      case KEY_END:
+        i=many-1;
+        break;
+      
       default:
       {
         int j;
@@ -270,7 +279,6 @@ win_select(char *title, char *prompt, char **choose, int many, char def)
         for(j = 0;j < many;j++)
           if(ch == word_bigsmall(*(choose[j])))
           {
-            show_winline(x + 4 + i, y, win_len, p+1, bgcolor, 0, &winform);
             i = j;
             break;
           }

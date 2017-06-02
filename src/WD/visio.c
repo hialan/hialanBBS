@@ -1165,25 +1165,95 @@ int igetch()
 
          if(re_entry)
          {
-           pressanykey("您已經使用快速選單了:)");
+           pressanykey("您已經使用快速選單了!");
            return ch;
          }         
          
          if(currutmp && currutmp->mode != IDLE)
          {
-           if(currutmp->mode == EDITING)
+           int mode0 = currutmp->mode;
+           int stat0 = currstat;
+           int more0 = inmore;
+           int old_roll = roll;
+           int my_newfd = i_newfd;
+           char *choose[12]={"mM)信件列表", 
+           		    "fF)我的最愛", 
+           		    "uU)線上名單",
+           		    "bB)所有看板",
+           		    "wW)英漢字典",
+           		    "pP)遊樂設施",
+           		    "vV)投票中心",
+           		    "kK)查詢網友",
+           		    "nN)刻留言板",
+           		    "sS)點歌中心",
+           		    "gG)下站休息",
+           		    msg_choose_cancel};
+	   char ans='m';
+	   
+           if(currutmp->mode == EDITING || !cuser.userlevel)
              return ch;
          
            re_entry = 1;
            vs_save(screen);         
-           every_menu();
+ 	   
+ 	   while(ans != 'q')
+ 	   {
+  	     clear();
+  	     setutmpmode(QMENU);
+             switch(ans = win_select("快速選單", "", choose, 12, ans))
+             {
+               case 'm':
+                 m_read();
+                 break;
+               case 'f':
+                 Favor();
+                 break;
+               case 'u':
+                 if(currutmp->mode != LUSERS)
+                   t_users();
+                 else
+                   pressanykey("您已經在使用者名單了!!");
+                 break;
+               case 'b':
+                 New();
+                 break;
+               case 'w':
+                 DL_func("SO/dreye.so:main_dreye");
+                 break;
+               case 'p':
+                 DL_func("SO/soman.so:soman");
+                 break;
+               case 'v':
+                 DL_func("SO/vote.so:all_vote");
+                 break;
+               case 'k':
+                 t_query();
+                 break; 
+               case 's':
+                 DL_func("SO/song.so:ordersong");
+                 break;
+               case 'n':
+                 note();
+                 break;
+               case 'g':
+                 Goodbye();
+                 break;
+             }
+           }
+
            vs_restore(screen);
            re_entry = 0;
+           currutmp->mode = mode0;
+           currstat = stat0;
+           inmore = more0;
+           roll = old_roll;
+           i_newfd = my_newfd;
            continue;
          }
          return ch;
        }
        break;
+
        case Ctrl('U'):
          resetutmpent();
          if(currutmp != NULL && currutmp->mode != EDITING &&
@@ -1656,8 +1726,7 @@ def     --> 預設值
                                                                                 
 */
                                                                                 
-char
-getans2(int line, int col, char *prompt, char **s, int many, char def)
+char getans2(int line, int col, char *prompt, char **s, int many, char def)
 {
   int point = 0;        /*指標*/
   int len = strlen(prompt);

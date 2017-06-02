@@ -13,6 +13,7 @@ OSTYPE = freebsd
 SUBDIR += lib
 SUBDIR += WD
 SUBDIR += SO
+SUBDIR += game
 SUBDIR += util
 
 all:

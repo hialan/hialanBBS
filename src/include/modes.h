@@ -116,7 +116,7 @@ enum
 #define OSONG           68
 
 /* RPG ¿ï³æ */
-#define RMENU		69
+#define QMENU		69
 #define RGUILD 		70
 #define RTRAIN		71
 #define RINFO		72

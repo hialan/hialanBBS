@@ -302,8 +302,7 @@ woju
 Ref: bbs.c: brdperm(char* brdname, char* userid)
 */
 
-int
-Ben_Perm(boardheader *bptr)
+int Ben_Perm(boardheader *bptr)
 {
   register int level,brdattr;
   register char *ptr;
@@ -422,7 +421,7 @@ static void load_boards(char *bname , usint mode)
       if (!belong(fpath, bptr->brdname))
         continue;
     }
-    else if(bptr->brdattr & BRD_GROUPBOARD || bptr->brdattr & BRD_CLASS || bptr->brdattr & BRD_PERSONAL)
+    else if(bptr->brdattr & BRD_GROUPBOARD || bptr->brdattr & BRD_CLASS /*|| bptr->brdattr & BRD_PERSONAL*/)
       continue;
 
     if ((state = Ben_Perm(bptr)) && (yank_flag == 1 || (yank_flag == 2 &&
@@ -569,7 +568,7 @@ static void show_brdlist_line(int headx, int row, int clsflag, int newflag, char
   boardstat *ptr;
   int head = headx;
   static char *color[7]={"[1;36m","[1;34m","[1;33m","[1;32m","[1;35m","[1;36m","[1;37m"};
-  static char *unread[2]={"  ","[36m¡´"};
+  static char *unread[2]={"  ","[1;32m¡°\033[m"};
   char attrbuf[35];
 
       move(row, 0);
@@ -592,8 +591,8 @@ static void show_brdlist_line(int headx, int row, int clsflag, int newflag, char
                  head,!(ptr->brdattr & BRD_HIDE) ? ' ':
                  (ptr->brdattr & BRD_POSTMASK) ? ')' : '-',
                  ptr->zap ? "--" :
-                 (ptr->brdattr & BRD_GROUPBOARD) ? "[1;34m£U" :
-                 (ptr->brdattr & BRD_CLASS) ? "[1;36m¡¼" :
+                 (ptr->brdattr & BRD_GROUPBOARD) ? "[0;33m£U" :
+                 (ptr->brdattr & BRD_CLASS) ? "[0;36m¡¼" :
                  unread[ptr->unread]);
         }
         else if (ptr->zap)

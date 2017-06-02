@@ -157,14 +157,16 @@ dreye(char *word, char *ans)
   return 0;
 }
 
-int
-main_dreye()
+int main_dreye()
 {
   char ans[2];
   char word[30];
+  int mode0=currutmp->mode;
 
+  setutmpmode(DICT);
   ans[0] = '1';
-  do {
+  do 
+  {
     clear();
     move(0, 23);
     outs("\033[1;37;44m¡· DreyeÄ¶¨å³q½u¤W¦r¨å v0.1 ¡·\033[m");
@@ -180,5 +182,7 @@ main_dreye()
     if(ans[0] != 'q')
       dreye(word, ans);
   } while(ans[0] != 'q');
+  
+  currutmp->mode = mode0;
   return 0;
 }
