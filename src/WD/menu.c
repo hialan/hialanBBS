@@ -216,6 +216,8 @@ show_menu(struct one_key *p)
     }
     else if (is_menu_stat() ) /*看板說明是 NULL , 所以只顯示 movie2*/
       prints("%37s%-s", "", movie2[m++] );
+    else
+      movie2[m][0] = '\0';
   }
   
   if (currstat == GAME) menu_row = old_menu_row;  /*game 有移位..移回來*/

@@ -138,23 +138,18 @@ char *permstrings[] = {
 
 #define HABIT_MOVIE       000000000001    /* 開/關動態看板 */
 #define HABIT_COLOR       000000000002    /* 彩色/黑白切換 */
-#define HABIT_NOTE        000000000004    /* 顯示留言板 */
-#define HABIT_ALARM	  000000000010    /* 半點報時 */
-#define HABIT_BELL	  000000000020	  /* 聲音 */
-#define HABIT_BOARDLIST	  000000000040    /* 看板列表顯示文章數或是編號 */
-#define HABIT_SEELOG	  000000000100    /* 上站都去看紀錄排名? */
-#define HABIT_CYCLE	  000000000200    /* 循環式閱讀 */
-#define HABIT_FEELING	  000000000400
-#define HABIT_FROM	  000000001000
-#define HABIT_LIGHTBAR	  000000002000	  /* 光棒選單 */
-#define HABIT_ALREADYSET  000000004000    /* 每次上站都設定? */
-#define HABIT_NOBRDHELP	  000000010000	  /* 不顯示看板說明 */
+#define HABIT_ALARM	  000000000004    /* 半點報時 */
+#define HABIT_BELL	  000000000010	  /* 聲音 */
+#define HABIT_BOARDLIST	  000000000020    /* 看板列表顯示文章數或是編號 */
+#define HABIT_CYCLE	  000000000040    /* 循環式閱讀 */
+#define HABIT_LIGHTBAR	  000000000100	  /* 光棒選單 */
+#define HABIT_NOBRDHELP	  000000000200	  /* 不顯示看板說明 */
 
 #define HAS_HABIT(x)     ((x)?cuser.habit&(x):1)
 #define HAVE_HABIT(x)    (cuser.habit&(x))
 
-#define HABIT_NEWUSER    (HABIT_MOVIE | HABIT_COLOR | HABIT_SEELOG | HABIT_ALARM | HABIT_BELL | HABIT_LIGHTBAR)
-#define HABIT_GUEST	 (HABIT_MOVIE | HABIT_COLOR | HABIT_SEELOG | HABIT_LIGHTBAR)
+#define HABIT_NEWUSER    (HABIT_MOVIE | HABIT_COLOR | HABIT_ALARM | HABIT_BELL | HABIT_LIGHTBAR)
+#define HABIT_GUEST	 (HABIT_MOVIE | HABIT_COLOR | HABIT_LIGHTBAR)
 /* ----------------------------------------------------- */
 /* 各種喜好設定的中文意義                                */
 /* ----------------------------------------------------- */
@@ -165,21 +160,16 @@ extern char *habitstrings[];
 
 #else
 
-#define NUMHABITS        13
+#define NUMHABITS        8
 
 char *habitstrings[] = {
 /* HABIT_MOVIE */      "動態看板       ",
 /* HABIT_COLOR */      "彩色顯示模式   ",
-/* HABIT_NOTE  */      "上站顯示留言板 ",
 /* HABIT_ALARM */      "半點報時       ",
 /* HABIT_BELL  */      "聲音           ",
 /* HABIT_BOARDLIST */  "看板列表顯示   ",
-/* HABIT_SEELOG	*/     "上站觀看各項紀錄",
 /* HABIT_CYCLE */      "循環式閱\讀    ",
-/* HABIT_FEELING */    "上站設定心情   ",
-/* HABIT_FROM */       "上站設定故鄉   ",
 /* HABIT_LIGHTBAR */   "使用選單光棒   ",
-/* HABIT_ALREADYSET */ "上站不修改喜好設定",
 /* HABIT_NOBRDHELP */  "不顯示看板說明"
 };
 
@@ -187,16 +177,11 @@ char *habitstrings[] = {
 char *habit_help_strings[] ={
 /* HABIT_MOVIE */      "切換要不要顯示動態看板",
 /* HABIT_COLOR */      "切換要不要顯示彩色的畫面，如果關閉的話所有畫面會變成單色顯示",
-/* HABIT_NOTE  */      "上站時，選擇是否顯示留言板",
 /* HABIT_ALARM */      "選擇是否要系統在整點發送訊息",
 /* HABIT_BELL  */      "選擇是否要系統發出提醒聲",
 /* HABIT_BOARDLIST */  "看板列表時，最前方顯示文章數或編號",
-/* HABIT_SEELOG */     "上站時，選擇是否觀看各項紀錄",
 /* HABIT_CYCLE */      "在文章列表時，看到最後一篇會自動回到第一篇繼續閱\讀",
-/* HABIT_FEELING */    "上站時，選擇是否設定心情",
-/* HABIT_FROM */       "上站時，選擇是否設定故鄉",
 /* HABIT_LIGHTBAR */   "選擇是否使用選單光棒   ",
-/* HABIT_ALREADYSET */ "上站時，選擇是否修改喜好設定",
 /* HABIT_NOBRDHELP */  "選擇看板時，不顯示看板說明  "
 };
 

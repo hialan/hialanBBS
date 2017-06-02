@@ -372,9 +372,11 @@ search_rec(char* dirname, int (*filecheck)())
    if (!(fp = fopen(dirname, "r")))
       return 0;
 
-   while (fread(&fhdr, sizeof(fhdr), 1, fp)) {
+   while (fread(&fhdr, sizeof(fhdr), 1, fp)) 
+   {
      ans++;
-     if ((*filecheck) (&fhdr)) {
+     if ((*filecheck) (&fhdr)) 
+     {
         fclose(fp);
         return ans;
      }
@@ -398,13 +400,15 @@ delete_files(char* dirname, int (*filecheck)())
    strcpy(tmpfname, dirname);
    strcat(tmpfname, "_tmp");
 
-   if (!(fptmp = fopen(tmpfname, "w"))) {
+   if (!(fptmp = fopen(tmpfname, "w"))) 
+   {
       fclose(fp);
       return ans;
    }
 
    while (fread(&fhdr, sizeof(fhdr), 1, fp))
-     if ((*filecheck) (&fhdr)) {
+     if ((*filecheck) (&fhdr)) 
+     {
         ans++;
         setdirpath(genbuf, dirname, fhdr.filename);
         unlink(genbuf);

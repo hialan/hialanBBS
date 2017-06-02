@@ -885,21 +885,6 @@ start_client(bbsdtype)
         
 //  force_board("Boards");
 
-  if(HAS_HABIT(HABIT_FROM) && HAS_PERM(PERM_FROM))
-  {
-    char fbuf[50];
-    sprintf(fbuf, "故鄉 [%s]：", currutmp->from);
-    if(getdata(b_lines, 0, fbuf, currutmp->from, 17, DOECHO,0))
-      currutmp->from_alias=0;
-  }
-  if(HAS_HABIT(HABIT_FEELING))
-  {
-    getdata(b_lines ,0,"今天的心情如何呢？", cuser.feeling, 5 ,DOECHO,cuser.feeling);
-    cuser.feeling[4] = '\0';
-    strcpy(currutmp->feeling, cuser.feeling);
-    substitute_record(fn_passwd, &cuser, sizeof(userec), usernum);
-  }
-
   if (HAS_PERM(PERM_ACCOUNTS) && dashf(fn_register))
     DL_func("SO/admin.so:m_register");
   domenu(MMENU, "主功\能表", (chkmail(0) ? 'M' : 'B'), cmdlist);

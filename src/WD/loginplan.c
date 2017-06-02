@@ -25,14 +25,36 @@ static int view_noteans()
   more("note.ans",YEA);
 }
 
+static int habit_from()
+{
+  if(HAS_PERM(PERM_FROM))
+  {
+    char fbuf[50];
+    sprintf(fbuf, "故鄉 [%s]：", currutmp->from);
+    if(getdata(b_lines, 0, fbuf, currutmp->from, 17, DOECHO,0))
+      currutmp->from_alias=0;
+  }
+}
+
+static int habit_feeling()
+{
+  getdata(b_lines ,0,"今天的心情如何呢？", cuser.feeling, 5 ,DOECHO,cuser.feeling);
+  cuser.feeling[4] = '\0';
+  strcpy(currutmp->feeling, cuser.feeling);
+  substitute_record(fn_passwd, &cuser, sizeof(userec), usernum);
+}
+
 int u_habit(), t_users(), Announce();
 
-#define MAXLOGINPLAN 4		 //總共有幾項 (編號加一)
+#define MAXLOGINPLAN 6	 //總共有幾項 (編號加一)
 static planinfo loginplan[] = {
- 0, u_habit, 		0, "上站修改喜好設定",
+ 0, Announce,		0, "上站觀看系統紀錄",
  1, view_noteans,	0, "上站觀看留言板",
- 2, Announce,		0, "上站觀看系統紀錄",
- 3, t_users, 		0, "上站觀看使用者名單"};
+ 2, u_habit, 		0, "上站修改喜好設定",
+ 3, habit_from,		0, "上站修改故鄉",
+ 4, habit_feeling,	0, "上站修改心情",
+ 5, t_users, 		0, "上站觀看使用者名單"
+};
 
 /*----------------------------*/
 /*上站判斷函式      	      */

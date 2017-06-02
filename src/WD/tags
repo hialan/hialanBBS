@@ -207,7 +207,7 @@ do_voteboardreply	votebrd.c	/^do_voteboardreply(fileheader *fhdr)$/
 doent	bbs.c	/^doent (num, ent, row, bar, bar_color)$/
 doforward	mail.c	/^doforward(direct, fh, mode)$/
 dogetch	io.c	/^dogetch()$/
-domenu	menu.c	/^domenu(cmdmode, cmdtitle, cmd, cmdtable)$/
+domenu	menu.c	/^domenu(int cmdmode, char *cmdtitle, int cmd, struc/
 dosearchuser	main.c	/^dosearchuser(userid)$/
 edit_loginplan	loginplan.c	/^int edit_loginplan()$/
 edit_msg	edit.c	/^edit_msg(void)$/
@@ -267,6 +267,8 @@ good_post	bbs.c	/^good_post (ent, fhdr, direct)$/
 goto_line	edit.c	/^goto_line(int lino)$/
 gtty	term.c	/^#define gtty(fd, data) tcgetattr( fd, data )$/
 guest_count_ulist	cache.c	/^guest_count_ulist()$/
+habit_feeling	loginplan.c	/^static int habit_feeling()$/
+habit_from	loginplan.c	/^static int habit_from()$/
 haspostperm	cache.c	/^haspostperm(bname)$/
 have_author	board.c	/^have_author(char* brdname)$/
 hit_alarm_clock	io.c	/^hit_alarm_clock()$/
@@ -360,7 +362,7 @@ more	more.c	/^more(fpath, promptend)$/
 more_web	more.c	/^more_web(fpath, promptend)$/
 move	screen.c	/^move(y, x)$/
 move_cursor_line	read.c	/^move_cursor_line(locmem, mode)$/
-movie	menu.c	/^movie(i)$/
+movie	menu.c	/^void movie(int i)$/
 msgbox	window.c	/^msgbox(line, width, title, prompt)$/
 multi_list	mail.c	/^multi_list(reciper)$/
 multi_reply	mail.c	/^multi_reply(ent, fhdr, direct)$/
@@ -490,14 +492,14 @@ show_file	stuff.c	/^show_file(char *filename, int y, int lines, int mo/
 show_help	stuff.c	/^show_help(mode)$/
 show_helplist_line	read.c	/^show_helplist_line(row, cmd, barcolor)$/
 show_last_call_in	msg.c	/^show_last_call_in()$/
-show_menu	menu.c	/^show_menu(p)$/
-show_movie2	menu.c	/^show_movie2()  \/*show note2 by hialan 02\/04\/20*/
+show_menu	menu.c	/^show_menu(struct one_key *p)$/
+show_movie2	menu.c	/^int show_movie2()  \/\/¤p¬ÝªO$/
 show_winbox	window.c	/^show_winbox(x, y, line, width, title, prompt)$/
 show_winline	window.c	/^show_winline(x, y, win_len, words, bgcolor, barcol/
 showplans	user.c	/^showplans(char* uid)$/
 showsig	user.c	/^showsig(uid, i)$/
 showsignature	edit.c	/^showsignature(fname)$/
-showtitle	menu.c	/^showtitle(title, mid)$/
+showtitle	menu.c	/^void showtitle(char *title, char *mid)$/
 split	edit.c	/^split(line, pos)$/
 stampdir	record.c	/^stampdir(fpath, fh)$/
 stampfile	record.c	/^stampfile(fpath, fh)$/

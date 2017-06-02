@@ -1820,10 +1820,12 @@ del_range (ent, fhdr, direct)
         char genbuf[100];
         fileheader rsfh;
         int i = inum1, now;
+        
         if (currstat == RMAIL)
           sethomedir (genbuf, cuser.userid);
         else
           setbdir (genbuf, currboard);
+        
         if ((fd = (open (direct, O_RDONLY, 0))) != -1)
         {
           if (lseek (fd, (off_t) (size * (inum1 - 1)), SEEK_SET) != -1)
