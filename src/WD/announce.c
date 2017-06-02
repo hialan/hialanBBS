@@ -2003,6 +2003,7 @@ mon_help ()
   return 0;
 }
 
+#if 0
 int
 Log ()
 {
@@ -2010,6 +2011,7 @@ Log ()
   a_menu (mytitle, "man/log", (HAS_PERM (PERM_SYSOP) ? SYSOP : NOBODY));
   return 0;
 }
+#endif
 
 int
 XFile ()

@@ -720,32 +720,32 @@ select_read(locmem,sr_mode)
 
 /* 基本指令集 */
 struct one_key basic[]={
-KEY_LEFT, NULL, 0, "離開。        其他相同的按鍵: q, e",
-KEY_UP,   NULL, 0, "游標向上。    其他相同的按鍵: p, k",
-KEY_DOWN, NULL, 0, "游標向下。    其他相同的按鍵: n, j",
-KEY_PGDN, NULL, 0, "下一頁。      其他相同的按鍵: 空白鍵, N, Ctrl+f",
-KEY_PGUP, NULL, 0, "上一頁。      其他相同的按鍵: P, Ctrl+b",
-KEY_END,  NULL, 0, "跳到最後一項。其他相同的按鍵: $",
-KEY_RIGHT,NULL, 0, "執行, 閱\讀。  其他相同的按鍵: Enter",
-'\0', NULL, 0, NULL};
+KEY_LEFT, NULL, 0, "離開。        其他相同的按鍵: q, e",0,
+KEY_UP,   NULL, 0, "游標向上。    其他相同的按鍵: p, k",0,
+KEY_DOWN, NULL, 0, "游標向下。    其他相同的按鍵: n, j",0,
+KEY_PGDN, NULL, 0, "下一頁。      其他相同的按鍵: 空白鍵, N, Ctrl+f",0,
+KEY_PGUP, NULL, 0, "上一頁。      其他相同的按鍵: P, Ctrl+b",0,
+KEY_END,  NULL, 0, "跳到最後一項。其他相同的按鍵: $",0,
+KEY_RIGHT,NULL, 0, "執行, 閱\讀。  其他相同的按鍵: Enter",0,
+'\0', NULL, 0, NULL,0};
 
 
 /* 主題式閱讀指令集 */
 struct one_key sub_key[]={
-'/',      NULL, 0, "找尋標題。              其他相同的按鍵: ?",
-'S',      NULL, 0, "循序閱\讀新文章。",
-'L',      NULL, 0, "閱\讀非轉信文章。",
-'u',      NULL, 0, "標題式閱\讀。",
-'=',      NULL, 0, "找尋首篇文章。",
-'\\',     NULL, 0, "找尋游標該處之首篇文章。",
-'[',	  NULL, 0, "向前搜尋相同標題之文章。其他相同的按鍵: +",
-']',	  NULL, 0, "向後搜尋相同標題之文章。其他相同的按鍵: -",
-'<',	  NULL, 0, "向前搜尋其他標題。      其他相同的按鍵: ,",
-'>',	  NULL, 0, "向後搜尋其他標題。      其他相同的按鍵: .",
-'A', 	  NULL, 0, "搜尋作者。              其他相同的按鍵: a",
-'X',	  NULL, 0, "所有被加分過的文章。",
-'G',	  NULL, 0, "所有被 mark 過的文章。",
-'\0', NULL, 0, NULL};
+'/',      NULL, 0, "找尋標題。              其他相同的按鍵: ?",0,
+'S',      NULL, 0, "循序閱\讀新文章。",0,
+'L',      NULL, 0, "閱\讀非轉信文章。",0,
+'u',      NULL, 0, "標題式閱\讀。",0,
+'=',      NULL, 0, "找尋首篇文章。",0,
+'\\',     NULL, 0, "找尋游標該處之首篇文章。",0,
+'[',	  NULL, 0, "向前搜尋相同標題之文章。其他相同的按鍵: +",0,
+']',	  NULL, 0, "向後搜尋相同標題之文章。其他相同的按鍵: -",0,
+'<',	  NULL, 0, "向前搜尋其他標題。      其他相同的按鍵: ,",0,
+'>',	  NULL, 0, "向後搜尋其他標題。      其他相同的按鍵: .",0,
+'A', 	  NULL, 0, "搜尋作者。              其他相同的按鍵: a",0,
+'X',	  NULL, 0, "所有被加分過的文章。",0,
+'G',	  NULL, 0, "所有被 mark 過的文章。",0,
+'\0', NULL, 0, NULL,0};
 
 int 
 show_helplist_line(row, cmd, barcolor)
@@ -1248,10 +1248,11 @@ struct one_key *rcmdlist;
     case RC_CHDIR:
       last_line = rec_num(currdirect, FHSZ);
       if (num_record != NULL)
-	{
+      {
          *num_record = last_line;
 	 num_record = NULL;
-	}
+      }
+      
       if (mode == RC_NEWDIR)
       {
         if (last_line == 0)
@@ -1271,25 +1272,6 @@ struct one_key *rcmdlist;
             }
             goto return_i_read;
           }                       
-          else if (currstat == LISTMAIN)
-          {
-            char *choose_list[2]={"nN.新增","qQ.離開"};
-
-            genbuf[0] = getans2(1, 0, "尚未有名單 ", choose_list, 2, 'q');
-            if (genbuf[0] == 'n')
-              list_add();
-            goto return_i_read;
-          }                       
-          else if (currstat == LISTEDIT)
-          {
-            char *choose_list[2] = {"nN.新增","qQ.離開"};
-            
-            genbuf[0] = getans2(1, 0, "", choose_list, 2, 'q');
-
-            if (genbuf[0] == 'n')
-              list_add();
-            goto return_i_read;
-          }
           else if (currmode & MODE_DIGEST)
           {
             board_digest(); /* Kaede */
@@ -1308,9 +1290,7 @@ struct one_key *rcmdlist;
           else
           {
             char *choose_post[2] = {"pP.發表文章", "qQ.離開"};
-
-            genbuf[0] = getans2(b_lines - 1, 0, "看板新成立 ", choose_post, 2, 'q');
-            if (genbuf[0] == 'p')
+            if (getans2(b_lines - 1, 0, "看板新成立 ", choose_post, 2, 'q') == 'p')
               do_post();
             goto return_i_read;
           }
@@ -1325,8 +1305,8 @@ struct one_key *rcmdlist;
       (void) (*dotitle) ();
 
     case RC_BODY:
-      if (last_line < locmem->top_ln + p_lines)
-      {
+      if (last_line < locmem->top_ln + p_lines) //當畫面有顯示最後一項
+      {						//才更新 last_line
         num = rec_num(currdirect, FHSZ);
 
         if (last_line != num)
@@ -1338,7 +1318,7 @@ struct one_key *rcmdlist;
 
       if (last_line == 0)
          goto return_i_read;
-      else if (recbase != locmem->top_ln)
+      else if (recbase != locmem->top_ln) 
       {
         recbase = locmem->top_ln;
         if (recbase > last_line)
@@ -1414,7 +1394,8 @@ woju
     else
        ch = ' ';
 
-    if (mode == POS_NEXT) {
+    if (mode == POS_NEXT) 
+    {
        mode = cursor_pos(locmem, locmem->crs_ln + 1, 1);
        if (mode == RC_NONE)
           mode = RC_DRAW;

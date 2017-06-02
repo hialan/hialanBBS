@@ -1340,6 +1340,7 @@ cite (ent, fhdr, direct)
   return RC_FULL;
 }
 
+#if 0
 Cite_post (ent, fhdr, direct)
   int ent;
   fileheader * fhdr;
@@ -1362,7 +1363,9 @@ Cite_post (ent, fhdr, direct)
     a_menu (paste_title, paste_path, paste_level, ANNOUNCE);
   return RC_FULL;
 }
+#endif
 
+int
 Cite_posts (int ent, fileheader * fhdr, char *direct)
 {
   char fpath[MAXPATHLEN];
@@ -1373,8 +1376,6 @@ Cite_posts (int ent, fileheader * fhdr, char *direct)
     return RC_NONE;
   }
   setbfile (fpath, currboard, fhdr->filename);
-/* shakalaca.000502: 為什麼要 ??
-  add_tag (); */
   load_paste ();
   if (*paste_path && paste_level && dashf (fpath))
   {
@@ -2463,13 +2464,9 @@ write_msg (ent, fhdr, direct)
   fileheader * fhdr;
   char *direct;
 {
-    user_info *owneronline = (user_info *)searchowner(fhdr->owner);
-
-    if (owneronline == NULL)
-      return RC_NONE;
-
-    my_write(owneronline->pid, "熱線 Call-In：");
-    return RC_FULL;
+  user_info *owneronline = (user_info *)searchowner(fhdr->owner);
+  if (owneronline != NULL) talk_water(owneronline);
+  return RC_FULL;
 }
 
 int
@@ -2530,38 +2527,37 @@ post_b_results()
 
 struct one_key read_comms[] =
 {
-  KEY_TAB, board_digest, 0,"進入/退出 文摘",
-  'b', b_notes,          0,"看進版畫面",
-  'c', cite,             0,"收錄精華",
-  'r', read_post,        0,"閱\讀文章",
-  'z', man,         	 0,"進入精華區",
-  'D', del_range,	 0,"大 D 砍信",
-  Ctrl ('S'), save_mail, 0,"存入信箱",
-  'E', edit_post,        0,"修改文章",
-  'T', edit_title,       0,"修改標題",
-  's', do_select,        0,"選擇看板",
-  'B', board_edit,       0,"看板編輯",
-  't', add_tag,          0,"標記文章",
-  Ctrl ('D'), del_tag,   0,"刪除標記文章",
-  'x', cross_post,       0,"轉貼",
-  'g', good_post,        0,"收到文摘中",
-  'y', reply_post,       0,"回覆文章",
-  'd', del_post,         0,"刪除文章",
-  'm', mark,             0,"Mark 文章",
-  'X', refusemark,       0,"文章加密",
-  Ctrl ('P'), do_post,   0,"發表文章",
-  'C', gem_tag,          0,"收錄標記文章",
-  Ctrl ('C'), Cite_posts,0,"直接收錄文章至精華區",
-  '%', score,		 0,"文章評分",
-  'v', v_board,		 0,"板內v板",
-  'w', write_msg,	 PERM_LOGINOK,"板內丟水球",
-  'F', post_mail,	 PERM_FORWARD,"將文章寄回 Internet 郵箱",
-  'U', post_mail_uncode, PERM_FORWARD,"將文章 uncode 後寄回 Internet 郵箱",
-  Ctrl ('Q'), post_query,0,"板內 q 人",
-  'V', post_vote,	 0,"參與投票",
-  'R', post_b_results,	 0,"看投票結果",
-  '\0', NULL, 0, NULL
-};
+  KEY_TAB, board_digest,	0,"進入/退出 文摘",0,
+  'b', b_notes,        		0,"看進版畫面",0,
+  'c', cite,              PERM_BM,"收錄精華",0,
+  'r', read_post,        	0,"閱\讀文章",0,
+  'z', man,         	 	0,"進入精華區",0,
+  'D', del_range,	  PERM_BM,"大 D 砍信",0,
+  Ctrl ('S'), save_mail,	0,"存入信箱",0,
+  'E', edit_post,        	0,"修改文章",0,
+  'T', edit_title,        PERM_BM,"修改標題",0,
+  's', do_select,        	0,"選擇看板",0,
+  'B', board_edit,        PERM_BM,"看板編輯",0,
+  't', add_tag,           PERM_BM,"標記文章",0,
+  Ctrl ('D'), del_tag,    PERM_BM,"刪除標記文章",0,
+  'x', cross_post,       	0,"轉貼",0,
+  'g', good_post,         PERM_BM,"收到文摘中",0,
+  'y', reply_post,       	0,"回覆文章",0,
+  'd', del_post,         	0,"刪除文章",0,
+  'm', mark,              PERM_BM,"Mark 文章",0,
+  'X', refusemark,       	0,"文章加密",0,
+  Ctrl ('P'), do_post,   	0,"發表文章",0,
+  'C', gem_tag,           PERM_BM,"收錄標記文章",0,
+  Ctrl ('C'), Cite_posts,	0,"直接收錄文章至精華區",0,
+  '%', score,		 	0,"文章評分",0,
+  'v', v_board,		 	0,"板內v板",0,
+  'w', write_msg,	 PERM_LOGINOK,"板內丟水球",0,
+  'F', post_mail,	 PERM_FORWARD,"將文章寄回 Internet 郵箱",0,
+  'U', post_mail_uncode, PERM_FORWARD,"將文章 uncode 後寄回 Internet 郵箱",0,
+  Ctrl ('Q'), post_query,	0,"板內 q 人",0,
+  'V', post_vote,	 	0,"參與投票",0,
+  'R', post_b_results,	 	0,"看投票結果",0,
+  '\0', NULL, 0, NULL,0};
 
 void
 Read ()

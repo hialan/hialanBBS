@@ -57,16 +57,14 @@ list_desc(fhdr, echo)
   else
     sprintf(buf, "對他的描述：");
 
-  if (echo == DOECHO)
-    memset(fhdr, 0, sizeof(fileheader));
+  if (echo == DOECHO) memset(fhdr, 0, sizeof(fileheader));
   getdata(1, 0, buf, fhdr->title, 60, DOECHO,
 	  (echo != DOECHO) ? fhdr->title : 0);
 
   strcpy(buf, strrchr(currdirect, '/') + 1);
   if (!strcmp(buf, FN_PAL) || (currdirect[0] == 'b'))
   {
-    buf[0] = getans2(1, 0,"壞人嗎? ", 0, 2,'n');
-    if (*buf != 'y')
+    if (getans2(1, 0,"壞人嗎? ", 0, 2,'n') != 'y')
       fhdr->filemode |= M_PAL;
     else
       fhdr->filemode |= M_BAD;
@@ -85,59 +83,23 @@ list_add()
   if (currstat != LISTEDIT)
   {
     char *list_choose[3]={"11.一般名單","22.好友名單","qQ.離開"};
-    
     strcpy(listfile, "list.0");
-    /*
-     * getdata(1, 0, "新增 1)一般名單 2)好友名單 3)文章通知 Q)uit？[1] ",
-     * ans, 3, LCECHO, 0);
-     */
-    
-    /*修改此檔會發生錯誤  所以還是不要用的好...||| */
-    /*參考自exbbs                         by hialan*/
-    
-    /*
-    getdata(1, 0, "新增 1)一般名單 2)好友名單 3)上下站通知 Q)uit？[1] ",
-	    ans, 3, LCECHO, 0);
-    */
-    
-    /*
-    getdata(1, 0, "新增 1)一般名單 2)好友名單 Q)uit？[1] ",
-	    ans, 3, LCECHO, 0);
-    */
-    
-    ans[0] = getans2(1, 0, "新增 ", list_choose, 3, '1');
 
-    if (ans[0] == '\0')
-      ans[0] = '1';
-
-    switch (ans[0])
-      {
+    switch (getans2(1, 0, "新增 ", list_choose, 3, '1'))
+    {
 	case '2':
 	  strcpy(listfile, FN_PAL);
 	  break;
 
-	  /*
-	   * case '3': strcpy(listfile, "postlist"); break;
-	   */
-	
-	/*  hialan */
-	/*
-	case '3':
-	  strcpy(listfile, FN_ALOHA);
-	  break;
-	*/  
 	case 'q':
 	  return RC_FULL;
 
 	default:
 	  getdata(1, 0, "請選擇名單 (0-9)？[0] ", ans, 3, DOECHO, 0);
-
-	  if (ans[0] == '\0')
-	    ans[0] = '0';
-
-	  if (ans[0] >= '0' && ans[0] <= '9')
-	    listfile[5] = ans[0];
-      }
+	  if (ans[0] == '\0') ans[0] = '0';
+	  if (ans[0] >= '0' && ans[0] <= '9') listfile[5] = ans[0];
+	  break;
+    }
 
     setuserfile(fpath, FN_LIST);
     if (belong_list(fpath, listfile))
@@ -152,11 +114,10 @@ list_add()
     if (rec_add(fpath, &hdr, sizeof(fileheader)) == -1)
       pressanykey("系統發生錯誤! 請通知站長!");
 
-    if (currstat != LISTMAIN)
-      ListMain();
-  } else
+    if (currstat != LISTMAIN) ListMain();
+  } 
+  else
   {
-
     /* itoc.010529: 好友名單檢查人數上限 */
     if (strstr(currdirect, FN_PAL))
     {
@@ -169,11 +130,14 @@ list_add()
 
     move(1, 0);
     usercomplete(msg_uid, listfile);
+    
+    if (!listfile[0])
+      return RC_CHDIR;  //用 RC_CHDIR 來表示取消 for ListEdit()
 
     if (belong_list(currdirect, listfile))
     {
       pressanykey("已有這位站友了 !");
-      return RC_FULL;
+      return RC_CHDIR;
     }
     if (listfile[0] && searchuser(listfile))
     {
@@ -284,10 +248,6 @@ list_merge(ent, fhdr, direct)
 
   if (currstat == LISTEDIT)
   {
-    /*
-     * if (!getdata(b_lines, 0, "引入 1)一般名單 2)好友名單 3)文章通知 ？",
-     * buf, 2, DOECHO, 0)) return RC_FOOT;
-     */
     if (!getdata(b_lines, 0, "引入 1)一般名單 2)好友名單 ？", buf, 2, DOECHO, 0))
       return RC_FOOT;
 
@@ -308,9 +268,7 @@ list_merge(ent, fhdr, direct)
 	case '2':
 	  strcpy(source, "pal");
 	  break;
-	  /*
-	   * case '3': strcpy(source, "postlist"); break;
-	   */
+
 	default:
 	  return RC_FULL;
       }
@@ -452,16 +410,15 @@ list_move(ent, fhdr, direct)
 }
 
 struct one_key list_comm[] = {
-  'r', list_view, 0, "進入/檢視",
-  'c', list_edit, 0, "修改",
-  'a', list_add,  0, "新增",
-  'd', list_del,  0, "刪除",
+  'r', list_view, 0, "進入/檢視",0,
+  'c', list_edit, 0, "修改",0,
+  'a', list_add,  0, "新增",0,
+  'd', list_del,  0, "刪除",0,
 /* 會發生問題的地方.. */
-  'i', list_merge,0, "引入其他名單",
-  's', list_multi,0, "群組寄信",
-  'm', list_move, 0, "改變位置",
-  '\0', NULL, 0, NULL
-};
+  'i', list_merge,0, "引入其他名單",0,
+  's', list_multi,0, "群組寄信",0,
+  'm', list_move, 0, "改變位置",0,
+  '\0', NULL, 0, NULL,0};
 
 /*Change For LightBar by hialan on 20020609*/
 void
@@ -510,6 +467,25 @@ ListMain()
   char buf[STRLEN];
 
   setuserfile(buf, FN_LIST);
+  if(rec_num(buf, sizeof(fileheader)) == 0)
+  {
+    char *choose_list[2] = {"nN.新增","qQ.離開"};  
+    
+    if (getans2(1, 0, "尚未有名單 ", choose_list, 2, 'q') == 'n') 
+    {
+      usint currstat0 = currstat;
+      char currdirect0[64];
+
+      setutmpmode(LISTMAIN);
+      strcpy(currdirect0, currdirect);
+      strcpy(currdirect, buf);          
+      list_add();
+      strcpy(currdirect, currdirect0);
+      setutmpmode(currstat0);
+    }
+    else
+      return RC_FULL;
+  }
   i_read(LISTMAIN, buf, listtitle, listdoent, list_comm, NULL);
 
   return RC_FULL;
@@ -521,9 +497,25 @@ ListEdit(fname)
   char *fname;
 {
   char currdirect0[64];
-
+  int tmp = 1;
   strcpy(currdirect0, currdirect);
-  strcpy(currdirect, fname);
-  i_read(LISTEDIT, fname, listtitle, listdoent, list_comm, NULL);
+  strcpy(currdirect, fname);    
+
+  if(rec_num(fname, sizeof(fileheader)) == 0)
+  {
+    char *choose_list[2] = {"nN.新增","qQ.離開"};  
+    if (getans2(1, 0, "", choose_list, 2, 'q') == 'n') 
+    {
+      usint currstat0 = currstat;
+      setutmpmode(LISTEDIT);
+      tmp = list_add();
+      setutmpmode(currstat0);
+      if(tmp == RC_CHDIR) tmp = 0;  //RC_CHDIR 用來判斷是否為中途跳出?
+    }
+    else
+      tmp = 0;
+  }
+  if(tmp) i_read(LISTEDIT, fname, listtitle, listdoent, list_comm, NULL);
   strcpy(currdirect, currdirect0);
+  return;
 }

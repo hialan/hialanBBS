@@ -365,30 +365,17 @@ t_display()
 
 /* itoc.011104: for BMW */
 int
-bmw_water(ent, bmw, direct)
-  int ent;
-  fileheader *bmw;
-  char *direct;
-{
-  int tuid;
-  user_info *uentp;
-                                                                                
-  if ((tuid = getuser(bmw->owner)) && (uentp = (user_info *) search_ulist(cmpuids, tuid)))
-    talk_water(uentp);
-  
-  return RC_FULL;  
-}
-
-int
 bmw_refresh()
 {
   return RC_FULL;
 }
 
+extern int write_msg();  //bbs.c
+
 struct one_key bmwlist_key[]={
-'w' , bmw_water, PERM_PAGE, "丟水球",
-'s' , bmw_refresh,       0, "更新畫面",
-'\0', NULL, 0, NULL};
+'w' , write_msg, PERM_LOGINOK, "丟水球",0,
+'s' , bmw_refresh,       0, "更新畫面",0,
+'\0', NULL, 0, NULL,0};
 
 void
 bmwtitle()

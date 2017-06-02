@@ -262,6 +262,7 @@ struct one_key
   void *fptr;
   usint level;			
   char *desc;
+  int mode;
 };
 
 

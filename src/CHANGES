@@ -159,3 +159,9 @@
 
 [2003/02/24]
   1.將 bmw (maple 的水球回顧模式), 使用 i_read 閱讀
+
+[2003/02/26]
+  1.將 i_read 中 讀不到 list 的時候的判斷移到 list.c
+
+[2003/02/28]
+  1.將 struct MENU 和 struct one_key 合併
