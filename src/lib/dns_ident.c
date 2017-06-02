@@ -8,6 +8,9 @@
 
 
 #include "dns.h"
+#include "dns.p"
+#include <string.h>
+#include <unistd.h>
 
 
 /* ----------------------------------------------------- */

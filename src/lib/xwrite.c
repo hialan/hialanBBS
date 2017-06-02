@@ -1,3 +1,4 @@
+#include <unistd.h>
 int
 xwrite(fd, data, size)
   int fd;

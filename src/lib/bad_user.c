@@ -1,6 +1,8 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 
+int
 bad_user(char* name)
 {
    FILE* list;

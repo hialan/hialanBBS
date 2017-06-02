@@ -1,3 +1,6 @@
+#include "dao.h"
+#include <string.h>
+
 int
 is_fname(str)
   char *str;

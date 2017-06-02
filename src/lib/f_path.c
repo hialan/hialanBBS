@@ -2,6 +2,8 @@
 /* file structure : set file path for boards/user home	 */
 /* ----------------------------------------------------- */
 
+#include "dao.h"
+#include <string.h>
 
 static void
 mak_fpath(str, key, name)

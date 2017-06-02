@@ -1,6 +1,8 @@
 #include "dao.h"
 #include <sys/stat.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <string.h>
 
 
 static int rm_dir();

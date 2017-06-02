@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 char *
 str_dup(src, pad)
   char *src;

@@ -71,4 +71,4 @@ getshort(c)
 }
 
 
-#endif	_DNS_H_
+#endif //_DNS_H_

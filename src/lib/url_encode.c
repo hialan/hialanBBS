@@ -6,12 +6,13 @@
 /* create : 99/03/30                                     */
 /* update :   /  /                                       */
 /*-------------------------------------------------------*/
+#include "dao.h"
 
 extern char radix32[32];
 
 void
 url_encode(dst, src)
-  unsigned char *dst; /* Thor.990331: n srcず짽역킷� */
+  unsigned char *dst; /* Thor.990331: n srcず짽역킷 */
   unsigned char *src;
 {
   for(; *src; src++)
@@ -22,7 +23,7 @@ url_encode(dst, src)
       *dst++ = *src;
     else
     {
-      register cc = *src;
+      register char cc = *src;
       *dst++ = '%';
       *dst++ = radix32[cc >> 4];
       *dst++ = radix32[cc & 0xf];

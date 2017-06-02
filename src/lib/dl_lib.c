@@ -5,12 +5,14 @@
 /* update :   /  /                                       */
 /* ----------------------------------------------------- */
 
+#include "dao.h"
 #include <dlfcn.h>
-#include <varargs.h>
+#include <stdarg.h>
 #include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #define BBSHOME "/home/nation"
 
@@ -99,22 +101,22 @@ DL_get(name)
 }
 
 int 
-DL_func(va_alist)
-va_dcl
+DL_func(char* name, ...)
 {
   va_list args;
-  char *name;
   int (*f)(), ret;
 
-  va_start(args);
-  name = va_arg(args, char *);
+  va_start(args, name);
 
   if(!(f = DL_get(name)))
   { /* not get func */
-    return -1;
+    ret = -1;
+  }
+  else
+  {
+    ret = (*f)(args);
   }
 
-  ret = (*f)(args);
   va_end(args);
 
   return ret;

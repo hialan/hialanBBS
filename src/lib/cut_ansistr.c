@@ -6,6 +6,7 @@
 /*count那傳回值是處理過後的長度=strip_ansi(buf,str,0)    */
 /*作者:herb                                              */
 /*-------------------------------------------------------*/
+#include <string.h>
 
 int
 cut_ansistr(char *buf, char *str, int len) {

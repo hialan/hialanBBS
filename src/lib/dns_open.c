@@ -8,6 +8,10 @@
 
 
 #include "dns.h"
+#include "dns.p"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 int
 dns_open(host, port)

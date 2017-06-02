@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "dao.h"
+#include <unistd.h>
 
 #if 0
   int key;

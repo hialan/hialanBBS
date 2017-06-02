@@ -3,10 +3,12 @@
 /* ----------------------------------------------------- */
 
 
+#include "dao.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 
 FILE *

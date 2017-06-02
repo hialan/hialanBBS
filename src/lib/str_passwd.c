@@ -1,3 +1,6 @@
+#include "dao.h"
+#include <string.h>
+#include <unistd.h>
 #ifndef	PASSLEN
 #define	PASSLEN 14
 #endif

@@ -1,3 +1,4 @@
+#include "dao.h"
 int
 invalid_brdname (brd)           /* 定義錯誤看板名稱 */
      char *brd;

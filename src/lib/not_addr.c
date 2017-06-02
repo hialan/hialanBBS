@@ -1,5 +1,6 @@
 #define	STRICT_FQDN_EMAIL
 
+int is_alnum(char);
 
 int
 not_addr(addr)

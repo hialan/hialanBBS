@@ -1,3 +1,6 @@
+#include "dao.h"
+#include <string.h>
+
 int
 str_has(list, tag)
   char *list;

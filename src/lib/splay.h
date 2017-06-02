@@ -13,4 +13,4 @@ typedef struct SplayNode
 SplayNode *splay_in(SplayNode *top, void *data, int (*compare)());
 
 
-#endif _SPLAY_H_
+#endif //_SPLAY_H_
