@@ -1081,11 +1081,6 @@ change_lightbar()
     ch[i] = ch[i] - '0';
   }
 
-/*
-  if (win_select("自訂光棒樣式", "是否要使用自訂光棒樣式", 0, 2, 1, 'n') == 'n')
-    return 0;
-*/
-  
   if(save_lightbar_color(ch) == 1)
     pressanykey("修改完成!!");
   else

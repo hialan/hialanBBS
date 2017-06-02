@@ -370,7 +370,7 @@ new_register(mode)
   newuser.lightbar[3] = 0;   /* blite*/
   newuser.lightbar[4] = 0;   /* underline */
 
-  strcpy(newuser.cursor, ">>");		    /* cursor */
+  strcpy(newuser.cursor, STR_CURSOR);		    /* cursor */
   allocid = getnewuserid();
   if (allocid > MAXUSERS || allocid <= 0)
   {

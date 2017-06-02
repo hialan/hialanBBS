@@ -10,7 +10,8 @@
 #include "bbs.h"
 
 char last_return_msg[128] = " 你還沒有丟過水球呦 !!";  /*最後一句水球回顧 by hialan*/
-char   no_oldmsg=0,oldmsg_count=0;            /* pointer */
+char watermode=0;
+char no_oldmsg=0,oldmsg_count=0;            /* pointer */
 msgque oldmsg[MAX_REVIEW];   /* 丟過去的水球 */
 
 extern struct UTMPFILE *utmpshm;

@@ -85,7 +85,5 @@
 #include "dao.h"
 #include "attr.h"		/* Thor.990311: dynamic attribute database */
 
-//#include "hyper.h"		/* wildcat: hyper bbs fast key define */
-
 #endif				/* _BBS_H_ */
 

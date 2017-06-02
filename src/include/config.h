@@ -218,3 +218,5 @@
 /* ----------------------------------------------------- */
                                                                                 
 #define MAXPATHLEN      256     /* 程式路徑的最大長度 */
+#define MAXMONEY(cuser) ((cuser.totaltime*10) + (cuser.numlogins*100) + (cuser.numposts*1000))
+  /* 金錢上限 hialan:030131*/

@@ -15,9 +15,6 @@
 #include <sys/uio.h>
 #endif
 
-// wildcat : ¤À¤T­Ó¦a¤è¼g¹ê¦bÆZ³¾ªº
-#define MAXMONEY ((muser.totaltime*10) + (muser.numlogins*100) + (muser.numposts*1000))
-
 #define IRH 1
 #define HRM 2
 
@@ -349,7 +346,7 @@ my_query(uident)
     prints("[¸gÀÙª¬ªp]%s\n",money[i]);
     if (HAS_PERM(PERM_SYSOP) || !strcmp(muser.userid, cuser.userid))
       prints("[ª÷¹ô¼Æ¶q]%-30ld[»È¹ô¼Æ¶q]%-21ld\n[»È¹ô¤W­­]%ld\n"
-             ,muser.goldmoney,muser.silvermoney,MAXMONEY);
+             ,muser.goldmoney,muser.silvermoney,MAXMONEY(muser));
 
     if(strcmp(muser.beqid,cuser.userid))
     {
@@ -996,10 +993,8 @@ friend_add(uident)
     sprintf(fpath, "¹ï©ó %s ªº´y­z¡G", uident); /* ­É fpath ¥Î¤@¤U */
     getdata(2, 0, fpath, buf, 22, DOECHO, 0);
     strncpy(pal.desc, buf, 21);
-    //getdata(2, 0, "Ãa¤H¶Ü (Y/N) ? [N]", buf, 3, DOECHO, 0);
-    buf[0] = getans2(2, 0,"Ãa¤H¶Ü? ", 0, 2, 'n');
-    
-    if (*buf != 'y')
+
+    if (getans2(2, 0,"Ãa¤H¶Ü? ", 0, 2, 'n') != 'y')
     {
       pal.ftype |= M_PAL;
 /* shakalaca.000120: ÁÙ¦³¤W¯¸³qª¾¥¼§ï.. */
@@ -1333,7 +1328,6 @@ pickup_user()
       {
         if (getans2(b_lines, 0, "§AªºªB¤ÍÁÙ¨S¤W¯¸¡A­n¬İ¬İ¤@¯ëºô¤Í¶Ü? ", 0, 2, 'y') != 'n')
         {
-          //cuser.uflag &= ~FRIEND_FLAG;
           cuser.uflag ^= FRIEND_FLAG;
           continue;
         }
@@ -1443,10 +1437,21 @@ pickup_user()
 
       switch (ch)
       {
-      case KEY_LEFT:
-      case 'e':
-      case 'E':
-        return;
+        case KEY_LEFT:
+        case 'e':
+        case 'E':
+        {
+          /* ¬ö¿ı¨Ï¥ÎªÌ FRIEND_FLAG ª¬ºA */        
+          int unum = do_getuser(cuser.userid, &xuser);
+
+          if((cuser.uflag & FRIEND_FLAG) != (xuser.uflag & FRIEND_FLAG))
+          {
+            xuser.uflag ^= FRIEND_FLAG;
+            substitute_record(fn_passwd, &xuser, sizeof(userec), unum);
+          }
+          
+          return;
+        }
 
         case KEY_TAB:
         {
@@ -2120,126 +2125,6 @@ talkreply()
 
   clear();
 }
-
-
-/* ------------------------------------- */
-/* ºô¤Í°ÊºAÂ²ªí                          */
-/* ------------------------------------- */
-
-#if 0
-int
-shortulist(uentp)
-  user_info *uentp;
-{
-  static int lineno, fullactive, linecnt;
-  static int moreactive, page, num;
-  char uentry[50];
-  int state;
-
-  if (!lineno)
-  {
-    lineno = 3;
-    page = moreactive ? (page + p_lines * 3) : 0;
-    linecnt = num = moreactive = 0;
-    move(1, 70);
-    prints("Page: %d", page / (p_lines) / 3 + 1);
-    move(lineno, 0);
-  }
-  if (uentp == NULL)
-  {
-    int finaltally;
-
-    clrtoeol();
-    move(++lineno, 0);
-    clrtobot();
-    finaltally = fullactive;
-    lineno = fullactive = 0;
-    return finaltally;
-  }
-  if ((!HAS_PERM(PERM_SYSOP) && !HAS_PERM(PERM_SEECLOAK) && uentp->invisible) ||
-      ((is_rejected(uentp) & HRM) && !HAS_PERM(PERM_SYSOP)))
-  {
-    if (lineno >= b_lines)
-      return 0;
-    if (num++ < page)
-      return 0;
-    memset(uentry, ' ', 25);
-    uentry[25] = '\0';
-  }
-  else
-  {
-    fullactive++;
-    if (lineno >= b_lines)
-    {
-      moreactive = 1;
-      return 0;
-    }
-    if (num++ < page)
-      return 0;
-
-    state = (currutmp == uentp) ? 10 : is_friend(uentp);
-
-    if (PERM_HIDE(uentp) && HAS_PERM(PERM_SYSOP))
-       state = 9;
-
-    sprintf(uentry, "%s%-13s%c%-10s%s ", fcolor[state],
-      uentp->userid, uentp->invisible ? '#' : ' ',
-      modestring(uentp, 1), state ? "[m" : "");
-  }
-  if (++linecnt < 3)
-  {
-    strcat(uentry, "¢x");
-    outs(uentry);
-  }
-  else
-  {
-    outs(uentry);
-    linecnt = 0;
-    clrtoeol();
-    move(++lineno, 0);
-  }
-  return 0;
-}
-
-
-static void
-do_list(modestr)
-  char *modestr;
-{
-  int count;
-
-  showtitle(modestr, BoardName);
-
-  outc('\n');
-  outs(msg_shortulist);
-
-  friends_number = override_number = 0;
-  if (apply_ulist(shortulist) == -1)
-    outs(msg_nobody);
-  else
-  {
-    time_t thetime = time(NULL);
-
-    count = shortulist(NULL);
-    move(b_lines, 0);
-    prints(COLOR1"[1m  ¤W¯¸Á`¤H¼Æ¡G%-7d[32m§ÚªºªB¤Í¡G%-6d"
-      "[33m»P§Ú¬°¤Í¡G%-8d[30m%-23s[37;40;0m",
-      count, friends_number, override_number, Etime(&thetime));
-    refresh();
-  }
-}
-
-
-int
-t_list()
-{
-  setutmpmode(LUSERS);
-  do_list("¨Ï¥ÎªÌª¬ºA");
-  igetch();
-  return 0;
-}
-
-#endif
 
 /* shakalaca.000814: ¥H¤U³o¨â­Ó¨ç¦¡¦b .so ¤¤¦³¥Î¨ì :pp */
 int

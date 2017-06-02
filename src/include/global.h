@@ -86,7 +86,7 @@
 /* °T®§¦r¦ê¡G¿W¥ß¥X¨Ó¡A¥H§Q¤ä´©¦UºØ»y¨¥                  */
 /* ----------------------------------------------------- */
 
-#define STR_CURSOR      "Øp"
+#define STR_CURSOR      ">>"
 #define STR_UNCUR       "  "
 
 #define STR_AUTHOR1     "§@ªÌ:"
@@ -153,9 +153,6 @@
 COLOR2"  «H«H¬Û±¤  "\
 COLOR1"[1m (R)[37m¦^«H [33m(x)[37mÂà¹F [33m(y)[37m¸s²Õ¦^«H [33m(D)[37m§R°£ [33m(c)[37m½Æ»s¤å³¹  [33m[G][37mÄ~Äò¡H    [m"
 
-#define MSG_SHORTULIST  \
-"[7m¨Ï¥ÎªÌ¥N¸¹    ¥Ø«eª¬ºA   ¢x¨Ï¥ÎªÌ¥N¸¹    ¥Ø«eª¬ºA   ¢x¨Ï¥ÎªÌ¥N¸¹    ¥Ø«eª¬ºA  [0m"
-
 #define P_BOARD "¹ï¤£°_,¦¹ªO¥u­ã¬ÝªO¦n¤Í¶i¤J,½Ð¦VªO¥D¥Ó½Ð¤J¹Ò³\\¥i"
 
 
@@ -197,7 +194,6 @@ usint currbrdattr;
 char currBM[IDLEN * 3 + 10];
 char reset_color[4] = "[m";
 char margs[64] = "\0";           /*  main argv list*/
-char watermode = 0;
 int inmore = 0;
 /* global string variables */
 
@@ -224,7 +220,6 @@ char *fn_mandex         = "/.Names";
 
 char *msg_seperator     = MSG_SEPERATOR;
 char *msg_mailer        = MSG_MAILER;
-char *msg_shortulist    = MSG_SHORTULIST;
 
 char *msg_cancel        = MSG_CANCEL;
 char *msg_usr_left      = MSG_USR_LEFT;
@@ -302,7 +297,6 @@ extern usint currbrdattr;
 extern char currBM[];           /* BM of currently selected board */
 extern char reset_color[];
 extern char margs[];
-extern char watermode;
 extern int inmore;
 /* global string variable */
 
@@ -328,7 +322,6 @@ extern char *fn_mandex;
 
 extern char *msg_seperator;
 extern char *msg_mailer;
-extern char *msg_shortulist;
 
 extern char *msg_cancel;
 extern char *msg_usr_left;

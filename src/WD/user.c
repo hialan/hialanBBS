@@ -10,6 +10,7 @@
 #define _USER_C_
 
 #include "bbs.h"
+#undef MAXMONEY
 #define MAXMONEY ((u->totaltime*10) + (u->numlogins*100) + (u->numposts*1000))
 
 extern int numboards;

@@ -8,6 +8,24 @@
 
 #include "bbs.h"
 
+#ifdef HAVE_GAME
+waste_money()
+{
+  while(cuser.silvermoney >= MAXMONEY(cuser)
+    && cuser.numlogins > 2)
+  {
+    clear();
+    move(10,0);
+    prints("你的銀幣上限為 %ld！\n\n\n\n",MAXMONEY(cuser));
+    outs("請想辦法花掉一些 , 或是把錢轉成金幣吧!\n在商業中心的銀行中有換錢的選項 .");    
+    pressanykey("你錢太多囉！想辦法花掉吧！");
+    finance();
+//    game_list();
+  }
+}
+#endif
+
+
 int
 inumoney(char *tuser,int money)
 {

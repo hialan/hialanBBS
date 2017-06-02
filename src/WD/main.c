@@ -8,12 +8,8 @@
 /*-------------------------------------------------------*/
 
 #define _MAIN_C_
-#define RANDLOGIN	/*亂數進站畫面  by hialan*/
 #include "bbs.h"
-#ifdef RANDLOGIN
-  #define WELCOME_TITLE "etc/Welcomes/Welcome_title/"
-#endif
-#define MAXMONEY ((cuser.totaltime * 10) + (cuser.numlogins * 100) + (cuser.numposts * 1000))
+#define WELCOME_TITLE "etc/Welcomes/Welcome_title/"
 
 jmp_buf byebye;
 
@@ -106,11 +102,6 @@ system_abort()
 {
   if (currmode)
     u_exit("ABORT");
-
-/*
-  clear();
-  refresh();
-*/
   printf("謝謝光臨, 記得常來喔 !\n");
   sleep(1);
   exit(0);
@@ -191,6 +182,7 @@ talk_request()
 
 extern msgque oldmsg[MAX_REVIEW];   /* 丟過去的水球 */
 extern char   no_oldmsg,oldmsg_count;            /* pointer */
+extern char   watermode;
 
 static void
 write_request()
@@ -327,10 +319,6 @@ login_query()
   int attempts;
   char genbuf[512];
   extern struct UTMPFILE *utmpshm;
-
-//  char randlogin;  /*亂數進版畫面*/
-  char rbuf[512];
-  time_t i;
 
 /* by Excalibur(大魔王) is84006@cis.nctu.edu.tw
    避免hacker開一堆窗停在登入畫面佔資源 */
@@ -1007,18 +995,3 @@ woju
   return;
 }
 
-#ifdef HAVE_GAME
-waste_money()
-{
-  while(cuser.silvermoney >= MAXMONEY
-    && cuser.numlogins > 2)
-  {
-    clear();
-    move(10,0);
-    prints("你的銀幣上限為 %ld！\n\n\n\n",MAXMONEY);
-    outs("請想辦法花掉一些 , 或是把錢轉成金幣吧!\n在商業中心的銀行中有換錢的選項 .");    
-    pressanykey("你錢太多囉！想辦法花掉吧！");
-    finance();
-  }
-}
-#endif

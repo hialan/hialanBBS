@@ -37,13 +37,14 @@ show_winline(x, y, win_len, words, bgcolor, barcolor)
   move(b_lines, 0);
 }
 
+#if 0
+  hialan NOTE:
+#endif     
+
 int
-show_winbox(x, y, line, width, title, prompt, type)
+show_winbox(x, y, line, width, title, prompt)
   char *title,*prompt;
   int line, width, x, y;
-
-  int type; /*0.clear */
-  	    /*1.置中  */
 {
   int win_len;  /*win_len 是有幾個中文字!!*/
   int i,j;
@@ -111,35 +112,22 @@ show_winbox(x, y, line, width, title, prompt, type)
 }
 
 int
-msgbox(line, width, title, prompt, type)
+msgbox(line, width, title, prompt)
   char *title,*prompt;
   int line, width;
-                                                                                
-  int type; /*0.clear */
-            /*1.置中  */
 {
   int x,y, win_len;
 
   /*init window*/
-  if(!type)
-  {
-    clear();
-    x = 0;
-    y = 0;
-    width = 78;
-  }
-  else
-  {
-    x = (b_lines - line - 5) / 2;
-    y = (80 - width) / 2;
-  }
+  x = (b_lines - line - 5) / 2;
+  y = (80 - width) / 2;
 
-  win_len = show_winbox(x, y, line, width, title, prompt, type);
+  win_len = show_winbox(x, y, line, width, title, prompt);
 }
 
 int
-win_select(title, prompt, choose, many, type, def)
-  int many, type;
+win_select(title, prompt, choose, many, def)
+  int many;
   char *title, *prompt, **choose, def;
 {
   int x, y, i;
@@ -164,31 +152,21 @@ win_select(title, prompt, choose, many, type, def)
   }
 
   /*init window*/
-  if(!type)
+  width = strlen(title);
+  i = strlen(prompt);
+  if(i > width) width = i;
+  for(i = 0;i < many;i++) /*ch暫時當作暫存變數..:pp*/
   {
-    clear();
-    x = 0;
-    y = 0;
-    width = 78;
+    ch = strlen(choose[i]);
+    if(ch > width) width = ch;
   }
-  else
-  {
-    width = strlen(title);
-    i = strlen(prompt);
-    if(i > width) width = i;
-    for(i = 0;i < many;i++) /*ch暫時當作暫存變數..:pp*/
-    {
-      ch = strlen(choose[i]);
-      if(ch > width) width = ch;
-    }
     
-    width = width + 12;
-    x = (b_lines - many - 6) / 2;
-    y = (80 - width) / 2;
-  }
+  width = width + 12;
+  x = (b_lines - many - 6) / 2;
+  y = (80 - width) / 2;
 
   get_lightbar_color(barcolor);
-  win_len = show_winbox(x, y, many+1, width, title, prompt, type);
+  win_len = show_winbox(x, y, many+1, width, title, prompt);
 
   for(i = 0;i < many;i++)
   {

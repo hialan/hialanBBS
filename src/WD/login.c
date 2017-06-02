@@ -9,7 +9,6 @@
 #include "bbs.h"
 
 #define WELCOME_TITLE "etc/Welcomes/Welcome_title/"
-#define MAXMONEY ((cuser.totaltime * 10) + (cuser.numlogins * 100) + (cuser.numposts * 1000))
 
 jmp_buf byebye;
 static uschar enter_uflag;
@@ -929,21 +928,4 @@ start_client(bbsdtype)
     DL_func("SO/admin.so:m_register");
   domenu(MMENU, "主功\能表", (chkmail(0) ? 'M' : 'B'), cmdlist);
 }
-
-#ifdef HAVE_GAME
-waste_money()
-{
-  while(cuser.silvermoney >= MAXMONEY
-    && cuser.numlogins > 2)
-  {
-    clear();
-    move(10,0);
-    prints("你的銀幣上限為 %ld！\n\n\n\n",MAXMONEY);
-    outs("請想辦法花掉一些 , 或是把錢轉成金幣吧!\n在商業中心的銀行中有換錢的選項 .");    
-    pressanykey("你錢太多囉！想辦法花掉吧！");
-    finance();
-//    game_list();
-  }
-}
-#endif
 

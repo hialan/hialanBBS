@@ -35,11 +35,6 @@ static int i_mode = INPUT_ACTIVE;
 
 extern int dumb_term;
 
-static int keyin_mode = 0;         /* for key_in in getdata by hialan.020810*/
-                                   /* 0:無限制
-                                      1:不能回水球
-                                      2:不能進使用者名單   */
-
 passwd_outs(text)
   char *text;
 {
@@ -212,10 +207,6 @@ num_in_buf()
   return icurrchar - ibufsize;
 }
 
-
-//char watermode = -1;  /* Ptt 水球回顧用的參數 */
-extern  char no_oldmsg,oldmsg_count;
-
 int
 dogetch()
 {
@@ -283,6 +274,8 @@ dogetch()
   }
 }
 
+extern char oldmsg_count;            /* pointer */    
+extern char watermode;
 
 int
 igetch()
@@ -360,8 +353,7 @@ igetch()
        case Ctrl('U'):
          resetutmpent();
          if(currutmp != NULL && currutmp->mode != EDITING &&
-            currutmp->mode != LUSERS && currutmp->mode &&
-            keyin_mode != 2)   //add by hialan.020810 for getdata
+            currutmp->mode != LUSERS && currutmp->mode)
          {
            int mode0 = currutmp->mode;
            int stat0 = currstat;
@@ -380,7 +372,7 @@ igetch()
 
         case Ctrl('R'):
         {
-          if(currutmp == NULL || keyin_mode == 1) return (ch);
+          if(currutmp == NULL) return (ch);
           else if(watermode > 0)
           {
             watermode = (watermode + oldmsg_count)% oldmsg_count + 1;
@@ -471,11 +463,6 @@ getdata(line, col, prompt, buf, len, echo, ans)
   extern unsigned char scr_cols;
 #define MAXLASTCMD 6
   static char lastcmd[MAXLASTCMD][80];
-
- keyin_mode = 2;  //輸入時不要給他看使用者名單, 專心輸入
- 
- if(echo == PASS)  /* 輸入時不提供快速鍵 by hialan.020809 */
-   keyin_mode = 1;
 
   if (prompt)
   {
@@ -798,8 +785,6 @@ woju
   }
   if ((echo == LCECHO) && ((ch = buf[0]) >= 'A') && (ch <= 'Z'))
     buf[0] = ch | 32;
-
-  keyin_mode = 0;
 
   return clen;
 }

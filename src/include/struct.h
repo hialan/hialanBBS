@@ -169,7 +169,8 @@ typedef struct PAL PAL;
 woju
 Message queue
 */
-typedef struct {
+typedef struct 
+{
    pid_t last_pid;
    char last_userid[IDLEN + 1];
    char last_call_in[80];
