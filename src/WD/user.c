@@ -494,7 +494,13 @@ showplans(char* uid)
   if (dashf(genbuf))
     more(genbuf,YEA);
   else
-    pressanykey("%s ¥Ø«e¨S¦³¦W¤ù", uid);
+  {
+    clear();
+    sprintf(genbuf,"%s ¥Ø«e¨S¦³¦W¤ù", uid);
+    move(0,0);    
+    clrtoeol();
+    outs(genbuf);
+  }
 
   switch (getans2(b_lines, 0, "", choose_plans, 5, 0))
   {
@@ -502,6 +508,41 @@ showplans(char* uid)
       my_query(uid);
       break;
     case '2':
+    {
+      char *choose[10]={"11", "22", "33", "44", "55", "66", "77", "88", "99", "qQ.¨ú®ø"};
+      char *choose_tmp[10];
+      int i,n=0; //¦³´X­Ó Ã±¦WÀÉ
+      
+      for(i=0;i<9;i++)
+      {
+        sethomefile(genbuf, uid, "sig.0");
+        genbuf[strlen(genbuf) - 1] = i + '1';
+        if(dashf(genbuf)) 
+          choose_tmp[n++] = choose[i];
+      }
+      
+      if(n==0)
+      {
+        pressanykey("%s ¨S¦³¥ô¦óÃ±¦WÀÉ", uid);
+        break;
+      }
+      
+      choose_tmp[n++] = choose[9];
+      
+      i = getans2(b_lines, 0, "½Ð¿ï¾ÜÃ±¦WÀÉ:", choose_tmp, n, 'q');;
+      if(i >= '1' && i <= '9')
+      {
+          clear();
+          sethomefile(genbuf, uid, "sig.0");
+          genbuf[strlen(genbuf) - 1] = i;
+          move(3, 0);
+          prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w[42m   Ã±¦WÀÉ %c   [40m¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
+          show_file(genbuf, 4, MAXSIGLINES, ONLY_COLOR);
+          move(4 + MAXSIGLINES, 0);
+          prints("      [1;33m¡´¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¡´\033[m", i);
+          pressanykey_old(NULL);
+      }
+    }
       break;
     case '3':
       user_gem(uid);

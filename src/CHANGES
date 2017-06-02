@@ -165,3 +165,6 @@
 
 [2003/02/28]
   1.將 struct MENU 和 struct one_key 合併
+
+[2003/02/29]
+  1.將 user.c -> showplans 完成
