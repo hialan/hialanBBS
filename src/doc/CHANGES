@@ -260,3 +260,22 @@
 [2003/08/04]
   1.刪除 visio.c --> term_init_m2() 刪除, Makefile 可去掉 -ltermcap
   2.修正 [BUG]直接選擇我的最愛看板會造成所有看板列表失效 by cholesterol
+
+[2003/08/24]
+  1.修正 local_save
+
+[2003/08/25]
+  1.加入字典, 猜數字
+
+[2003/08/26]
+  1.重新加入 game_log() 於 stuff.c
+  2.加入遊戲: 接龍, 天地九九九, 黑傑克 等原 WD 擁有之11項遊戲
+  3.i_read_helper 增加 Ctrl-H : 閱讀本站說明文件
+  4.board.c --> 加入 board_comms
+  5.more.c --> more() 加入求助鍵 'h'
+  6.announce.c --> a_menu() 加入求助鍵 'h'
+  7.edit.c --> vedit() 加入求助鍵 Ctrl('Z')
+  8.visio.c --> igetch() 刪除 case Ctrl('Z') 區段
+  9.加入快速選單 : stuff.c --> every_menu()
+		   visio.c --> igetch() --> case Ctrl('Z')
+		

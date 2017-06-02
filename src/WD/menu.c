@@ -178,7 +178,7 @@ static int show_menu(struct one_key *p)
 #endif
 
   move(MENU_ROW - 1,0);
-  prints("%s      功\  能          說    明                  按 [Ctrl-Z] 求助               \033[m",  COLOR3);
+  prints("%s      功\  能          說    明                  按 [Ctrl-Z] 快速選單           \033[m",  COLOR3);
 
   move(MENU_ROW, 0);
   while ((s = p[n].desc)!=NULL || movie2[m][0]!='\0')  /*要兩個同時為0才結束*/
@@ -514,8 +514,8 @@ static struct one_key classlist[] = {
 /* ----------------------------------------------------- */
 
 static struct one_key finlist[] = {
-'0',  "SO/buy.so:bank",     0,      "0Bank           \033[1;36m神殿銀行\033[m",1,
-'1',  "SO/song.so:ordersong",0,     "1OrderSong      \033[1;33m神殿點歌機\033[m     $5g/首",1,
+'0',  "SO/buy.so:bank",     0,      "0Bank           \033[1;36m銀行\033[m",1,
+'1',  "SO/song.so:ordersong",0,     "1OrderSong      \033[1;33m點歌機\033[m     $5g/首",1,
 '2',  "SO/buy.so:p_cloak",  0,      "2Cloak          臨時隱身/現身  $2g/次     (現身免費)",1,
 '3',  "SO/buy.so:p_from",   0,      "3From           修改故鄉       $5g/次",1,
 '4',  "SO/buy.so:p_exmail", 0,      "4BuyMailbox     購買信箱上限   $100g/封",1,

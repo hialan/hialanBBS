@@ -73,8 +73,7 @@ COLOR1"[1m ¿ï³æ   I.§ÆÃ¾s J.§ÆÃ¾l K.¼Æ¦r  L.¹Ï¶ô  M.½bÀY  N.¬A©·  O.¼Ð°O  P.ªí®
 " [ªí®æ ] ¢uùä¢}¢t¢{ùàùáùâ¢¡¢¢¢£¢x¢wùå    ¢zùÝ¢qùÞ¢~ùã¢s¢rùß¢|ùúùûùüùý    "
 };
 
-char *my_edit_mode[2] =
-{"¨ú¥N", "´¡¤J"};
+char *my_edit_mode[2] = {"¨ú¥N", "´¡¤J"};
 
 char save_title[STRLEN];
 
@@ -294,15 +293,6 @@ static void edit_msg(void)
   n++;
   move(b_lines, 0);
   clrtoeol();
-#if 0
-  prints("%s  ½s¿è¤å³¹  %s [33m(Ctrl-Z)[37m»²§U»¡©ú \
-[33m(^G)[37m´¡¤J¹Ï¤å®w [33m(^X,^Q) [37mÂ÷¶}ùø%s¢x%c%c%c%cùø %3d:%3d  [m",
-    COLOR2, COLOR3
-    edit_mode[insert_character],
-    my_ansimode ? 'A' : 'a', indent_mode ? 'I' : 'i',
-    phone_mode ? 'P' : 'p', raw_mode ? 'R' : 'r',
-    currln + 1, n);
-#endif
   prints("%s  ½s¿è¤å³¹  %s  ùø%s¢x%c%c%c%cùø %3d:%3d     ^G)´¡¤J¹Ï¤å®w  ^X|^Q)Â÷¶}  Ctrl-Z)»¡©ú \033[m",
     COLOR2, COLOR3,
     edit_mode[insert_character],
@@ -875,8 +865,7 @@ auto_backup()
 }
 
 
-void
-restore_backup()
+void restore_backup()
 {
   char bakfile[80], buf[80];
 
@@ -1340,10 +1329,7 @@ addsignature(fp)
 
 long wordsnum;
 
-static int
-write_file(fpath, saveheader)
-  char *fpath;
-  int saveheader;
+static int write_file(char *fpath, int saveheader)
 {
   FILE *fp;
   textline *p, *v;
@@ -1353,11 +1339,14 @@ write_file(fpath, saveheader)
 
   stand_title("ÀÉ®×³B²z");
 
+/*
   if (currstat == SMAIL)
     ans[0] = getans2(1, 0, "",choose,7,'s');
   else
     ans[0] = getans2(1, 0, "",choose,8,'s');
+*/
 
+  ans[0] = getans2(1, 0, "", choose, (currstat == SMAIL) ? 7 : 8, 's');
   switch (ans[0])
   {
     case 'a':
@@ -1412,7 +1401,8 @@ write_file(fpath, saveheader)
       break;
   }
 
-  if (saveheader == 2 && !aborted) {
+  if (saveheader == 2 && !aborted) 
+  {
      stand_title("¼g¤J¥¢±Ñ: §ï¼g¨ì¼È¦sÀÉ");
      write_tmpbuf();
      return KEEP_EDITING;
@@ -2194,12 +2184,13 @@ vedit(fpath, saveheader)
     }
 
     if (raw_mode)
-       switch (ch) {
-       case Ctrl('S'):
-       case Ctrl('Q'):
-       case Ctrl('T'):
-          continue;
-          break;
+       switch (ch) 
+       {
+         case Ctrl('S'):
+         case Ctrl('Q'):
+         case Ctrl('T'):
+           continue;
+           break;
        }
 
     if (ch == Ctrl('J') && !raw_mode)
@@ -2233,7 +2224,8 @@ vedit(fpath, saveheader)
 woju
 */
       if (ch == KEY_ESC)
-         switch (KEY_ESC_arg) {
+         switch (KEY_ESC_arg) 
+         {
          case ',':
             ch = Ctrl(']');
             break;
@@ -2457,7 +2449,8 @@ woju
          case 'j':
             if (blockln >= 0)
                block_shift_left();
-            else if (currline->len) {
+            else if (currline->len) 
+            {
                int currpnt0 = currpnt;
                currpnt = 0;
                delete_char();
@@ -2524,6 +2517,7 @@ woju
       case Ctrl('S'):
          search_str(0);
          break;
+
       case Ctrl('U'):
         insert_char('');
         line_dirty = 1;
@@ -2834,6 +2828,12 @@ woju
           currline = p;
           redraw_everything = YEA;
           line_dirty = 0;
+          break;
+
+	case Ctrl('Z'):
+          more(BBSHOME"/etc/help/EDIT.help",YEA);
+          redraw_everything = YEA;
+          line_dirty = 1;
           break;
         }
 

@@ -37,10 +37,8 @@ LDFLAGS	= -lcrypt -lcompat -L../lib -ldao -export-dynamic
 # 下列的 make rules 不需修改				 #
 # ------------------------------------------------------ #
 
-SO =	buy.so vote.so votebrd.so song.so chat.so\
-	admin.so register.so soman.so dreye.so\
-	pnote.so do_talk.so
-#	votebrd.so
+SO =	gagb.so poker.so nine.so bj.so seven.so dice.so\
+	marie.so guessnum.so mine.so chessmj.so gp.so
 
 ETC =	Makefile $(HDR)
        

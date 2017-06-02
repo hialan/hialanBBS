@@ -1486,15 +1486,20 @@ a_menu (maintitle, path, lastlevel, mode)
 	break;
 
       if (ch >= '1' && ch <= '9')
-	{
-	  if ((ch = search_num (ch, me.num)) != -1)
-	    me.now = ch;
-	  me.page = 10000;
-	  continue;
-	}
+      {
+	if ((ch = search_num (ch, me.num)) != -1)
+	  me.now = ch;
+	me.page = 10000;
+	continue;
+      }
 
       switch (ch)
-	{
+      {
+        case 'h':
+          show_file(BBSHOME"/etc/help/ANNOUNCE.help",0, 24, ONLY_COLOR);
+          pressanykey_old(NULL);
+          me.page=9999;
+          break;
 	case KEY_UP:
 	case 'k':
 	  if (--me.now < 0)
@@ -1926,7 +1931,7 @@ a_menu (maintitle, path, lastlevel, mode)
 		me.page = 9999;
 		break;
 	      }
-	}
+      }
 	
       if (me.level == SYSOP)
 	{

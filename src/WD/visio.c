@@ -1106,7 +1106,7 @@ int igetch()
          }
          else return(ch);
 
-       case Ctrl('W'):
+       case Ctrl('Q'):
          if(currutmp != NULL && currutmp->mode)
          {
            screenline* screen = (screenline *)calloc(t_lines, sizeof(screenline));
@@ -1116,7 +1116,7 @@ int igetch()
            continue;
          }
 
-       case Ctrl('Q'):  // wildcat : 快速離站 :p
+       case Ctrl('W'):  // wildcat : 快速離站 :p
          if(currutmp->mode && currutmp->mode != READING)
          {
            if(answer("確定要離站?? (y/N)") != 'y')
@@ -1128,6 +1128,7 @@ int igetch()
          }
          else return (ch);
 
+#if 0
        case Ctrl('Z'):   /* wildcat:help everywhere */
        {
          static short re_entry = 0; /* CityLion: 防重入的... */
@@ -1156,6 +1157,33 @@ int igetch()
          }
          else return (ch);
        }
+#endif
+       case Ctrl('Z'):
+       {
+         static char re_entry = 0;
+         screenline* screen = (screenline *)calloc(t_lines, sizeof(screenline));
+
+         if(re_entry)
+         {
+           pressanykey("您已經使用快速選單了:)");
+           return ch;
+         }         
+         
+         if(currutmp && currutmp->mode != IDLE)
+         {
+           if(currutmp->mode == EDITING)
+             return ch;
+         
+           re_entry = 1;
+           vs_save(screen);         
+           every_menu();
+           vs_restore(screen);
+           re_entry = 0;
+           continue;
+         }
+         return ch;
+       }
+       break;
        case Ctrl('U'):
          resetutmpent();
          if(currutmp != NULL && currutmp->mode != EDITING &&
@@ -1204,7 +1232,6 @@ int igetch()
           }
           else return (ch);
         }
-
 
         case '\n':   /* Ptt把 \n拿掉 */
            continue;

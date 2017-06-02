@@ -698,11 +698,14 @@ check_personal_note(int newflag, char* userid)
 int show_help(int mode)
 {
   if(inmore)
-    more(BBSHOME"/etc/help/MORE.help",YEA);
+//    more(BBSHOME"/etc/help/MORE.help",YEA);
+    return 0;
   else if(mode == LUSERS)
-    more(BBSHOME"/etc/help/LUSERS.help",YEA);
+//    more(BBSHOME"/etc/help/LUSERS.help",YEA);
+    return 0;
   else if(mode == READBRD || mode == READNEW)
-    more(BBSHOME"/etc/help/BOARD.help",YEA);
+//    more(BBSHOME"/etc/help/BOARD.help",YEA);
+    return 0;
   else if(mode == RMAIL)
 //    more(BBSHOME"/etc/help/MAIL.help",YEA);
     return 0;
@@ -710,9 +713,11 @@ int show_help(int mode)
 //    more(BBSHOME"/etc/help/READ.help",YEA);
     return 0;
   else if(mode == ANNOUNCE)
-    more(BBSHOME"/etc/help/ANNOUNCE.help",YEA);
+//    more(BBSHOME"/etc/help/ANNOUNCE.help",YEA);
+    return 0;
   else if(mode == EDITING)
-    more(BBSHOME"/etc/help/EDIT.help",YEA);
+//    more(BBSHOME"/etc/help/EDIT.help",YEA);
+    return 0;
   else
     HELP();
   return 0;
@@ -955,4 +960,54 @@ change_bp(y, title, desc)
     }
   }
   pressanykey(NULL);
+}
+
+#define FN_GAMELOG "etc/game.log"
+
+int game_log(va_alist)
+  va_dcl
+{
+  va_list ap;
+  char *game, *fmt, desc[128];
+  FILE *fp;
+  time_t now=time(0);
+  
+  va_start(ap);
+    game = va_arg(ap, char *);
+    fmt = va_arg(ap, char *);
+    vsprintf(desc, fmt, ap);
+  va_end(ap);
+  
+  fp=fopen(FN_GAMELOG, "a+");
+  fprintf(fp, "\033[1;37m%s \033[33m%s \033[32m%s \033[36m%s\033[m\n", 
+              game, Etime(&now), cuser.userid, desc);
+  fclose(fp);
+  
+  return 0;
+}
+
+//hialan: 從 At 的menu.c 移植過來的
+int every_menu() 
+{
+  char ch;
+  char *choose[4]={"mM)信件列表", "fF)我的最愛", "uU)使用者名單", msg_choose_cancel};
+
+  if (!cuser.userlevel)
+    return RC_FULL;
+  ch = getans2(b_lines, 0, "快速選單", choose, 4, 'q');
+  switch(ch)
+  {
+   case 'm':
+         m_read();
+         break;
+   case 'f':
+         Favor();
+         break;
+   case 'u':
+         t_users();
+         break;
+   default:
+         break;
+  }
+  return RC_FULL;
 }

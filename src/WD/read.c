@@ -839,7 +839,7 @@ int i_read_helper(struct one_key *rcmdlist)
         sprintf(tmpbuf,"%s [線上 %d 人]",BOARDNAME,count_ulist());
         showtitle("線上求助", tmpbuf);
 
-        prints("[←]上一頁 [→]執行該指令 [↑↓]選擇\n");
+        prints("←)上一頁 →)執行該指令 ↑|↓)選擇 TAB)本站說明手冊\n");
         prints("%s    指令/按鍵   權    限     說          明%36s\033[0m\n", COLOR3, "");
 
       case 2:
@@ -959,6 +959,11 @@ int i_read_helper(struct one_key *rcmdlist)
          re_enter = 0;
          draw = 1;
        }
+       break;
+     
+     case KEY_TAB:
+       HELP();
+       draw=1;
        break;
     }
   }

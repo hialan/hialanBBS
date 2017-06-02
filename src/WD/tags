@@ -3,7 +3,8 @@ Announce	announce.c	/^Announce ()$/
 AnnounceSelect	announce.c	/^AnnounceSelect ()$/
 AppearInList	name.c	/^AppearInList(struct word *cwlist, char *data)$/
 ApplyToNameList	name.c	/^ApplyToNameList(fptr)$/
-AskTag	read.c	/^AskTag(msg)$/
+AskTag	read.c	/^int AskTag(char *msg)$/
+BOARD	menu.c	/^BOARD()$/
 Ben_Perm	board.c	/^Ben_Perm(boardheader *bptr)$/
 Boards	board.c	/^Boards()$/
 Cdate	stuff.c	/^Cdate(clock)$/
@@ -15,31 +16,37 @@ CountNameList	name.c	/^CountNameList()$/
 CreateNameList	name.c	/^CreateNameList()$/
 EnumTagFhdr	read.c	/^EnumTagFhdr(fhdr, direct, locus)$/
 EnumTagName	read.c	/^EnumTagName(fname, locus)$/
-Favor	board.c	/^Favor()$/
+Favor	board.c	/^int Favor()$/
 FreeNameList	name.c	/^FreeNameList()$/
 GetSubList	name.c	/^GetSubList(tag, list)$/
 Goodbye	bbs.c	/^Goodbye()$/
 HELP	announce.c	/^HELP ()$/
 InNameList	name.c	/^InNameList(name)$/
-ListEdit	list.c	/^ListEdit(fname)$/
-ListMain	list.c	/^ListMain()$/
+ListEdit	list.c	/^void ListEdit(char *fname)$/
+ListMain	list.c	/^int ListMain()$/
 LoadNameList	name.c	/^LoadNameList(reciper, listfile, msg)$/
 Log	announce.c	/^Log ()$/
+Mail	menu.c	/^Mail()$/
 MaxLen	name.c	/^MaxLen(list, count)$/
 Mmain	main.c	/^main(argc, argv)$/
 New	board.c	/^New()$/
 NumInList	name.c	/^NumInList(list)$/
 Post	bbs.c	/^Post ()$/
-Ptt_prints	more.c	/^Ptt_prints(char* str,int mode)$/
-Read	bbs.c	/^Read ()$/
+PowerBook	menu.c	/^PowerBook()$/
+Ptt_prints	more.c	/^char *Ptt_prints(char* str,int mode)$/
+Read	bbs.c	/^void Read ()$/
 ReadSelect	bbs.c	/^ReadSelect ()$/
 RemoveNameList	name.c	/^RemoveNameList(name)$/
 SHOW_BRDLIST	board.c	/^#define SHOW_BRDLIST() show_brdlist(head, clsflag,/
 Select	bbs.c	/^Select ()$/
+Service	menu.c	/^Service()$/
 ShowNameList	name.c	/^ShowNameList(row, column, prompt)$/
 TagThread	read.c	/^TagThread(direct, search, type)$/
 Tagger	read.c	/^Tagger(chrono, recno, mode )$/
+Talk	menu.c	/^static Talk()$/
 ToggleNameList	name.c	/^ToggleNameList(reciper, listfile, msg)$/
+User	menu.c	/^User()$/
+UserHabit	menu.c	/^UserHabit()$/
 UserMaxLen	name.c	/^UserMaxLen(cwlist, cwnum, morenum, count)$/
 UserSubArray	name.c	/^UserSubArray(cwbuf, cwlist, cwnum, key, pos)$/
 XFile	announce.c	/^XFile ()$/
@@ -50,7 +57,7 @@ a_delete	announce.c	/^a_delete (pm)$/
 a_delrange	announce.c	/^a_delrange (pm)$/
 a_editsign	announce.c	/^a_editsign (pm)$/
 a_forward	announce.c	/^a_forward (path, pitem, mode)$/
-a_loadname	announce.c	/^a_loadname (pm)$/
+a_loadname	announce.c	/^static void a_loadname (AMENU *pm)$/
 a_menu	announce.c	/^a_menu (maintitle, path, lastlevel, mode)$/
 a_moveitem	announce.c	/^a_moveitem (pm)$/
 a_newitem	announce.c	/^a_newitem (pm, mode)$/
@@ -59,15 +66,15 @@ a_pasteitem	announce.c	/^a_pasteitem (pm)$/
 a_perm	announce.c	/^a_perm(fname,fhdr,me)$/
 a_refusemark	announce.c	/^a_refusemark (pm)$/
 a_searchtitle	announce.c	/^a_searchtitle (pm, rev)$/
-a_showmenu	announce.c	/^a_showmenu (pm)$/
+a_showmenu	announce.c	/^static int a_showmenu (AMENU *pm)$/
 a_showname	announce.c	/^a_showname (pm)$/
 a_timestamp	announce.c	/^a_timestamp (buf, time)$/
 abort_bbs	main.c	/^abort_bbs()$/
 add_distinct	main.c	/^add_distinct(char* fname, char* line)$/
-add_flush	io.c	/^add_flush(flushfunc)$/
-add_io	io.c	/^add_io(fd, timeout)$/
+add_io	visio.c	/^void add_io(int fd, int timeout)$/
 add_tag	bbs.c	/^add_tag (ent, fhdr, direct)$/
 addsignature	edit.c	/^addsignature(fp)$/
+admin	menu.c	/^admin()$/
 alloc_line	edit.c	/^alloc_line()$/
 ansi2n	edit.c	/^ansi2n(int ansix, textline * line)$/
 answer	stuff.c	/^answer(char *s)$/
@@ -77,28 +84,27 @@ apply_ulist	cache.c	/^apply_ulist(fptr)$/
 ask	edit.c	/^ask (prompt)$/
 ask_tmpbuf	edit.c	/^ask_tmpbuf(int y)$/
 atexit	stuff.c	/^atexit(procp)$/
-atitle	announce.c	/^atitle ()$/
+atitle	announce.c	/^static void atitle ()$/
 auto_backup	edit.c	/^auto_backup()$/
-b_load_class	bbs.c	/^b_load_class(bname)$/
+b_load_class	bbs.c	/^static int b_load_class(char *bname) \/*文章類別 b/
 b_namearray	board.c	/^b_namearray(buf, pnum, tag)$/
 b_notes	bbs.c	/^b_notes ()$/
 back_line	edit.c	/^back_line(pos, num)$/
-bad_user_id	register.c	/^bad_user_id(userid)$/
+bad_user_id	user.c	/^int bad_user_id(char *userid)$/
 bbs_sendmail	mail.c	/^bbs_sendmail(fpath, title, receiver, key)$/
-be_rejected	talk.c	/^be_rejected(userid)$/
 beginsig	edit.c	/^beginsig(char* s)$/
-bell	stuff.c	/^bell()$/
+bell	stuff.c	/^void bell()$/
 belong	stuff.c	/^belong(filelist, key)$/
-belong_list	list.c	/^belong_list(fname, userid)$/
+belong_list	list.c	/^int belong_list(char *fname, char *userid)$/
 belong_spam	stuff.c	/^belong_spam(filelist, key)$/
 block_color	edit.c	/^block_color()$/
 block_del	edit.c	/^block_del(int hide)$/
 block_shift_left	edit.c	/^block_shift_left()$/
 block_shift_right	edit.c	/^block_shift_right()$/
-bmw_lightbar	msg.c	/^bmw_lightbar(num, bmw, row, bar, barcolor)$/
+bmw_lightbar	msg.c	/^static void bmw_lightbar(int num, fileheader *bmw,/
 bmw_refresh	msg.c	/^bmw_refresh()$/
-bmwtitle	msg.c	/^bmwtitle()$/
-board	board.c	/^board()$/
+bmwtitle	msg.c	/^static void bmwtitle()$/
+board	board.c	/^int board()$/
 board_digest	bbs.c	/^board_digest ()$/
 board_edit	bbs.c	/^board_edit ()$/
 board_select	bbs.c	/^board_select ()$/
@@ -109,39 +115,37 @@ brc_putrecord	board.c	/^brc_putrecord(ptr, name, num, list)$/
 brc_unread	board.c	/^brc_unread(fname)$/
 brc_update	board.c	/^brc_update()$/
 brdcomplete	name.c	/^brdcomplete(prompt, data)$/
-brdlist_foot	board.c	/^brdlist_foot()$/
-brdperm	bbs.c	/^brdperm (char *brdname, char *userid)$/
+brdlist_foot	board.c	/^static void brdlist_foot()$/
+brdperm	bbs.c	/^int brdperm (char *brdname, char *userid)$/
 cancel_post	bbs.c	/^cancel_post(fhdr, fpath)$/
 cancelpost	bbs.c	/^cancelpost (fh, by_BM)$/
-capture_screen	stuff.c	/^capture_screen()$/
-change_bp	hialan.c	/^change_bp(y, title, desc)$/
+capture_screen	visio.c	/^void capture_screen()$/
+change_bp	stuff.c	/^change_bp(y, title, desc)$/
 change_lightbar	color.c	/^change_lightbar()$/
-change_scroll_range	term.c	/^change_scroll_range(int top, int bottom)$/
+change_scroll_range	visio.c	/^static change_scroll_range(int top, int bottom)$/
 change_talk_type	talk.c	/^change_talk_type()$/
-chcxy	screen.c	/^chcxy(type)$/
 check_BM	main.c	/^check_BM()      \/* Ptt 自動取下離職板主權力 *\/$/
-check_ctrlword	io.c	/^check_ctrlword(buf,len)$/
+check_ctrlword	visio.c	/^int check_ctrlword(char *buf,int len)$/
 check_local	edit.c	/^check_local(int i)$/
 check_max_online	main.c	/^check_max_online()$/
 check_money	stuff.c	/^check_money(unsigned long int money,int mode)$/
 check_newpost	board.c	/^check_newpost(ptr)$/
 check_personal_note	stuff.c	/^check_personal_note(int newflag, char* userid) $/
 check_quote	edit.c	/^check_quote()$/
-check_register	register.c	/^check_register()$/
+check_register	stuff.c	/^check_register()$/
 check_words	edit.c	/^check_words()$/
 chkmail	mail.c	/^chkmail(rechk)$/
 chkmailbox	mail.c	/^chkmailbox(void)$/
-chkpasswd	register.c	/^chkpasswd(passwd, test)$/
+chkpasswd	user.c	/^int chkpasswd(char *passwd, char *test)$/
 chkstr	name.c	/^chkstr(otag, tag, name)$/
-choose_board	board.c	/^choose_board(int newflag,usint mode)$/
+choose_board	board.c	/^static void choose_board(int newflag,usint mode)$/
 chyiuan_ansi	stuff.c	/^chyiuan_ansi(buf,str,max)$/
 ci_strcmp	cache.c	/^ci_strcmp(s1, s2)$/
 cite	bbs.c	/^cite (ent, fhdr, direct)$/
-clear	screen.c	/^clear()$/
-clrchyiuan	screen.c	/^clrchyiuan(int x,int y)$/
-clrstandout	screen.c	/^clrstandout()$/
-clrtobot	screen.c	/^clrtobot()$/
-clrtoeol	screen.c	/^clrtoeol()$/
+clear	visio.c	/^void clear()$/
+clrchyiuan	visio.c	/^void clrchyiuan(int x,int y)$/
+clrtobot	visio.c	/^void clrtobot()$/
+clrtoeol	visio.c	/^void clrtoeol()$/
 cmpbnames	bbs.c	/^cmpbnames (bname, brec)$/
 cmpboard	board.c	/^cmpboard(brd, tmp)$/
 cmpfilename	bbs.c	/^cmpfilename (fhdr)$/
@@ -157,14 +161,13 @@ count_logins	cache.c	/^count_logins(fptr, farg, show)$/
 count_multi	cache.c	/^count_multi()$/
 count_multiplay	money.c	/^count_multiplay(int unmode)$/
 count_ulist	cache.c	/^count_ulist()$/
-cp_board	board.c	/^cp_board(ptr, bptr, n)$/
+cp_board	board.c	/^static void cp_board(boardstat *ptr, boardheader */
 creat_list	talk.c	/^creat_list()$/
 cross_post	bbs.c	/^cross_post (ent, fhdr, direct)$/
-cursor_clear	stuff.c	/^cursor_clear(row, column)$/
+cursor_clear	stuff.c	/^void cursor_clear(row, column)$/
 cursor_key	stuff.c	/^cursor_key(row, column)$/
 cursor_pos	read.c	/^cursor_pos(locmem, val, from_top)$/
-cursor_show	stuff.c	/^cursor_show(row, column)$/
-cvtchar	term.c	/^cvtchar(sp, c)$/
+cursor_show	stuff.c	/^void cursor_show(row, column)$/
 dashd	stuff.c	/^dashd(fname)$/
 dashf	stuff.c	/^dashf(fname)$/
 dashl	stuff.c	/^dashl(fname)$/
@@ -188,30 +191,26 @@ demoney	money.c	/^demoney(unsigned long int money)$/
 deumoney	money.c	/^deumoney(char *tuser, int money)$/
 display_buffer	edit.c	/^display_buffer()$/
 do_aloha	msg.c	/^do_aloha(char *hello)$/
-do_copy_post	bbs.c	/^do_copy_post (board, fpath, filemode)   \/\/複製文/
+do_copy_post	bbs.c	/^int do_copy_post (char *board, char *fpath, uschar/
 do_getuser	cache.c	/^do_getuser(userid, tuser)$/
 do_hold_mail	mail.c	/^do_hold_mail(fpath, receiver, holder)$/
-do_move	term.c	/^do_move(destcol, destline)$/
-do_post	bbs.c	/^do_post ()$/
-do_postnotify	bbs.c	/^do_postnotify (char *fpath)$/
+do_move	visio.c	/^void do_move(int destcol, int destline)$/
+do_post	bbs.c	/^int do_post ()$/
 do_quote	edit.c	/^do_quote()$/
 do_reply	bbs.c	/^do_reply (fhdr)$/
 do_reply_title	bbs.c	/^do_reply_title (row, title)$/
 do_select	bbs.c	/^do_select()$/
 do_send	mail.c	/^do_send(userid, title)$/
-do_talk	talk.c	/^do_talk(fd)$/
-do_talk_char	talk.c	/^do_talk_char(twin, ch)$/
-do_talk_nextline	talk.c	/^do_talk_nextline(twin)$/
 do_voteboard	votebrd.c	/^int do_voteboard(void)$/
-do_voteboardreply	votebrd.c	/^do_voteboardreply(fileheader *fhdr)$/
-doent	bbs.c	/^doent (num, ent, row, bar, bar_color)$/
+do_voteboardreply	votebrd.c	/^void do_voteboardreply(fileheader *fhdr)$/
+doent	bbs.c	/^void doent (int num, fileheader *ent, int row, cha/
 doforward	mail.c	/^doforward(direct, fh, mode)$/
-dogetch	io.c	/^dogetch()$/
+dogetch	visio.c	/^static int dogetch()$/
 domenu	menu.c	/^domenu(int cmdmode, char *cmdtitle, int cmd, struc/
 dosearchuser	main.c	/^dosearchuser(userid)$/
 edit_loginplan	loginplan.c	/^int edit_loginplan()$/
-edit_msg	edit.c	/^edit_msg(void)$/
-edit_note	stuff.c	/^edit_note()$/
+edit_msg	edit.c	/^static void edit_msg(void)$/
+edit_note	stuff.c	/^void edit_note()$/
 edit_outs	edit.c	/^edit_outs(text)$/
 edit_planitem	loginplan.c	/^static void edit_planitem(int pos, char *bar)$/
 edit_post	bbs.c	/^edit_post (ent, fhdr, direct)$/
@@ -219,6 +218,7 @@ edit_title	bbs.c	/^edit_title (ent, fhdr, direct)$/
 erase_tmpbuf	edit.c	/^erase_tmpbuf()$/
 favor_edit	board.c	/^favor_edit() $/
 fillucache	cache.c	/^fillucache(uentp)$/
+finance	menu.c	/^finance()$/
 fixkeep	read.c	/^fixkeep(s, first)$/
 flock	record.c	/^flock(fd, op)$/
 force_board	board.c	/^void force_board(char *bname)$/
@@ -226,15 +226,12 @@ forward_line	edit.c	/^forward_line(pos, num)$/
 friend_add	talk.c	/^friend_add(uident)$/
 friend_delete	talk.c	/^friend_delete(uident)$/
 friend_descript	talk.c	/^friend_descript(uident)$/
-friend_load	talk.c	/^friend_load()$/
+friend_load	talk.c	/^void friend_load()$/
 g_additem	announce.c	/^g_additem (GMENU * pm, ITEM * myitem)$/
 g_bm_names	bbs.c	/^g_bm_names(bh)$/
 g_board_names	bbs.c	/^g_board_names (fhdr)$/
 g_searchtitle	announce.c	/^g_searchtitle (GMENU * pm, int rev)$/
 g_showmenu	announce.c	/^g_showmenu (pm)$/
-game_get	record.c	/^game_get(userid,GD)$/
-game_log	stuff.c	/^game_log(va_alist)$/
-game_rec	record.c	/^game_rec(userid,GD)$/
 garbage_line	edit.c	/^garbage_line(str)               \/* quote deletion/
 gem	announce.c	/^gem(char *maintitle, ITEM * path, int update)$/
 gem_files	record.c	/^gem_files(char* dirname, int (*filecheck)())$/
@@ -242,15 +239,14 @@ gem_tag	bbs.c	/^gem_tag (ent, fhdr, direct)$/
 get_bonus	stuff.c	/^get_bonus()$/
 get_color	color.c	/^get_color(char *color, char cset[5])$/
 get_lightbar_color	color.c	/^get_lightbar_color(char *color)$/
-get_records	record.c	/^get_records(fpath, rptr, size, id, number)$/
-get_sum_records	record.c	/^get_sum_records(char* fpath, int size)$/
-getans	io.c	/^getans(prompt)$/
-getans2	hialan.c	/^getans2(line, col, prompt, s, many, def)$/
-getarg	term.c	/^getarg(argnum, type, p)$/
+get_records	record.c	/^int get_records(char *fpath, char *rptr, int size,/
+get_sum_records	record.c	/^int get_sum_records(char* fpath, int size)$/
+getans	visio.c	/^getans(prompt)$/
+getans2	visio.c	/^getans2(int line, int col, char *prompt, char **s,/
 getbcache	cache.c	/^getbcache(bname)$/
 getbname	cache.c	/^getbname(bid)$/
 getbnum	cache.c	/^getbnum(bname)$/
-getdata	io.c	/^getdata(line, col, prompt, buf, len, echo, ans)$/
+getdata	visio.c	/^getdata(int line, int col, char *prompt, char *buf/
 getindex	bbs.c	/^getindex (fpath, fname, size)$/
 getkeep	read.c	/^getkeep(s, def_topline, def_cursline)$/
 getlineno	edit.c	/^getlineno()$/
@@ -258,65 +254,65 @@ getmailnum	mail.c	/^getmailnum(void)$/
 getnewutmpent	cache.c	/^getnewutmpent(up)$/
 getuser	cache.c	/^getuser(userid)$/
 getuserid	cache.c	/^getuserid(num)$/
-getyx	screen.c	/^getyx(y, x)$/
+getyx	visio.c	/^void getyx(int *y, int *x)$/
 go_cmd	announce.c	/^go_cmd (node, sock)$/
 go_menu	announce.c	/^go_menu (GMENU * pm, ITEM * node, int update)$/
 go_proxy	announce.c	/^go_proxy (char *fpath, ITEM * node, int update)$/
 good_board	board.c	/^good_board()$/
 good_post	bbs.c	/^good_post (ent, fhdr, direct)$/
 goto_line	edit.c	/^goto_line(int lino)$/
-gtty	term.c	/^#define gtty(fd, data) tcgetattr( fd, data )$/
+gtty	visio.c	/^#define gtty(fd, data) tcgetattr( fd, data )$/
 guest_count_ulist	cache.c	/^guest_count_ulist()$/
 habit_feeling	loginplan.c	/^static int habit_feeling()$/
 habit_from	loginplan.c	/^static int habit_from()$/
 haspostperm	cache.c	/^haspostperm(bname)$/
-have_author	board.c	/^have_author(char* brdname)$/
-hit_alarm_clock	io.c	/^hit_alarm_clock()$/
+have_author	board.c	/^int have_author(char* brdname)$/
+hialan_test	menu.c	/^int hialan_test()$/
+hit_alarm_clock	visio.c	/^static void hit_alarm_clock()$/
 hold_mail	mail.c	/^hold_mail(fpath, receiver)$/
 i_read	read.c	/^i_read(cmdmode, direct, dotitle, doentry, rcmdlist/
-i_read_helper	read.c	/^i_read_helper(rcmdlist)$/
-i_read_key	read.c	/^i_read_key(rcmdlist, locmem, ch)$/
+i_read_helper	read.c	/^int i_read_helper(struct one_key *rcmdlist)$/
+i_read_key	read.c	/^i_read_key(struct one_key *rcmdlist, struct keeplo/
 idlist_add	name.c	/^idlist_add(fpath, desc, uident)$/
 idlist_delete	name.c	/^idlist_delete(fpath, uident)$/
-igetch	io.c	/^igetch()$/
-igetkey	io.c	/^igetkey()$/
+igetch	visio.c	/^int igetch()$/
+igetkey	visio.c	/^int igetkey()$/
 inbtotal	cache.c	/^inbtotal(bname, add)$/
 indent_spcs	edit.c	/^indent_spcs()$/
 indigestion	edit.c	/^indigestion(i)$/
 ingold	money.c	/^ingold(unsigned long int money)$/
-init_alarm	io.c	/^init_alarm()$/
-init_tty	term.c	/^init_tty()$/
-initscr	screen.c	/^initscr()$/
+init_alarm	visio.c	/^void init_alarm()$/
+init_tty	visio.c	/^void init_tty()$/
+initscr	visio.c	/^void initscr()$/
 inmailbox	money.c	/^inmailbox(int m)$/
 inmoney	money.c	/^inmoney(int money)$/
 insert_char	edit.c	/^insert_char(ch)$/
 insert_string	edit.c	/^insert_string(str)$/
 inugold	money.c	/^inugold(char *tuser,int money)$/
 inumoney	money.c	/^inumoney(char *tuser,int money)$/
-invalid_fname	stuff.c	/^invalid_fname(str)$/
+invalid_fname	stuff.c	/^int invalid_fname(char *str)$/
 invalid_pname	stuff.c	/^invalid_pname(str)$/
-is_BM	stuff.c	/^is_BM(list)$/
-is_friend	talk.c	/^is_friend(ui)$/
-is_hidden	talk.c	/^is_hidden(user)$/
-is_menu_stat	menu.c	/^is_menu_stat()	\/*判斷特定看板  by hialan 02\/04\//
+is_friend	talk.c	/^int is_friend(user_info *ui)$/
+is_hidden	talk.c	/^is_hidden(char *user)$/
+is_menu_stat	menu.c	/^int is_menu_stat()	\/*判斷特定看板  by hialan 02\//
 is_rejected	talk.c	/^is_rejected(ui)$/
 isig	announce.c	/^isig (sig)$/
 join	edit.c	/^join(line)$/
 killsp	edit.c	/^killsp(s)$/
 lazy_delete	bbs.c	/^lazy_delete (fhdr)$/
 leave_bbs	main.c	/^leave_bbs()$/
-list_add	list.c	/^list_add()$/
-list_del	list.c	/^list_del(ent, fhdr, direct)$/
-list_desc	list.c	/^list_desc(fhdr, echo)$/
-list_edit	list.c	/^list_edit(ent, fhdr, direct)$/
-list_merge	list.c	/^list_merge(ent, fhdr, direct)$/
-list_move	list.c	/^list_move(ent, fhdr, direct)$/
-list_multi	list.c	/^list_multi(ent, fhdr, direct)$/
-list_view	list.c	/^list_view(ent, fhdr, direct)$/
+list_add	list.c	/^int list_add()$/
+list_del	list.c	/^static int list_del(int ent, fileheader *fhdr, cha/
+list_desc	list.c	/^static void list_desc(fileheader *fhdr, int echo)$/
+list_edit	list.c	/^static int list_edit(int ent, fileheader *fhdr, ch/
+list_merge	list.c	/^static int list_merge(int ent, fileheader *fhdr, c/
+list_move	list.c	/^static int list_move(int ent, fileheader *fhdr, ch/
+list_multi	list.c	/^static int list_multi(int ent, fileheader *fhdr, c/
+list_view	list.c	/^static int list_view(int ent, fileheader *fhdr, ch/
 listcuent	talk.c	/^listcuent(uentp)$/
-listdoent	list.c	/^listdoent(num, ent, row, bar, bar_color)$/
-listtitle	list.c	/^listtitle()$/
-load_boards	board.c	/^load_boards(char *bname , usint mode)$/
+listdoent	list.c	/^static void listdoent(int num, fileheader *ent, in/
+listtitle	list.c	/^static void listtitle()$/
+load_boards	board.c	/^static void load_boards(char *bname , usint mode)$/
 load_file	edit.c	/^load_file(fp)$/
 load_paste	announce.c	/^load_paste ()$/
 load_winform	window.c	/^load_winform(Win_form *woutput)$/
@@ -329,48 +325,48 @@ log_board3	bbs.c	/^log_board3( mode, str, num )$/
 log_usies	main.c	/^log_usies(mode, msg)$/
 logattempt	main.c	/^logattempt(uid, type)$/
 login_plan	loginplan.c	/^int login_plan()$/
-login_query	main.c	/^login_query()$/
+login_query	main.c	/^static void login_query()$/
 loginplan_order	loginplan.c	/^static void loginplan_order()	\/\/取得順序$/
 m_forward	mail.c	/^m_forward(ent, fhdr, direct)$/
 m_internet	mail.c	/^m_internet()$/
 m_new	mail.c	/^m_new()$/
-m_postnotify	user.c	/^m_postnotify()$/
 m_read	mail.c	/^m_read()$/
 m_send	mail.c	/^m_send()$/
 m_sysop	bbs.c	/^m_sysop()$/
+m_user_admin	menu.c	/^m_user_admin()$/
 mail2user	stuff.c	/^mail2user(muser, title, fname, filemode)$/
 mail_all	mail.c	/^mail_all()$/
 mail_cross_post	mail.c	/^mail_cross_post(ent, fhdr, direct)$/
 mail_del	mail.c	/^mail_del(ent, fhdr, direct)$/
 mail_forward	mail.c	/^mail_forward(fhdr, direct, mode)$/
-mail_justify	mail.c	/^mail_justify(userec muser)$/
+mail_justify	mail.c	/^void mail_justify(userec muser)$/
 mail_list	mail.c	/^mail_list()$/
 mail_mbox	mail.c	/^mail_mbox()$/
 mail_read	mail.c	/^mail_read(ent, fhdr, direct)$/
 mail_reply	mail.c	/^mail_reply(ent, fhdr, direct)$/
 mail_save	mail.c	/^mail_save(int ent, fileheader* fhdr, char* direct)/
-mailtitle	mail.c	/^mailtitle()$/
+mailtitle	mail.c	/^static void mailtitle()$/
 make_blist	bbs.c	/^make_blist ()$/
 make_bmlist	bbs.c	/^make_bmlist()$/
-make_cold	bbs.c	/^make_cold(board,save_title,money, fpath)$/
+make_cold	bbs.c	/^int make_cold(char *board, char *save_title, int m/
 man	bbs.c	/^man()$/
 mark	bbs.c	/^mark (ent, fhdr, direct)$/
 match_paren	edit.c	/^match_paren()$/
-modestring	talk.c	/^modestring(uentp, simple)$/
+modestring	talk.c	/^char *modestring(user_info *uentp, int simple)$/
 mon_help	announce.c	/^mon_help ()$/
-more	more.c	/^more(fpath, promptend)$/
+more	more.c	/^int more(char *fpath, int promptend)$/
 more_web	more.c	/^more_web(fpath, promptend)$/
-move	screen.c	/^move(y, x)$/
+move	visio.c	/^void move(int y, int x)$/
 move_cursor_line	read.c	/^move_cursor_line(locmem, mode)$/
 movie	menu.c	/^void movie(int i)$/
-msgbox	window.c	/^msgbox(line, width, title, prompt)$/
+msgbox	window.c	/^int msgbox(int line, int width, char *title, char /
 multi_list	mail.c	/^multi_list(reciper)$/
 multi_reply	mail.c	/^multi_reply(ent, fhdr, direct)$/
 multi_send	mail.c	/^multi_send(title, inmail)$/
 multi_user_check	main.c	/^multi_user_check()$/
 my_ctime	stuff.c	/^my_ctime(const time_t *t)$/
 my_gem	announce.c	/^my_gem()$/
-my_kick	talk.c	/^my_kick(uentp)$/
+my_kick	talk.c	/^static void my_kick(user_info *uentp)$/
 my_open	announce.c	/^my_open (char *path)$/
 my_query	talk.c	/^my_query(uident)$/
 my_send	mail.c	/^my_send(uident)$/
@@ -381,67 +377,62 @@ namecomplete	name.c	/^namecomplete(prompt, data)$/
 nextfield	announce.c	/^nextfield (data, field)$/
 nolfilename	record.c	/^nolfilename(n, fpath)$/
 note	bbs.c	/^note()$/
-num_in_buf	io.c	/^num_in_buf()$/
-o_clear	screen.c	/^#define o_clear()     output(clearbuf,clearbuflen)/
-o_cleol	screen.c	/^#define o_cleol()     output(cleolbuf,cleolbuflen)/
-o_scrollrev	screen.c	/^#define o_scrollrev() output(scrollrev,scrollrevle/
-o_standdown	screen.c	/^#define o_standdown() output(endstandout,endstando/
-o_standup	screen.c	/^#define o_standup()   output(strtstandout,strtstan/
-ochar	io.c	/^ochar(c)$/
-offset_count	io.c	/^offset_count(char *prompt)   \/\/ Robert Liu 20010/
-oflush	io.c	/^oflush()$/
-outc	screen.c	/^outc(ch)$/
-outcf	term.c	/^outcf(ch)$/
-outch	screen.c	/^outch(c)$/
-outgo_post	bbs.c	/^outgo_post(fh, board)$/
-outmsg	screen.c	/^outmsg(msg)$/
-outns	screen.c	/^outns(str, n)$/
-output	io.c	/^output(s, len)$/
-outs	screen.c	/^outs(str)$/
-outz	screen.c	/^outz(msg)$/
+null_menu	menu.c	/^\/\/ wildcat : 分格線用的空選單 :p$/
+num_in_buf	visio.c	/^int num_in_buf()$/
+o_ansi	visio.c	/^#define o_ansi(x)       output(x, sizeof(x)-1)$/
+o_clear	visio.c	/^#define o_clear()       o_ansi("\\033[;H\\033[2J")/
+o_cleol	visio.c	/^#define o_cleol()       o_ansi("\\033[K")$/
+o_scrollrev	visio.c	/^#define o_scrollrev()   o_ansi("\\033[L")$/
+o_standdown	visio.c	/^#define o_standdown()   o_ansi("\\033[m")$/
+o_standup	visio.c	/^#define o_standup()     o_ansi("\\033[7m")$/
+ochar	visio.c	/^void ochar(char c)$/
+offset_count	visio.c	/^int offset_count(char *prompt)   \/\/ Robert Liu 2/
+oflush	visio.c	/^void oflush()$/
+outc	visio.c	/^void outc(register unsigned char ch)$/
+outch	visio.c	/^void outch(register uschar c)$/
+outgo_post	bbs.c	/^void outgo_post(fileheader *fh, char *board)$/
+outmsg	visio.c	/^outmsg(msg)$/
+output	visio.c	/^static void output(char *s, int len)$/
+outs	visio.c	/^void outs(str)$/
+outz	visio.c	/^void outz(register char *msg)$/
 over_load	main.c	/^over_load()$/
 pal_type	talk.c	/^pal_type(userid, whoask)$/
-parsecolor	screen.c	/^parsecolor(buf)$/
-passwd_outs	io.c	/^passwd_outs(text)$/
+parsecolor	visio.c	/^static void parsecolor(char *buf)$/
+passwd_outs	visio.c	/^void passwd_outs(char *text)$/
 pickup_cmp	talk.c	/^pickup_cmp(i, j)$/
 pickup_user	talk.c	/^pickup_user()$/
 pklist_doent	talk.c	/^pklist_doent(pklist, ch, row, bar_color)$/
-popnum	term.c	/^popnum(num)$/
-popstring	term.c	/^popstring(str)$/
-post_b_results	bbs.c	/^post_b_results()$/
+post_b_results	bbs.c	/^static int post_b_results()$/
 post_mail	bbs.c	/^post_mail (ent, fhdr, direct)$/
 post_mail_uncode	bbs.c	/^post_mail_uncode (ent, fhdr, direct)$/
 post_query	bbs.c	/^post_query (ent, fhdr, direct)$/
-post_vote	bbs.c	/^post_vote()$/
-pressanykey	stuff.c	/^pressanykey(va_alist)$/
-pressanykey_old	stuff.c	/^pressanykey_old(va_alist)$/
+post_vote	bbs.c	/^static int post_vote()$/
+pressanykey	stuff.c	/^void pressanykey(va_alist)$/
+pressanykey_old	stuff.c	/^void pressanykey_old(va_alist)$/
 printdash	stuff.c	/^printdash(mesg)$/
-prints	screen.c	/^prints(va_alist)$/
+prints	visio.c	/^prints(va_alist)$/
 purge_utmp	cache.c	/^purge_utmp(uentp)$/
-pusharg	term.c	/^pusharg(arg)$/
-pushnum	term.c	/^pushnum(num)$/
-re_m_postnotify	user.c	/^re_m_postnotify()$/
 read_brc_buf	board.c	/^read_brc_buf()$/
 read_file	edit.c	/^read_file(fpath)$/
 read_new_mail	mail.c	/^read_new_mail(fptr)$/
 read_post	bbs.c	/^read_post (ent, fhdr, direct)$/
 read_tmpbuf	edit.c	/^read_tmpbuf(int n)$/
-readln	more.c	/^readln(fp, buf)$/
-readtitle	bbs.c	/^readtitle ()$/
+readfoot	bbs.c	/^void readfoot(char tag)$/
+readln	more.c	/^static int readln(FILE *fp, char *buf)$/
+readtitle	bbs.c	/^static void readtitle ()$/
 rec_del	record.c	/^rec_del(fpath, size, id)$/
 rec_search	record.c	/^rec_search(fpath, rptr, size, fptr, farg)$/
-redoscr	screen.c	/^redoscr()$/
-refresh	screen.c	/^refresh()$/
+redoscr	visio.c	/^void redoscr()$/
+refresh	visio.c	/^void refresh()$/
 refusemark	bbs.c	/^refusemark(ent, fhdr, direct)$/
-region_scroll_down	screen.c	/^region_scroll_down(int top, int bottom)$/
-region_scroll_up	screen.c	/^region_scroll_up(int top, int bottom)$/
-rel_move	screen.c	/^rel_move(was_col, was_ln, new_col, new_ln)$/
+region_scroll_up	visio.c	/^void region_scroll_up(int top, int bottom)$/
+rel_move	visio.c	/^static void rel_move(was_col, was_ln, new_col, new/
 reload_bcache	cache.c	/^reload_bcache()$/
 reload_fcache	cache.c	/^reload_fcache()$/
 reload_filmcache	cache.c	/^reload_filmcache()$/
 reload_ucache	cache.c	/^reload_ucache()$/
 reply_post	bbs.c	/^reply_post (ent, fhdr, direct)$/
-reset_tty	term.c	/^reset_tty()$/
+reset_tty	visio.c	/^reset_tty()$/
 resetloginplan	loginplan.c	/^static int resetloginplan(p1, p2)$/
 resetutmpent	cache.c	/^resetutmpent()$/
 resolve_boards	cache.c	/^resolve_boards()$/
@@ -449,23 +440,22 @@ resolve_fcache	cache.c	/^resolve_fcache()$/
 resolve_garbage	cache.c	/^resolve_garbage()$/
 resolve_ucache	cache.c	/^resolve_ucache()$/
 resolve_utmp	cache.c	/^resolve_utmp()$/
-restore_backup	edit.c	/^restore_backup()$/
-restore_cursor	term.c	/^restore_cursor()$/
-restore_tty	term.c	/^restore_tty()$/
-rscroll	screen.c	/^rscroll()$/
-save_cursor	term.c	/^save_cursor()$/
+restore_backup	edit.c	/^void restore_backup()$/
+restore_cursor	visio.c	/^void restore_cursor()$/
+restore_tty	visio.c	/^restore_tty()$/
+rscroll	visio.c	/^void rscroll()$/
+save_cursor	visio.c	/^void save_cursor()$/
 save_lightbar_color	color.c	/^save_lightbar_color(char *color)$/
 save_loginplan	loginplan.c	/^static int save_loginplan()$/
 save_mail	bbs.c	/^save_mail (int ent, fileheader * fh, char *direct)/
 save_winform	window.c	/^save_winform(Win_form *winput)$/
 save_zapbuf	board.c	/^save_zapbuf()$/
-score	bbs.c	/^score (ent, fhdr, direct)$/
-score_note	bbs.c	/^score_note(prompt, fhdr, direct)	\/\/推薦加分!! 學/
-scroll	screen.c	/^scroll()$/
-scroll_forward	term.c	/^scroll_forward()$/
-scroll_reverse	term.c	/^scroll_reverse()$/
-search_board	board.c	/^search_board(num)$/
-search_num	stuff.c	/^search_num(ch, max)$/
+score	bbs.c	/^score (int ent, fileheader *fhdr, char *direct)$/
+score_note	bbs.c	/^score_note(char *prompt, fileheader *fhdr, char *d/
+scroll	visio.c	/^void scroll()$/
+scroll_forward	visio.c	/^static scroll_forward()$/
+search_board	board.c	/^static int search_board(int num)$/
+search_num	stuff.c	/^int search_num(int ch, int max)$/
 search_pickup	talk.c	/^search_pickup(num, actor, pklist)$/
 search_rec	record.c	/^search_rec(char* dirname, int (*filecheck)())$/
 search_str	edit.c	/^search_str(int mode)$/
@@ -476,44 +466,44 @@ searchowner	cache.c	/^user_info* searchowner(userid)	\/* alan.000422: ow/
 searchuser	cache.c	/^searchuser(userid)$/
 select_read	read.c	/^select_read(locmem,sr_mode)$/
 selector_item	color.c	/^selector_item(char *prompt, int line, int pos, cha/
-set_board	bbs.c	/^set_board ()$/
+set_board	bbs.c	/^void set_board ()$/
 set_menu_BM	board.c	/^set_menu_BM(char *BM)$/
-setbdir	stuff.c	/^setbdir(buf, boardname)$/
+setbdir	stuff.c	/^void setbdir(char *buf, char *boardname)$/
 setenv	stuff.c	/^setenv(name, value, overwrite)$/
 setflags	main.c	/^setflags(mask, value)$/
-setforward	mail.c	/^setforward() \/* Ptt , modify by wildcat*\/$/
+setforward	mail.c	/^int setforward() \/* Ptt , modify by wildcat*\/$/
 setup_utmp	main.c	/^setup_utmp(mode)$/
-setuserfile	stuff.c	/^setuserfile(buf, fname)$/
 setuserid	cache.c	/^setuserid(num, userid)$/
 setutmpmode	cache.c	/^setutmpmode(mode)$/
-show_brdlist	board.c	/^show_brdlist(head, clsflag, newflag)$/
-show_brdlist_line	board.c	/^show_brdlist_line( headx, row, clsflag, newflag, b/
-show_file	stuff.c	/^show_file(char *filename, int y, int lines, int mo/
-show_help	stuff.c	/^show_help(mode)$/
-show_helplist_line	read.c	/^show_helplist_line(row, cmd, barcolor)$/
+show_brdlist	board.c	/^static void show_brdlist(head, clsflag, newflag)$/
+show_brdlist_line	board.c	/^static void show_brdlist_line(int headx, int row, /
+show_cmd_level	read.c	/^static char *show_cmd_level(usint level)  \/\/顯示/
+show_file	more.c	/^int show_file(char *filename, int y, int lines, in/
+show_help	stuff.c	/^int show_help(int mode)$/
+show_helplist_line	read.c	/^static int show_helplist_line(int row, struct one_/
 show_last_call_in	msg.c	/^show_last_call_in()$/
-show_menu	menu.c	/^show_menu(struct one_key *p)$/
+show_menu	menu.c	/^static int show_menu(struct one_key *p)$/
 show_movie2	menu.c	/^int show_movie2()  \/\/小看板$/
-show_winbox	window.c	/^show_winbox(x, y, line, width, title, prompt)$/
-show_winline	window.c	/^show_winline(x, y, win_len, words, bgcolor, barcol/
-showplans	user.c	/^showplans(char* uid)$/
-showsig	user.c	/^showsig(uid, i)$/
+show_winbox	window.c	/^show_winbox(int x, int y, int line, int width, cha/
+show_winline	window.c	/^show_winline(int x, int y, int win_len, char *word/
+showplans	user.c	/^void showplans(char* uid)$/
+showsig	user.c	/^static void showsig(char *uid, int i)$/
 showsignature	edit.c	/^showsignature(fname)$/
 showtitle	menu.c	/^void showtitle(char *title, char *mid)$/
 split	edit.c	/^split(line, pos)$/
-stampdir	record.c	/^stampdir(fpath, fh)$/
-stampfile	record.c	/^stampfile(fpath, fh)$/
-stamplink	record.c	/^stamplink(fpath, fh)$/
-stand_title	stuff.c	/^stand_title(title)$/
-standend	screen.c	/^standend()$/
-standout	screen.c	/^standout()$/
-standoutput	screen.c	/^standoutput(buf, ds, de, sso, eso)$/
+stampdir	record.c	/^void stampdir(char *fpath, fileheader *fh)$/
+stampfile	record.c	/^void stampfile(char *fpath, fileheader *fh)$/
+stamplink	record.c	/^void stamplink(char *fpath, fileheader *fh)$/
+stand_title	stuff.c	/^void stand_title(char *title)$/
+standend	visio.c	/^void standend()$/
+standout	visio.c	/^void standout()$/
+standoutput	visio.c	/^static void standoutput(char *buf, int ds, int de,/
 star_ime	edit.c	/^int star_ime(int key,char *ans1,char *ans2)$/
 strcasestr	edit.c	/^char* strcasestr(const char* big, const char* litt/
-stty	term.c	/^#define stty(fd, data) tcsetattr( fd, TCSETS, data/
-substitute_record	record.c	/^substitute_record(fpath, rptr, size, id)$/
+stty	visio.c	/^#define stty(fd, data) tcsetattr( fd, TCSETS, data/
+substitute_record	record.c	/^int substitute_record(char *fpath, void *rptr, int/
 system_abort	main.c	/^system_abort()$/
-t_bmw	msg.c	/^t_bmw()$/
+t_bmw	msg.c	/^int t_bmw()$/
 t_display	msg.c	/^t_display()$/
 t_display_new	msg.c	/^t_display_new(int b_f_flag)$/
 t_idle	talk.c	/^t_idle()$/
@@ -539,48 +529,46 @@ talk_sendmail	talk.c	/^talk_sendmail(uentp)$/
 talk_switch	talk.c	/^talk_switch()  \/* 顯示切換 *\/$/
 talk_sysophide	talk.c	/^talk_sysophide()$/
 talk_water	talk.c	/^talk_water(uentp)$/
-talkreply	talk.c	/^talkreply()$/
-tbf_ask	stuff.c	/^tbf_ask()$/
-term_init	term.c	/^term_init(term)$/
+talkreply	talk.c	/^void talkreply()$/
+tbf_ask	stuff.c	/^char *tbf_ask()$/
 thread	read.c	/^thread(locmem, stype)$/
 touch_boards	cache.c	/^touch_boards()$/
 touchbtotal	cache.c	/^touchbtotal(bname)$/
-tparm	term.c	/^char *tparm(const char *str, ...) {$/
 transform_to_color	edit.c	/^transform_to_color(char* line)$/
-u_cloak	user.c	/^u_cloak()$/
-u_editfile	user.c	/^u_editfile()$/
+u_cloak	user.c	/^int u_cloak()$/
+u_editfile	user.c	/^int u_editfile()$/
 u_exit	main.c	/^u_exit(mode)$/
-u_habit	user.c	/^u_habit()$/
-u_info	user.c	/^u_info()$/
-u_list	user.c	/^u_list()$/
+u_habit	user.c	/^unsigned u_habit()$/
+u_info	user.c	/^int u_info()$/
+u_list	user.c	/^int u_list()$/
 u_list_CB	user.c	/^u_list_CB(uentp)$/
 u_namearray	cache.c	/^u_namearray(buf, pnum, tag)$/
-u_verify	user.c	/^u_verify()$/
-uinfo_query	user.c	/^uinfo_query(u, real, unum)$/
+u_verify	user.c	/^int u_verify()$/
+uinfo_query	user.c	/^void uinfo_query(userec *u, int real, int unum)$/
 undelete_line	edit.c	/^undelete_line()$/
 unlockutmpmode	talk.c	/^unlockutmpmode()$/
 unread_position	board.c	/^unread_position(dirfile, ptr)$/
 update_data	stuff.c	/^update_data()$/
-user_display	user.c	/^user_display(u, real)$/
+user_display	user.c	/^void user_display(userec *u, int real)$/
 user_gem	announce.c	/^user_gem(char *uid)$/
 user_login	main.c	/^user_login()$/
 usercomplete	name.c	/^usercomplete(prompt, data)$/
-userid_is_BM	stuff.c	/^userid_is_BM(userid, list)$/
-v_board	board.c	/^v_board (ent, fhdr, direct)$/
+userid_is_BM	stuff.c	/^int userid_is_BM(char *userid, char *list)     \/*/
+v_board	board.c	/^int v_board (ent, fhdr, direct)$/
 va_do_voteboardreply	votebrd.c	/^va_do_voteboardreply(va_list pvar)$/
 valid_dirname	announce.c	/^valid_dirname(char* fname)$/
 valid_ident	stuff.c	/^valid_ident(ident)$/
 vedit	edit.c	/^vedit(fpath, saveheader)$/
 view_noteans	loginplan.c	/^static int view_noteans()$/
 voteboard	board.c	/^void voteboard()$/
-vs_restore	screen.c	/^vs_restore(screen)                                /
-vs_save	screen.c	/^vs_save(screen)                                   /
+vs_restore	visio.c	/^void vs_restore(screenline *screen)$/
+vs_save	visio.c	/^void vs_save(screenline *screen)                  /
 waste_money	money.c	/^waste_money()$/
 where	main.c	/^int where (char *from)$/
-win_formchange	window.c	/^win_formchange()$/
-win_select	window.c	/^win_select(title, prompt, choose, many, def)$/
-word_bigsmall	hialan.c	/^word_bigsmall(ch)$/
-write_file	edit.c	/^write_file(fpath, saveheader)$/
+win_formchange	window.c	/^int win_formchange()$/
+win_select	window.c	/^win_select(char *title, char *prompt, char **choos/
+word_bigsmall	visio.c	/^int word_bigsmall(int ch)$/
+write_file	edit.c	/^static int write_file(char *fpath, int saveheader)/
 write_header	edit.c	/^write_header(FILE *fp)$/
 write_msg	bbs.c	/^write_msg (ent, fhdr, direct)$/
 write_request	main.c	/^write_request()$/

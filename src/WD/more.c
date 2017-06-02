@@ -484,7 +484,18 @@ woju
       {
         switch (ch = igetkey())
         {
-        case ':': {
+        case 'h':
+        case 'H':
+        case '?':
+//          more(BBSHOME"/etc/help/MORE.help",YEA);
+          show_file(BBSHOME"/etc/help/MORE.help", 0, 24,ONLY_COLOR);
+          pressanykey_old(NULL);
+          if (pageno)
+            pageno--;
+          lino = line = 0;
+          break;
+        case ':': 
+        {
            char buf[10];
            int i = 0;
 

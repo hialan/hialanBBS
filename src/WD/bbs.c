@@ -347,10 +347,7 @@ do_select()
 /* ----------------------------------------------------- */
 /* §ï¨} innbbsd Âà¥X«H¥ó¡B³s½u¬å«H¤§³B²zµ{§Ç             */
 /* ----------------------------------------------------- */
-
-outgo_post(fh, board)
-  fileheader *fh;
-  char *board;
+void outgo_post(fileheader *fh, char *board)
 {
   char buf[256];
   if(strcmp(fh->owner,cuser.userid))
@@ -470,8 +467,8 @@ do_reply (fhdr)
   *quote_file = 0;
 }
 
-
-brdperm (char *brdname, char *userid)
+/*hialan:³o¸Ì¦n¹³À³¸Ó¥Î belong_list? ¥H«á check*/
+int brdperm (char *brdname, char *userid)
 {
   boardheader *bp;
   boardheader *getbcache ();
@@ -479,38 +476,35 @@ brdperm (char *brdname, char *userid)
 
   bp = getbcache (currboard);
   if (uid && bp)
-    {
-      int level = bp->level;
-      char *ptr = bp->BM;
-      char buf[64], manager[IDLEN + 1];
-      userec xuser;
+  {
+    int level = bp->level;
+    char *ptr = bp->BM;
+    char buf[64], manager[IDLEN + 1];
+    userec xuser;
 
-      rec_get (fn_passwd, &xuser, sizeof (xuser), uid);
-      if ((level & BRD_POSTMASK) || ((level) ? xuser.userlevel & (level) : 1))
-  return 1;
+    rec_get (fn_passwd, &xuser, sizeof (xuser), uid);
+    if ((level & BRD_POSTMASK) || ((level) ? xuser.userlevel & (level) : 1))
+      return 1;
 
-      if (ptr[0] <= ' ')
-  return 0;
+    if (ptr[0] <= ' ')
+      return 0;
 
-      if (userid_is_BM (userid, ptr))
-  return 1;
+    if (userid_is_BM (userid, ptr))
+      return 1;
 
-      if ((level & 0xffff) != PERM_BBSADM)
-  return 0;
+    if ((level & 0xffff) != PERM_BBSADM)
+      return 0;
 
-      strncpy (manager, ptr, IDLEN + 1);
-      if (ptr = strchr (manager, '/'))
-  *ptr = 0;
-      sethomefile (buf, manager, fn_overrides);
-      return (belong (buf, userid));
-    }
+    strncpy (manager, ptr, IDLEN + 1);
+    if (ptr = strchr (manager, '/'))
+      *ptr = 0;
+    sethomefile (buf, manager, fn_overrides);
+    return (belong (buf, userid));
+  }
   return 0;
 }
 
-int
-do_copy_post (board, fpath, filemode)   //½Æ»s¤å³¹¨ì¬ÝªO
-  char *board, *fpath;
-  uschar filemode;
+int do_copy_post (char *board, char *fpath, uschar filemode)   //½Æ»s¤å³¹¨ì¬ÝªO
 {
   fileheader mhdr;
   char title[128];
@@ -771,7 +765,7 @@ int do_post ()
 
   strcpy (postfile.owner, owner);
   strcpy (postfile.title, save_title);
-  if (local_article == 1)    /* local save */
+  if (aborted == 1)    /* local save */
   {
     postfile.savemode = 'L';
     postfile.filemode = FILE_LOCAL;
@@ -784,7 +778,8 @@ int do_post ()
   {
     if (currmode & MODE_SELECT)
     rec_add (currdirect, &postfile, sizeof (postfile));
-    if (local_article != 1)// && !(currbrdattr & BRD_NOTRAN))
+//    if (local_article != 1)// && !(currbrdattr & BRD_NOTRAN))
+    if (aborted != 1)	//hialan: WD_pure for local save
       outgo_post (&postfile, currboard);
     brc_addlist (postfile.filename);
 
@@ -796,18 +791,17 @@ int do_post ()
       {
         int money = (wordsnum <= spendtime ? (wordsnum / 100) :
                     (spendtime / 100));
-	int cold;
+	int cold = make_cold(currboard,save_title,money,fpath);/*­pºâ§N«×*/
         
-        money *= (float)(((rand () % 5) + 5) / 5);
+        money *= (float)(((rand () % 5) + 5) / 5);        
         if (money < 1) money = 1;
-	
+
+        if(cold == 9)
+          money += 100;
+
         clear ();
         move (7, 0);
         update_data ();
-
-        cold = make_cold(currboard,save_title,money,fpath);/*­pºâ§N«×*/
-        if(cold == 9)
-          money += 100;
 
         prints ("\
               [1;36m¡i[37m­p ºâ ½Z ¹S[36m¡j\n
@@ -2423,16 +2417,14 @@ post_query (ent, fhdr, direct)
   return my_query(fhdr->owner);
 }  
 
-int
-post_vote()
+static int post_vote()
 {
   if (currstat != ANNOUNCE)
     DL_func("SO/vote.so:b_vote");
   return RC_FULL;
 }
 
-int
-post_b_results()
+static int post_b_results()
 {
   if (currstat != ANNOUNCE)
     DL_func("SO/vote.so:b_results");

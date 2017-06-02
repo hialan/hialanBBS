@@ -742,6 +742,27 @@ int v_board (ent, fhdr, direct)
   return RC_DRAW;
 }
 
+struct one_key board_comms[] =
+{
+ 'e', NULL, 	     0, "離開",0,
+ 'A', NULL, PERM_SYSOP, "列出看板屬性", 0,
+ 'a', NULL, 	     0, "搜尋作者", 0,
+ 'f', NULL, 	     0, "將看板加入我的最愛", 0,
+ 'F', NULL,  	     0, "將看板移除我的最愛", 0,
+Ctrl('A'), NULL,     0, "閱\讀本站天地精華", 0,
+ '/', NULL,	     0, "搜尋看板", 0,
+ 's', NULL,	     0, "搜尋看板", 0, 
+ 'S', NULL,	     0, "切換列表排序方式", 0,
+ 'y', NULL,	     0, "切換是否列出訂閱\看板", 0,
+ 'z', NULL, PERM_BASIC, "訂閱\/取消訂閱\看板", 0,
+ 'Z', NULL, PERM_BASIC, "更新看板文章是否閱\讀狀態?", 0,
+ 'v', NULL, 	     0, "將看板設成已閱\讀", 0,
+ 'V', NULL,	     0, "將看板設成未閱\讀", 0,
+ 'Q', NULL, PERM_BASIC, "查詢看板資訊", 0,
+ 'B', NULL, PERM_SYSOP, "建立看板", 0,
+ 'r', NULL, 	     0, "進入多功\能閱\讀選單", 0,
+'\0', NULL, 0, NULL, 0};
+
 static void choose_board(int newflag,usint mode)
 {
 #define SHOW_BRDLIST() show_brdlist(head, clsflag, newflag)
@@ -854,6 +875,13 @@ static void choose_board(int newflag,usint mode)
     else
       ch = cursor_key(3 + num - head, 0);
 
+    if(ch == 'h')
+    {
+      ch = i_read_helper(board_comms);
+      clsflag = 1;
+      SHOW_BRDLIST();
+    }
+      
     switch (ch)
     {
       case 'e':
@@ -864,7 +892,8 @@ static void choose_board(int newflag,usint mode)
         break;
 
      case 'c':
-      if (yank_flag == 2) {
+      if (yank_flag == 2) 
+      {
          newflag = yank_flag = 0;
          brdnum = -1;
       }
@@ -879,7 +908,6 @@ static void choose_board(int newflag,usint mode)
         break;
       if(attmode >= 2) attmode = 1;
       else attmode = 2;
-//      show_brdlist(head, attmode, newflag);
       clsflag = attmode;
       SHOW_BRDLIST();
       break;
@@ -899,7 +927,6 @@ static void choose_board(int newflag,usint mode)
         else
           yank_flag = 0;
           brdnum = -1;
-//          show_brdlist(head, 1, newflag);
           clsflag = 1;
           SHOW_BRDLIST();
           break;
@@ -962,13 +989,14 @@ static void choose_board(int newflag,usint mode)
           num += page_lines;
         break;
 
-      case KEY_ESC: if (KEY_ESC_arg == 'n') 
-      {
-         edit_note();
-         clsflag = 1;
-         SHOW_BRDLIST();
-      }
-      break;
+      case KEY_ESC: 
+        if (KEY_ESC_arg == 'n') 
+        {
+          edit_note();
+          clsflag = 1;
+          SHOW_BRDLIST();
+        }
+        break;
 
       case KEY_UP:
       case 'p':
@@ -1008,6 +1036,7 @@ static void choose_board(int newflag,usint mode)
         SHOW_BRDLIST();
         break;
 
+      case 's':
       case '/':
         if ((tmp = search_board(num)) >= 0)
           num = tmp;
@@ -1076,15 +1105,6 @@ static void choose_board(int newflag,usint mode)
         brc_update();
         clsflag = 0;
         SHOW_BRDLIST();
-        break;
-
-      case 's':
-        if ((tmp = search_board(-1)) < 0)
-        {
-          clsflag = 1;
-          SHOW_BRDLIST();
-        }
-        num = tmp;
         break;
 
       case 'Q':
@@ -1235,19 +1255,12 @@ int Favor()
   int mode0 = currutmp->mode;
   int stat0 = currstat;
   char fpath[80];
-  FILE *fp;
 
   boardprefix = NULL;
   currmode |= MODE_FAVORITE;
 
   sethomefile(fpath, cuser.userid, fn_myfavorite);
 
-/*
-  if ((fp = fopen(fpath, "r")) == NULL) 
-    return;
-  else 
-    fclose(fp);
-*/
   if(!dashf(fpath))
     pressanykey("您目前並沒有設定任何我的最愛!!");
   else
