@@ -466,8 +466,6 @@ namecomplete(prompt, data)
 /* ---------------------------------------------------- */
 /* name complete for user ID                             */
 /* ---------------------------------------------------- */
-
-
 static int
 UserMaxLen(cwlist, cwnum, morenum, count)
   char cwlist[][IDLEN + 1];

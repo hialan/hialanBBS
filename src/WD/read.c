@@ -1321,10 +1321,7 @@ struct one_key *rcmdlist;
             goto return_i_read;
           }
           else if (cmdmode == GAME)
-          {
-            soman_add();
             goto return_i_read;
-          }
           else
           {
             char *choose_post[2] = {"pP)µoªí¤å³¹", msg_choose_cancel};

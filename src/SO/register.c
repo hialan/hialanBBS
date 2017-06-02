@@ -49,8 +49,7 @@ compute_user_value(urec, clock)
 }
 
 
-static int
-getnewuserid()
+static int getnewuserid()
 {
   static char *fn_fresh = ".fresh";
   extern struct UCACHE *uidshm;
@@ -178,8 +177,7 @@ getfield(line, info, desc, buf, len)
 }
 
 
-int
-u_register()
+int u_register()
 {
   char rname[20], howto[50]="½Ð½T¹ê¶ñ¼g";
   char phone[20], career[40], email[50],birthday[9],sex_is[2],year,mon,day;
@@ -412,8 +410,7 @@ new_register(mode)
 
 
 
-int
-m_newuser()
+int m_newuser()
 {
   clear();
   new_register(1);
@@ -421,8 +418,7 @@ m_newuser()
   return 0;
 }
 
-void
-va_new_register(va_list pvar)
+void va_new_register(va_list pvar)
 {
   int mode;  
   mode = va_arg(pvar, int);

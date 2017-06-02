@@ -312,8 +312,7 @@ over_load()
 }
 #endif
 
-static void
-login_query()
+static void login_query()
 {
   char uid[IDLEN + 1], passbuf[PASSLEN];
   int attempts;
@@ -326,7 +325,8 @@ login_query()
 
   resolve_utmp();
   attempts = utmpshm->number;
-  term_init("vt100");
+//  term_init_m2("vt100");
+  
   initscr();
   clear();
 
@@ -574,7 +574,7 @@ check_BM()      /* Ptt 自動取下離職板主權力 */
   resolve_boards();
   cuser.userlevel &= ~PERM_BM;
   for (i = 0, bhdr = bcache; i < numboards; i++, bhdr++)
-      is_BM(bhdr->BM);
+      userid_is_BM(cuser.userid, bhdr->BM);
 }
 
 void
@@ -930,9 +930,6 @@ woju
      m_read();
 #ifdef HAVE_GAME
   waste_money();
-#endif
-#ifdef POSTNOTIFY
-  m_postnotify(); 
 #endif
 
   force_board("Announce");

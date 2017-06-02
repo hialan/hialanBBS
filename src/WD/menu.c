@@ -137,8 +137,7 @@ void movie(int i)
 
 char movie2[11][256] = {"\0","\0","\0","\0","\0","\0","\0","\0","\0","\0","\0"};
 
-int
-is_menu_stat()	/*判斷特定看板  by hialan 02/04/20*/
+int is_menu_stat()	/*判斷特定看板  by hialan 02/04/20*/
 {
   if(currstat <= CLASS)
      return 1;
@@ -470,12 +469,7 @@ int m_mclean();
 
 int hialan_test()
 {
-  char list[60]="hialan/kimo/test";
-  char i;
-  
-  i = userid_is_BM("test", list);
-  if(i)
-    pressanykey("是BM");
+  u_verify();
 }
 
 static struct one_key adminlist[] = {
@@ -639,7 +633,7 @@ static struct one_key userlist[] = {
 /* ----------------------------------------------------- */
 /* service menu                                          */
 /* ----------------------------------------------------- */
-int note(), soman();
+int note();
 
 static struct one_key servicelist[] = {
 'F',  finance,      PERM_LOGINOK,   "Finance       [商品大街]",0,
@@ -647,7 +641,8 @@ static struct one_key servicelist[] = {
 'V',  "SO/vote.so:all_vote",
                     PERM_LOGINOK,   "Vote          [投票中心]",1,
 'N',  note,         PERM_LOGINOK,   "Note          [寫留言板]",0,
-'G',  soman,	    PERM_LOGINOK,   "Game          [育樂中心]",0,
+'G',  "SO/soman.so:soman",
+		    PERM_LOGINOK,   "Game          [育樂中心]",1,
 0,  NULL, 0, NULL,0};
 
 /* ----------------------------------------------------- */

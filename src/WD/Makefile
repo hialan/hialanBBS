@@ -13,7 +13,7 @@ BBSHOME = ../..
 OS_DEF	= -DBSD44 -DTWO_LONGJMP_ARGS 
 CC	= gcc
 CFLAGS	= -O1 -Wunused -I../include -pipe -fomit-frame-pointer -s #-g -ggdb
-LDFLAGS	= -lcrypt -ltermcap -lcompat -L../lib -ldao -export-dynamic #-L/usr/local/lib/mysql -lmysqlclient
+LDFLAGS	= -lcrypt -lcompat -L../lib -ldao -export-dynamic #-ltermcap #-L/usr/local/lib/mysql -lmysqlclient
 CPROTO	= cproto -E"gcc -pipe -E -I../include"
 
 # ------------------------------------------------------ #
@@ -22,30 +22,30 @@ CPROTO	= cproto -E"gcc -pipe -E -I../include"
 
 SRC =	announce.c bbs.c board.c cache.c edit.c \
 	mail.c main.c menu.c more.c name.c read.c record.c\
-	register.c stuff.c talk.c user.c\
-	money.c list.c hialan.c votebrd.c\
-	window.c msg.c color.c loginplan.c soman.c visio.c\
+	stuff.c talk.c user.c\
+	money.c list.c votebrd.c\
+	window.c msg.c color.c loginplan.c visio.c\
 	#convcode.c admin.c term.c io.c screen.c
 
 OBJ =	announce.o bbs.o board.o cache.o edit.o \
 	mail.o main.o menu.o more.o name.o read.o record.o\
-	register.o stuff.o talk.o user.o\
-	money.o list.o hialan.o votebrd.o\
-	window.o msg.o color.o loginplan.o soman.o visio.o\
+	stuff.o talk.o user.o\
+	money.o list.o votebrd.o\
+	window.o msg.o color.o loginplan.o visio.o\
 	#convcode.o admin.o term.o screen.o io.o
 
 MOBJ =	announce.o bbs.o board.o cache.o edit.o \
 	mail.o mbbsd.o menu.o more.o name.o read.o record.o\
-	register.o stuff.o talk.o user.o\
-	money.o list.o hialan.o votebrd.o\
-	window.o msg.o color.o loginplan.o soman.o visio.o\
+	stuff.o talk.o user.o\
+	money.o list.o votebrd.o\
+	window.o msg.o color.o loginplan.o visio.o\
 	#convcode.o admin.o login.o  term.o screen.o io.o
 
 PRO =	announce.x bbs.x board.x cache.x edit.x \
-	io.x mail.x main.x login.x menu.x more.x name.x read.x record.x\
-	register.x screen.x stuff.x talk.x user.x term.x\
-	money.x list.x hialan.x votebrd.x\
-	window.x msg.x color.x loginplan.x soman.x\
+	mail.x main.x menu.x more.x name.x read.x record.x\
+	stuff.x talk.x user.x\
+	money.x list.x votebrd.x\
+	window.x msg.x color.x loginplan.x visio.x\
 	#convcode.x admin.x
 
 EXE =	bbs

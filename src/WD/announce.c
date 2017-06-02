@@ -1461,7 +1461,7 @@ a_menu (maintitle, path, lastlevel, mode)
     char *ptr;
 
     if (ptr = strrchr (me.mtitle, '['))
-      me.level = is_BM (ptr + 1);
+      me.level = userid_is_BM(cuser.userid, ptr + 1);
   }
 
   me.page = 9999;
@@ -1855,7 +1855,7 @@ a_menu (maintitle, path, lastlevel, mode)
             memcpy (&item, &me.header[me.now - me.page], FHSZ);
  
             if (ptr = strrchr (item.title, '['))
-               level_tmp = is_BM (ptr + 1);
+               level_tmp = userid_is_BM (cuser.userid, ptr + 1);
 
             if(me.level >= MANAGER || level_tmp)
             {
@@ -1987,7 +1987,7 @@ AnnounceSelect ()
   {
       setapath (fpath, xboard);
       setutmpmode (ANNOUNCE);
-      a_menu (xboard, fpath, (HAS_PERM (PERM_ALLBOARD) || HAS_PERM (PERM_BM) && is_BM (bp->BM)) ? 1 : 0);
+      a_menu (xboard, fpath, (HAS_PERM (PERM_ALLBOARD) || HAS_PERM (PERM_BM) && userid_is_BM (cuser.userid, bp->BM)) ? 1 : 0);
   }
   return RC_FULL;
 }

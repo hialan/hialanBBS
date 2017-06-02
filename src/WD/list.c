@@ -366,7 +366,8 @@ static int list_move(int ent, fileheader *fhdr, char *direct)
       fail = 1;
     if (get_records(direct, &tmp[max], sizeof(fileheader), ent, 1) != 1)
       fail = 1;
-  } else
+  } 
+  else
   {
     if (get_records(direct, &tmp[min], sizeof(fileheader), ent, 1) != 1)
       fail = 1;

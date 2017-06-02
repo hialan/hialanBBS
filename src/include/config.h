@@ -18,7 +18,7 @@
 #define MYHOSTNAME      "Venice.twbbs.org"		/* 網址 */
 #define MYIP		"163.25.104.100"		/* IP */
 #define MYVERSION       "WD-BBS 2.9 SNAP"		/* 程式版本 */
-#define MYBBSID         "Venice-BBS"			/* 轉信代碼 */
+#define MYBBSID         "AT3-BBS"			/* 轉信代碼 */
 #define BBSHOME         "/home/bbs"			/* BBS 的家 */
 #define BBSUSER         "bbs"
 #define BBSUID          1005
@@ -50,7 +50,6 @@
 #define	REG_FORM		/* shakalaca: 填註冊單 */
 				/* shakalaca.000813: 認證方式請擇一 */
 #undef  NEWUSER_LIMIT		/* 新手上路的三天限制 */
-#undef  POSTNOTIFY		/* 新文章通知功能 */
 #undef  INVISIBLE		/* 隱藏 BBS user 來自何處 */
 #define MULTI_NUMS	(1)	/* 最多重複上站人次 (guest除外) */
 #define INITIAL_SETUP		/* 剛開站，還沒建立預設看板[SYSOP] */

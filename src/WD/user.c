@@ -20,6 +20,44 @@ extern void resolve_boards();
 char *sex[8] = { MSG_BIG_BOY, MSG_BIG_GIRL, MSG_LITTLE_BOY, MSG_LITTLE_GIRL,
                  MSG_MAN, MSG_WOMAN, MSG_PLANT, MSG_MIME };
 
+/* ------------------- */
+/* password encryption */
+/* ------------------- */
+int chkpasswd(char *passwd, char *test)
+{
+  extern char *crypt();
+  static char pwbuf[14];
+  char *pw;
+
+  strncpy(pwbuf, test, 14);
+  pw = crypt(pwbuf, passwd);
+  return (!strncmp(pw, passwd, 14));
+}
+
+int bad_user_id(char *userid)
+{
+  register char ch;
+
+  if (belong("etc/baduser",userid))
+    return 1;
+
+  if (strlen(userid) < 2)
+    return 1;
+
+  if (not_alpha(*userid))
+    return 1;
+
+  if (!ci_strcmp(userid, str_new))
+    return 1;
+
+  while (ch = *(++userid))
+  {
+    if (not_alnum(ch))
+      return 1;
+  }
+  return 0;
+}
+
 void user_display(userec *u, int real)
 {
   int diff; 
@@ -387,7 +425,6 @@ unsigned u_habit()
 {
   unsigned fbits;
   register int i;
-//  char choice[4];
   int ch;
   char *choice[2]={"£¾","¢æ"};
   
@@ -662,18 +699,12 @@ int u_editfile()
   return 0;
 }
 
-
 /* --------------------------------------------- */
 /* ¦C¥X©Ò¦³µù¥U¨Ï¥ÎªÌ                            */
 /* --------------------------------------------- */
-
-
 extern struct UCACHE *uidshm;
 int usercounter, totalusers, showrealname;
 ushort u_list_special;
-
-extern int
-bad_user_id(char userid[]);
 
 static int
 u_list_CB(uentp)
@@ -749,20 +780,23 @@ u_list_CB(uentp)
 }
 
 
-int
-u_list()
+int u_list()
 {
   setutmpmode(LAUSERS);
   showrealname = u_list_special = usercounter = 0;
   totalusers = uidshm->number;
   if (HAS_PERM(PERM_SEEULEVELS))
   {
-    if (getans("Æ[¬Ý [1]¯S®íµ¥¯Å (2)¥þ³¡¡H") != '2')
+    char *choose[2]={"11)¯S®íµ¥¯Å", "22)¥þ³¡"};
+
+    if (getans2(b_lines, 0, "Æ[¬Ý¡H", choose, 2, '1') != '2')
       u_list_special = 32;
   }
   if (HAS_PERM(PERM_CHATROOM) || HAS_PERM(PERM_SYSOP))
   {
-    if (getans("Åã¥Ü [1]¯u¹ê©m¦W (2)¼ÊºÙ¡H") != '2')
+    char *choose[2]={"11)¯u¹ê©m¦W", "22)¼ÊºÙ"};
+    
+    if (getans2(b_lines, 0, "Åã¥Ü¡H", choose, 2, '1') != '2')
       showrealname = 1;
   }
   u_list_CB(NULL);
@@ -779,112 +813,9 @@ u_list()
   return 0;
 }
 
-
-#ifdef POSTNOTIFY
-int
-m_postnotify()
-{
-  FILE *f1;
-  int n=0, i;
-  char ans[4];
-  char genbuf[200],fname[200];
-  char id[64][IDLEN+1];
-
-  sethomefile(genbuf, cuser.userid, "postnotify"); 
-  if ((f1 = fopen (genbuf, "r")) == NULL)
-    return XEASY;
-
-  stand_title ("¼f®Ö·s¤å³¹³qª¾");
-  i = 2;
-
-  while (fgets (genbuf, STRLEN, f1))
-  {
-    move (i++, 0);
-    outs (genbuf);
-    strcpy(id[n],genbuf);
-    n++;
-  }
-  sethomefile(genbuf, cuser.userid, "postnotify"); 
-  if(!isprint(id[0][0]))
-  {
-    unlink(genbuf);
-    return 0;
-  } 
-  fclose(f1); 
-  getdata (b_lines - 1, 0, "¶}©l¼f®Ö¶Ü(Y/N)¡H[Y] ", ans, 3, LCECHO, "Y");
-  if (ans[0] == 'y')
-  {
-    sethomefile(fname,cuser.userid,"postnotify.ok"); 
-    for(i = n-1; i>= 0; i--)
-    {
-      move(1,0);
-      clrtobot();  
-      if(!getuser(id[i]))
-      {
-        pressanykey("¬dµL¦¹¤H %s",id[i]);
-        sethomefile(genbuf, cuser.userid, "postnotify");
-        del_distinct(genbuf, id[i]);
-        continue;
-      }  
-      move(2,0); 
-      prints("[1;32m­^¤å¥N¸¹ : [37m%-13.13s   [32m¼ÊºÙ: [37m%s\n",xuser.userid,xuser.username);
-      prints("[1;32m¤W¯¸¦¸¼Æ : [37m%-13d   [32m¤å³¹: [37m%d\n",xuser.numlogins,xuser.numposts);
-      prints("[1;32m¹q¤l«H½c : [37m%s[m\n",xuser.email);
-      getdata(10,0,"¬O§_­nÅý¥L¥[¤J? (y/n/Skip)¡H[S]",ans,3,LCECHO,0);
-      if(ans[0] == 'y' || ans[0] == 'Y')
-      {
-        add_distinct(fname, xuser.userid);
-        sethomefile(genbuf, cuser.userid, "postnotify"); 
-        del_distinct(genbuf, xuser.userid); 
-        mail2user(xuser.userid, "[·s¤å³¹³qª¾] ¦P·N¥[¤J",BBSHOME"/etc/pn_agree", 0); 
-      } 
-      if(ans[0] == 'n' || ans[0] == 'N')
-      {
-        sethomefile(genbuf, cuser.userid, "postnotify"); 
-        del_distinct(genbuf, xuser.userid); 
-        mail2user(xuser.userid, "[·s¤å³¹³qª¾] ©Úµ´¥[¤J",BBSHOME"/etc/pn_dissent", 0); 
-//        sethomefile(genbuf, xuser.userid, "postlist"); 
-//        del_distinct(genbuf, cuser.userid); 
-      } 
-    }
-  }
-  return 0;
-}
-
-
-int
-re_m_postnotify()
-{
-  char genbuf[200], buf[200], buf2[200];
-
-  sethomefile(buf, cuser.userid, "postnotify.ok");
-  sethomefile(buf2, cuser.userid, "postnotify");
-  if (!dashf(buf) && !dashf(buf2))
-  {
-    pressanykey("¥Ø«e¨S¦³¥ô¦ó¤H³]©w§Aªº·s¤å³¹³qª¾"); 
-    return 0;
-  } 
-
-  if (dashf(buf2))
-    m_postnotify();
-
-  if (answer("¬O§_­n­«·s¼f®Ö? (y/N)") == 'y')
-  {  
-    if (dashf(buf))
-    {
-      sprintf(genbuf,"/bin/cat %s >> %s",buf,buf2); 
-      system(genbuf); 
-      unlink(buf);
-      m_postnotify();
-    } 
-  }
-}
-#endif
-
 #ifdef REG_MAGICKEY
 /* shakalaca.000712: new justify */
-int
-u_verify()
+int u_verify()
 {
   char keyfile[80], buf[80], inbuf[15], *key;
   FILE *fp;
@@ -911,12 +842,17 @@ u_verify()
     return XEASY;
   }
 
-  while (fgets(buf, 80, fp))
-  {
-    key = strtok(buf, "\0");
-  }
-  fclose(fp);
+  fgets(buf, 80, fp);
+  fclose(fp);  
 
+  for(key=buf;*key;key++)
+    if(*key == '\n')
+    {
+      *key='\0';
+      break;
+    }
+  key = buf;
+  
   getdata(b_lines, 0, "½Ð¿é¤J MagicKey¡G", inbuf, 14, DOECHO, 0);
   if (*inbuf)
   {

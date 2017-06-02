@@ -1,3 +1,4 @@
+
 /*-------------------------------------------------------*/
 /* record.c     ( NTHU CS MapleBBS Ver 2.36 )            */
 /*-------------------------------------------------------*/
@@ -26,7 +27,7 @@ flock(fd, op)
 #endif
 
 
-get_sum_records(char* fpath, int size)
+int get_sum_records(char* fpath, int size)
 {
    struct stat st;
    long ans = 0;
@@ -40,7 +41,8 @@ get_sum_records(char* fpath, int size)
    strcpy(buf, fpath);
    p = strrchr(buf, '/') + 1;
 
-   while (fread(&fhdr, size, 1, fp) == 1) {
+   while (fread(&fhdr, size, 1, fp) == 1) 
+   {
       strcpy(p, fhdr.filename);
       if (stat(buf, &st) == 0 && S_ISREG(st.st_mode) && st.st_nlink == 1)
          ans += st.st_size;
@@ -49,10 +51,7 @@ get_sum_records(char* fpath, int size)
    return ans / 1024;
 }
 
-int
-get_records(fpath, rptr, size, id, number)
-  char *fpath, *rptr;
-  int size, id, number;
+int get_records(char *fpath, char *rptr, int size, int id, int number)
 {
   int fd;
 
@@ -75,12 +74,14 @@ get_records(fpath, rptr, size, id, number)
 }
 
 
-int
-substitute_record(fpath, rptr, size, id)
+int substitute_record(char *fpath, void *rptr, int size, int id)
+{
+#if 0
   char *fpath;                     // 欲寫入的路徑/檔名
   char *rptr;                      // 指向欲寫入到檔案中的資料區塊 
   int size, id;                    // size 為區塊大小, id為記錄位置,由1開始
-{
+#endif
+
   int fd;
   static short substitute_flag = 1;               // 判斷重入的旗標
 
@@ -532,10 +533,7 @@ int farg;
 /* ------------------------------------------ */
 /* Input: fpath = directory; Output: fpath = full path; */
 
-void
-stampfile(fpath, fh)
-  char *fpath;
-  fileheader *fh;
+void stampfile(char *fpath, fileheader *fh)
 {
   register char *ip = fpath;
   time_t dtime;
@@ -574,10 +572,7 @@ stampfile(fpath, fh)
 /*
     ===== Added by mgtsai, Sep 10th, '96 =====
 */
-void
-stampdir(fpath, fh)
-  char *fpath;
-  fileheader *fh;
+void stampdir(char *fpath, fileheader *fh)
 {
   register char *ip = fpath;
   time_t dtime;
@@ -602,10 +597,7 @@ stampdir(fpath, fh)
 }
 
 
-void
-stamplink(fpath, fh)
-  char *fpath;
-  fileheader *fh;
+void stamplink(char *fpath, fileheader *fh)
 {
   register char *ip = fpath;
   time_t dtime;
@@ -684,7 +676,7 @@ gem_files(char* dirname, int (*filecheck)())
 	if(c != 'n' && c != 'N')
 	  fhdr.filemode ^= FILE_TAGED;
         now = getindex (dirname, fhdr.filename, sizeof (fileheader));
-        substitute_record (dirname, &fhdr, sizeof (fhdr), now);
+        substitute_record (dirname, &fhdr, sizeof (fileheader), now);
     }
   }  
 
@@ -694,46 +686,7 @@ gem_files(char* dirname, int (*filecheck)())
 
 #endif
 
-int
-game_rec(userid,GD)
-  char *userid;
-  gamedata GD;
-{
-  char buf[80];
-  int fd;
 
-  sprintf(buf, BBSHOME"/home/%s/.GAME", userid);
 
-  fd = open(buf , O_WRONLY | O_CREAT, 0600);
-  flock(fd, LOCK_EX);
-  lseek(fd, (off_t) (sizeof(GD) * 0), SEEK_SET);
-  write(fd, &GD, sizeof(GD));
-  flock(fd, LOCK_UN);
-  close(fd);
 
-  return 0;
-}
-
-int
-game_get(userid,GD)
-  char *userid;
-  gamedata *GD;
-{
-  char buf[80];
-  int fd;
-
-  sprintf(buf, BBSHOME"/home/%s/.GAME", userid);
-  if(fd = open(buf, O_RDONLY))
-  {
-    read(fd, GD, sizeof(GD));
-    close(fd);
-  }
-  else
-  {
-    memset(&GD, 0, sizeof(GD));
-    game_rec(userid, GD);
-  }
-
-  return 0;
-}
 

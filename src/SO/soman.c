@@ -65,7 +65,7 @@ static int soman_desc(fileheader *fhdr)
   return 0;
 }
 
-int soman_add()
+static int soman_add()
 {
   fileheader hdr;
   char fname[PATHLEN];
@@ -162,7 +162,10 @@ int soman()
   sprintf(fname, "etc/%s", FN_SOMAN);
   if(dashf(fname))
   {
-    i_read(GAME, fname, somantitle, soman_doent, soman_comm, NULL);
+    if(rec_num(fname, sizeof(fileheader)) > 0)
+      i_read(GAME, fname, somantitle, soman_doent, soman_comm, NULL);
+    else
+      soman_add();
   }
   else
     pressanykey("本站現不提供外掛程式!!");

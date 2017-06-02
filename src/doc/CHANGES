@@ -236,3 +236,27 @@
 [2003/07/29]  
   1.合併 term.c screen.c io.c --> visio.c
   2.合併 menu.c menu.h --> menu.c  //又回來了..||
+  3.取代 mbbsd.c --> telnet_init() , 使用 M3 的版本!!
+  4.精簡 visio.c --> 參考 At 的 visio.c
+
+[2003/07/30]
+  1.將 do_talk 相關函式 放到 DSO 下面的 do_talk.c
+
+[2003/07/31]
+  1.刪除函式: record.c --> game_rec() game_get()
+  2.刪除函式: stuff.c --> is_BM()
+  3.將 register.c 關於 id, password 的丟到 user.c, 剩下一個函式丟到 stuff.c 
+  4.刪除功能: 新文張通知 #ifdef POSTNOTIFY 
+  5.刪除函式: stuff.c --> game_log()
+  6.合併檔案: hialan.c --> stuff.c visio.c
+
+[2003/08/01]
+  1.轉換 DSO: 將 soman.c 轉成 DSO 減少空間
+
+[2003/08/03]
+  1.修正 MagicKey 判斷錯誤的問題
+  2.修正 board.c --> choose_boards() 顯示 "還有下頁喔!!" 的錯誤問題
+
+[2003/08/04]
+  1.刪除 visio.c --> term_init_m2() 刪除, Makefile 可去掉 -ltermcap
+  2.修正 [BUG]直接選擇我的最愛看板會造成所有看板列表失效 by cholesterol

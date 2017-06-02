@@ -151,7 +151,7 @@ void set_board ()
 
   currmode = (currmode & MODE_DIRTY) | MODE_STARTED;
   if (HAS_PERM (PERM_ALLBOARD) ||
-      (HAS_PERM (PERM_BM) && is_BM (currBM + 6)))
+      (HAS_PERM (PERM_BM) && userid_is_BM (cuser.userid, currBM + 6)))
   {
       currmode |= (MODE_BOARD | MODE_POST);
   }
@@ -506,52 +506,6 @@ brdperm (char *brdname, char *userid)
     }
   return 0;
 }
-
-#ifdef POSTNOTIFY
-do_postnotify (char *fpath)
-{
-  fileheader mhdr;
-  char title[256], buf1[80], buf[80];
-  FILE *fp;
-  char genbuf[256];
-
-  sethomefile (genbuf, cuser.userid, "postnotify.ok");
-  if (fp = fopen (genbuf, "r"))
-    {
-      char last_fname[80];
-      boardheader *bp;
-      boardheader *getbcache ();
-
-      strcpy (last_fname, fpath);
-      bp = getbcache (currboard);
-      while (fgets (buf, 80, fp))
-  if (brdperm (currboard, buf))
-    {
-      sethomefile(buf1, buf, "postlist");
-      if (!belong_list(buf1, buf))
-      {
-        del_distinct(genbuf, cuser.userid);
-        fclose(fp);
-        return;
-      }
-
-      sethomepath (buf1, buf);
-      stampfile (buf1, &mhdr);
-      strcpy (mhdr.owner, cuser.userid);
-      strcpy (mhdr.title, "[新]");
-      strncat (mhdr.title, save_title, TTLEN - 4);
-      mhdr.savemode = 0;
-      mhdr.filemode = 0;
-      sethomedir (title, buf);
-      rec_add (title, &mhdr, sizeof (mhdr));
-      unlink (buf1);
-      f_cp (last_fname, buf1, O_TRUNC);
-      strcpy (last_fname, buf1);
-    }
-      fclose (fp);
-    }
-}
-#endif
 
 int
 do_copy_post (board, fpath, filemode)   //複製文章到看板
@@ -935,11 +889,6 @@ int do_post ()
     do_copy_post("All_Post", fpath, 0); // 紀錄所有站內的貼文
     if (currbrdattr & BRD_ANONYMOUS)    // 反匿名
       do_copy_post("UnAnonymous", fpath, 0);
-
-#ifdef POSTNOTIFY    /* 新文章通知 */
-    if (!(currbrdattr & BRD_ANONYMOUS) && !(currbrdattr & BRD_HIDE))
-      do_postnotify (fpath);
-#endif
   }
   return RC_FULL;
 }
@@ -1033,11 +982,6 @@ edit_post (ent, fhdr, direct)
 
     if (currmode&MODE_SELECT)     // CityLion: SELECT時也要修改原.DIR
        substitute_record(genbuf, fhdr, sizeof(*fhdr), now);
-
-#ifdef POSTNOTIFY
-    if (currbrdattr & BRD_ANONYMOUS)
-      do_postnotify (fpath);
-#endif       
   }  
   return RC_FULL;
 }
@@ -1260,7 +1204,7 @@ man()
       if (Ben_Perm (&brdshm->bcache[getbnum (xboard)] - 1) != 1)
         pressanykey(P_BOARD);
       else
-        a_menu (xboard, fpath, HAS_PERM (PERM_ALLBOARD) ? 2 : is_BM (bp->BM) ? 1 : 0);
+        a_menu (xboard, fpath, HAS_PERM (PERM_ALLBOARD) ? 2 : userid_is_BM (cuser.userid, bp->BM) ? 1 : 0);
     }
     else if(HAS_PERM(PERM_MAILLIMIT) || HAS_PERM(PERM_BM)) // wildcat : 之前忘記加 PERM 限制啦 ^^;
     {

@@ -38,8 +38,8 @@ LDFLAGS	= -lcrypt -ltermcap -lcompat -L../lib -ldao -export-dynamic -L/usr/local
 # ------------------------------------------------------ #
 
 SO =	buy.so vote.so votebrd.so song.so chat.so\
-	admin.so register.so\
-	pnote.so
+	admin.so register.so soman.so\
+	pnote.so do_talk.so tranb.so
 #	votebrd.so
 
 ETC =	Makefile $(HDR)

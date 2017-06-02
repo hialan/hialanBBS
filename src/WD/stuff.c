@@ -10,17 +10,13 @@
 #include <varargs.h>
 
 
-void
-setbdir(buf, boardname)
-  char *buf, *boardname;
+void setbdir(char *buf, char *boardname)
 {
   sprintf(buf, "boards/%s/%s", boardname,
     currmode & MODE_DIGEST ? fn_mandex : ".DIR");
 }
 
-int
-invalid_fname(str)
-  char *str;
+int invalid_fname(char *str)
 {
   char ch;
 
@@ -108,20 +104,9 @@ int userid_is_BM(char *userid, char *list)     /* ªO¥D¡GBM list */
   return 0;
 }
 
-
-int
-is_BM(list)
-  char *list;
-{
-  return userid_is_BM(cuser.userid, list);
-}
-
-
 /* ----------------------------------------------------- */
 /* ÀÉ®×ÀË¬d¨ç¼Æ¡GÀÉ®×¡B¥Ø¿ý¡BÄÝ©ó                        */
 /* ----------------------------------------------------- */
-
-
 off_t
 dashs(fname)
   char *fname;
@@ -254,8 +239,7 @@ Cdate(clock)
 }
 
 
-void
-pressanykey_old(va_alist)
+void pressanykey_old(va_alist)
   va_dcl
 {
   va_list ap;
@@ -291,8 +275,7 @@ pressanykey_old(va_alist)
   refresh();
 }
 
-void
-pressanykey(va_alist)
+void pressanykey(va_alist)
   va_dcl
 {
   va_list ap;
@@ -335,8 +318,7 @@ pressanykey(va_alist)
 }
 
 
-void
-bell()
+void bell()
 {
   char sound[3], *ptr;
 
@@ -347,8 +329,7 @@ bell()
 }
 
 
-int
-search_num(ch, max)
+int search_num(int ch, int max)
 {
   int clen = 1;
   int x, y;
@@ -406,12 +387,10 @@ search_num(ch, max)
 }
 
 
-void
-stand_title(title)
-  char *title;
+void stand_title(char *title)
 {
   clear();
-  prints(COLOR1"[1m¡i %s ¡j[m\n", title);
+  prints("%s[1m¡i %s ¡j[m\n", COLOR1, title);
 }
 
 
@@ -639,25 +618,7 @@ void (*procp)();
 
 #endif
 
-capture_screen()
-{
-   char fname[PATHLEN];
-   FILE* fp;
-   extern screenline *big_picture;
-   extern uschar scr_lns;
-   int i;
-
-   sethomefile(fname, cuser.userid, "buf.0");
-   if (fp = fopen(fname, "w")) 
-   {
-      for (i = 0; i < scr_lns; i++)
-         fprintf(fp, "%.*s\n", big_picture[i].len, big_picture[i].data);
-      fclose(fp);
-   }
-}
-
-void
-edit_note()
+void edit_note()
 {
    char fname[PATHLEN];
    int mode0 = currutmp->mode;
@@ -690,8 +651,7 @@ my_ctime(const time_t *t)
 /* ¼È¦sÀÉ TBF (Temporary Buffer File) routines           */
 /* ----------------------------------------------------- */
 
-char *
-tbf_ask()
+char *tbf_ask()
 {
   static char fn_tbf[10] = "buf.0";
   getdata(b_lines, 0, "½Ð¿ï¾Ü¼È¦sÀÉ(0-9)¡G", fn_tbf + 4, 2, DOECHO,"0");
@@ -735,85 +695,7 @@ check_personal_note(int newflag, char* userid)
  return 0;
 }
 
-game_log(va_alist)
-va_dcl
-{
- va_list ap;
- int file;
- char *fmt,msg[128],ff[40];
- time_t now;
- FILE *fs;
-
- va_start(ap);
-  file = va_arg(ap, int);
-  fmt = va_arg(ap, char *);
-  vsprintf(msg, fmt, ap);
- va_end(ap);
-
- switch(file) /* ³o¤@¬q¥i¥H¦Û¤v§ï! */
- {
-  case XAXB:
-    strcpy(ff,"log/ab.log");
-    log_usies("XAXB",NULL);
-    break;
-  case CHICKEN: 
-    strcpy(ff,"log/pip.log"); 
-    log_usies("CHICKEN",NULL);
-    break;
-  case BLACKJACK: 
-    strcpy(ff,"log/bj.log"); 
-    log_usies("BJ",NULL);
-    break;
-  case STOCK: 
-    strcpy(ff,"log/stock.log"); 
-    log_usies("STOCK",NULL);
-    break;
-  case DICE: 
-    strcpy(ff,"log/dice.log"); 
-    log_usies("DICE",NULL);
-    break;
-  case GP: 
-    strcpy(ff,"log/gp.log"); 
-    log_usies("GP",NULL);
-    break;
-  case MARIE: 
-    strcpy(ff,"log/marie.log"); 
-    log_usies("MARIE",NULL);
-    break;
-  case RACE: 
-    strcpy(ff,"log/race.log"); 
-    log_usies("RACE",NULL);
-    break;
-  case BINGO: 
-    strcpy(ff,"log/bingo.log"); 
-    log_usies("BINGO",NULL);
-    break; 
-  case NINE: 
-    strcpy(ff,"log/nine.log"); 
-    log_usies("NINE",NULL);
-    break;
-  case NumFight: 
-    strcpy(ff,"log/fightnum.log"); 
-    log_usies("NumFight",NULL);
-    break;
-  case CHESSMJ: 
-    strcpy(ff,"log/chessmj.log"); 
-    log_usies("CHESSMJ",NULL);
-    break;
-  case SEVENCARD: 
-    strcpy(ff,"log/seven.log"); 
-    log_usies("SEVENCARD",NULL);
-    break;
- }
- fs=fopen(ff,"a+");
- now=time(0);
- fprintf(fs,"[1;33m%s [32m%s [36m%s[m\n", Etime(&now),cuser.userid,msg);
- fclose(fs);
-}
-
-int
-show_help(mode)
-  int mode;
+int show_help(int mode)
 {
   if(inmore)
     more(BBSHOME"/etc/help/MORE.help",YEA);
@@ -870,4 +752,207 @@ debug(mode)
 
   sprintf(buf, "%s %s %s\n", Etime(&now), mode, cuser.userid);      
   f_cat("debug",buf);
+}
+
+/*-------------------------------------------------------*/
+/* register.c   ( NTHU CS MapleBBS Ver 2.36 )            */
+/*-------------------------------------------------------*/
+/* target : user register routines                       */
+/* create : 95/03/29                                     */
+/* update : 95/12/15                                     */
+/*-------------------------------------------------------*/
+
+/* origin: SOB & Ptt              */
+/* modify: wildcat/980909         */
+/* ½T»{user¬O§_³q¹Lµù¥U¡B¸ê®Æ¥¿½T */
+check_register()
+{
+  char *ptr;
+  char genbuf[200],buf[100];
+
+  if(!HAS_PERM(PERM_POST) && (cuser.lastlogin - cuser.firstlogin >= 86400))
+    cuser.userlevel |= PERM_POST;  
+
+  stand_title("½Ð¸Ô²Ó¶ñ¼g­Ó¤H¸ê®Æ");
+
+  while (strlen(cuser.username) < 2)
+    getdata(2, 0, "ºï¸¹¼ÊºÙ¡G", cuser.username, 24, DOECHO,0);
+  strcpy(currutmp->username, cuser.username);
+
+  for (ptr = cuser.username; *ptr; ptr++)
+    if (*ptr == 9)              /* TAB convert */
+      strcpy(ptr, " ");
+
+  while (strlen(cuser.feeling) < 2)
+    getdata(3, 0, "¤ß±¡ª¬ºA¡G", cuser.feeling, 5, DOECHO,0);
+  cuser.feeling[4] = '\0';
+  strcpy(currutmp->feeling, cuser.feeling);
+
+  while (strlen(cuser.realname) < 4)
+    getdata(4, 0, "¯u¹ê©m¦W¡G", cuser.realname, 20, DOECHO,0);
+
+  while (!cuser.month || !cuser.day || !cuser.year)
+  {
+    sprintf(genbuf, "%02i/%02i/%02i", cuser.year,cuser.month, cuser.day);
+    getdata(6, 0, "¥X¥Í¦~¥÷ ¦è¤¸ 19", buf, 3, DOECHO,0);
+    cuser.year = (buf[0] - '0') * 10 + (buf[1] - '0');
+    getdata(7, 0, "¥X¥Í¤ë¥÷", buf, 3, DOECHO,0);
+    cuser.month = (buf[0] - '0') * 10 + (buf[1] - '0');
+    getdata(8, 0, "¥X¥Í¤é´Á", buf, 3, DOECHO,0);
+    cuser.day = (buf[0] - '0') * 10 + (buf[1] - '0');
+    if (cuser.month > 12 || cuser.month < 1 ||
+      cuser.day > 31 || cuser.day < 1 || cuser.year > 90 || cuser.year < 40)
+      continue;
+    break;
+  }
+
+  while (cuser.sex > 7)
+  {
+    char buf;
+    char *choose_sex[8]={"11.¸¯®æ","22.©j±µ","33.©³­}","44.¬ü¬Ü","55.Á¦¨û","66.ªü«¼","77.´Óª«","88.Äqª«"};
+
+    buf = getans2(10, 0, "©Ê§O ", choose_sex, 8, cuser.sex + '1');    
+    if (buf >= '1' && buf <= '8')
+      cuser.sex = buf - '1';
+  }
+
+  if (belong_spam(BBSHOME"/etc/spam-list",cuser.email))
+  {
+    strcpy(cuser.email,"NULL");
+    pressanykey("©êºp,¥»¯¸¤£±µ¨ü§Aªº E-Mail «H½c¦ì¸m");
+  }
+  
+  if (!strchr(cuser.email, '@'))
+  {
+    bell();
+    move(t_lines - 4, 0);
+    prints("\
+¡° ¬°¤F±zªºÅv¯q¡A½Ð¶ñ¼g¯u¹êªº E-mail address¡A ¥H¸ê½T»{»Õ¤U¨­¥÷¡A\n\
+   ®æ¦¡¬° [44muser@domain_name[0m ©Î [44muser@\\[ip_number\\][0m¡C\n\n\
+¡° ¦pªG±z¯uªº¨S¦³ E-mail¡A½Ðª½±µ«ö [return] §Y¥i¡C");
+
+    do
+    {
+      getdata(12, 0, "¹q¤l«H½c¡G", cuser.email, 50, DOECHO,0);
+      if (!cuser.email[0])
+        sprintf(cuser.email, "%s%s", cuser.userid, str_mail_address);
+      if(belong_spam(BBSHOME"/etc/spam-list",cuser.email))
+      {
+        strcpy(cuser.email, "NULL");
+        pressanykey("©êºp,¥»¯¸¤£±µ¨ü§Aªº E-Mail «H½c¦ì¸m");
+      }
+    } while (!strchr(cuser.email, '@'));
+
+#ifdef  REG_MAGICKEY   
+    mail_justify(cuser);
+#endif
+
+  }
+
+  cuser.userlevel |= PERM_DEFAULT;
+  if (!HAS_PERM(PERM_SYSOP) && !(cuser.userlevel & PERM_LOGINOK))
+  {
+    /* ¦^ÂÐ¹L¨­¥÷»{ÃÒ«H¨ç¡A©Î´¿¸g E-mail post ¹L */
+
+    sethomefile(genbuf, cuser.userid, "email");
+    if (dashf(genbuf))
+      cuser.userlevel |= ( PERM_POST );
+
+#ifdef  STRICT
+    else
+    {
+      cuser.userlevel &= ~PERM_POST;
+      more("etc/justify", YEA);
+    }
+#endif
+
+  substitute_record(fn_passwd, &cuser, sizeof(userec), usernum);
+/* wildcat 981218 */
+    clear();
+    update_data(); 
+
+#ifdef REG_FORM
+    if (HAS_PERM(PERM_POST) && !HAS_PERM(PERM_LOGINOK)
+      && answer("¬O§_­n¶ñ¼gµù¥U³æ (y/N)") == 'y')
+    DL_func("SO/register.so:u_register");
+#endif
+
+  }
+  if (HAS_PERM(PERM_DENYPOST) && !HAS_PERM(PERM_SYSOP))
+    cuser.userlevel &= ~PERM_POST;
+}
+
+/*-------------------*/
+/*  hialan's script  */
+/*-------------------*/
+int
+change_bp(y, title, desc)
+  char desc[3][80];
+  char *title;
+  int y;
+{
+  int i, ch;
+  char barcolor[50];
+  char *bgcolor="\033[0;30;46m";
+  
+  move(y, 0);
+  clrtoeol();
+  prints("   \033[0m\033[30m\033[47m    %-53s%-16s\033[m", title, "«ö q Áäµ²§ô");
+
+  y++;
+  for(i = 0;i < 3;i++)
+  {
+    move(i+y,0);
+    clrtoeol();
+    prints("     %s%-71s\033[m", bgcolor, desc[i]);
+  }
+
+  get_lightbar_color(barcolor);
+  i = 0;
+  while(1)
+  {
+    move(i+y,0);
+    clrtoeol();
+    prints("   ¡´%s%-71s\033[m", barcolor, desc[i]);
+    
+    ch = igetkey();
+    
+    move(i+y,0);
+    clrtoeol();
+    prints("     %s%-71s\033[m", bgcolor, desc[i]);
+   
+    switch(ch)
+    {
+      case KEY_UP:
+        i--;
+        if(i < 0) i = 2;
+        break;
+        
+      case KEY_DOWN:
+        i++;
+        if(i > 2) i = 0;
+        break;
+      
+      case '\r':
+      
+        do
+        {
+          getdata(i+y, 0, "     ", desc[i], 71, DOECHO, desc[i]);
+ 
+          move(i+y,0);
+          clrtoeol();
+          prints("     %s%-71s\033[m", bgcolor, desc[i]);
+
+          i++;
+          if(i > 2) i = 0;
+        }while(desc[i][0] == '\0' && i != 0);
+      
+        break;
+      
+      case 'Q':
+      case 'q':
+        return 0;
+    }
+  }
+  pressanykey(NULL);
 }

@@ -559,7 +559,7 @@ static void check_BM()      /* Ptt 自動取下離職板主權力 */
   resolve_boards();
   cuser.userlevel &= ~PERM_BM;
   for (i = 0, bhdr = bcache; i < numboards; i++, bhdr++)
-      is_BM(bhdr->BM);
+      userid_is_BM(cuser.userid, bhdr->BM);
 }
 
 void setup_utmp(int mode)
@@ -833,7 +833,7 @@ void start_client()
 
   dup2(0, 1);
   
-  term_init("vt100");
+//  term_init_m2("vt100");
   initscr();
   login_query();
   user_login();
@@ -861,10 +861,6 @@ void start_client()
 
 #ifdef HAVE_GAME
   waste_money();
-#endif
-
-#ifdef POSTNOTIFY
-  m_postnotify(); 
 #endif
 
   force_board("Announce");
@@ -900,42 +896,129 @@ void start_client()
 /* FSA (finite state automata) for telnet protocol       */
 /* ----------------------------------------------------- */
 
-static void
-telnet_init()
+static void telnet_init()
 {
-  static char svr[] = {
+  static char svr[] = 
+  {
     IAC, DO, TELOPT_TTYPE,
     IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
     IAC, WILL, TELOPT_ECHO,
     IAC, WILL, TELOPT_SGA
   };
 
-  register int n, len;
-  register char *cmd, *data;
-  int rset, oset;
+  int n, len;
+  char *cmd;
+  int rset;
   struct timeval to;
-  char buf[256];
+  char buf[64];
 
-  data = buf;
+  /* --------------------------------------------------- */
+  /* init telnet protocol                                */
+  /* --------------------------------------------------- */
 
+  cmd = svr;
 
-  to.tv_sec = 1;
-  rset = to.tv_usec = 0;
-  FD_SET(0, (fd_set *) & rset);
-  oset = rset;
-  for (n = 0, cmd = svr; n < 4; n++)
+  for (n = 0; n < 4; n++)
   {
     len = (n == 1 ? 6 : 3);
-    write(0, cmd, len);
+    send(0, cmd, len, 0);
     cmd += len;
 
+    rset = 1;
+    /* Thor.981221: for future reservation bug */
+    to.tv_sec = 1;
+    to.tv_usec = 1;
     if (select(1, (fd_set *) & rset, NULL, NULL, &to) > 0)
       recv(0, buf, sizeof(buf), 0);
-//      read(0, data, sizeof(buf));
-    rset = oset;
   }
 }
 
+static void term_init()
+{
+#if 0   /* fuse.030518: 註解 */
+  server問：你會改變行列數嗎？(TN_NAWS)
+  client答：Yes, I do. (TNCH_DO)
+
+  那麼在連線時，當TERM變化行列數時就會發出：
+  TNCH_IAC + TNCH_SB + TN_NAWS + 行數列數 + TNCH_IAC + TNCH_SE;
+#endif
+
+  /* ask client to report it's term size */
+  static char svr[] =       /* server */
+  {
+    IAC, DO, TELOPT_NAWS
+  };
+
+  static char rvr[] =       /* receiver */
+  {
+    IAC, WILL, TELOPT_NAWS,
+    IAC, SB, TELOPT_NAWS,
+    IAC, WONT, TELOPT_NAWS
+  };
+
+  int len, rset;
+  char *cmd, *res, buf[64];
+  struct timeval to;
+
+  cmd = svr;
+
+  len = 3;
+
+return;
+  
+  /* 問對方 (telnet client) 有沒有支援不同的螢幕寬高 */
+  send(0, cmd, len, 0);
+
+  rset = 1;
+  if (select(1, (fd_set *) & rset, NULL, NULL, &to) > 0)
+    recv(0, buf, sizeof(buf), 0);
+
+  cmd = rvr;
+  res = buf;
+  if (!memcmp(res, cmd, 3))
+  {
+    /* got IAC WILL NAWS : 對方說有 */
+    res += 3;
+    if (!memcmp(res, cmd + 3, 3))
+    {
+      /* got IAC SB NAWS ：接著回傳資料 */
+      res += 3;
+      /* t_width = res[0] * 256 + res[1]; */
+      t_columns = res[0] * 256 + res[1];
+      t_lines = res[2] * 256 + res[3];
+    }
+  }
+  else if (!memcmp(res, cmd + 3, 3))
+  {
+    /* got IAC SB NAWS */
+    res += 3;
+    /* t_width = res[0] * 256 + res[1]; */
+    t_columns = res[0] * 256 + res[1];
+    t_lines = res[2] * 256 + res[3];
+  }
+  else if (!memcmp(res, cmd + 6, 3))
+  {
+    /* got IAC WONT NAWS; default to 80x24 ：對方說沒有 */
+    /* t_width = 80; */
+    t_columns = 80;
+    t_lines = 24;
+  }
+  else
+  {
+    /* what ever else; default to 80x24 ：沒有回覆 */
+    /* t_width = 80; */
+    t_columns = 80;
+    t_lines = 24;
+  }
+
+  /* b_lines 至少要 23，最多不能超過 t_lines - 1 */
+  if(t_lines < 24)
+    t_lines = 24;
+    
+  b_lines = t_lines - 1;
+  p_lines = t_lines - 4;
+  return;
+}
 
 /* ----------------------------------------------- */
 /* 取得 remote user name 以判定身份                */
@@ -1159,8 +1242,7 @@ start_daemon(genbuf)
 }
 
 
-static void
-close_daemon()
+static void close_daemon()
 {
   exit(0);
 }
@@ -1196,7 +1278,7 @@ bind_port(port)
   return sock;
 }
 
-bad_host(char* name)
+int bad_host(char* name)
 {
    FILE* list;
    char buf[40];
@@ -1396,6 +1478,7 @@ again:
         setenv("RFC931", RFC931, 1);
       }
       telnet_init();
+//      term_init();
       printpt("mbbsd : %s",fromhost);
       start_client();
     }

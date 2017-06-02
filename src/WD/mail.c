@@ -1595,8 +1595,7 @@ chkmail(rechk)
 }
 
 #ifdef  REG_MAGICKEY
-void
-mail_justify(userec muser)
+void mail_justify(userec muser)
 {
   fileheader mhdr;
   char title[128], buf1[80];
@@ -1614,7 +1613,6 @@ mail_justify(userec muser)
     FILE *fp;
     char title[80], *ptr, ch, MagicKey[9];
     ushort checksum;            /* 16-bit is enough */
-    time_t now;
                 
     checksum = getuser(muser.userid);
     ptr = muser.email;
@@ -1627,7 +1625,7 @@ mail_justify(userec muser)
       checksum = (checksum << 1) ^ ch;
     }
     /* shakalaca.990725: 身份認證用的 MagicKey */
-    sprintf(title, "%d", checksum + time(&now));
+    sprintf(title, "%d", checksum + time(0));
     strncpy(MagicKey, title, 8);
     MagicKey[8] = '\0';
     sethomefile(title, cuser.userid, fn_magickey);
@@ -1636,7 +1634,7 @@ mail_justify(userec muser)
       pressanykey("錯誤!!開啟檔案失敗, 請通知站長!!");
       return;
     }
-    fprintf(fp, "%s", MagicKey);
+    fprintf(fp, "%s\n", MagicKey);
     fclose(fp);
 
     sprintf(title, "%s To %s: [重要 ! 請閱\讀]", TAG_VALID, muser.userid);

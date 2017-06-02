@@ -316,7 +316,7 @@ Ben_Perm(boardheader *bptr)
     return 1;
 
   ptr = bptr->BM;
-  if (is_BM(ptr))
+  if (userid_is_BM(cuser.userid, ptr))
     return 1;
 
   /* 祕密看板 */
@@ -700,7 +700,7 @@ cmpboard(brd, tmp)
 static void
 set_menu_BM(char *BM)
 {
-  if (HAS_PERM(PERM_ALLBOARD) || is_BM(BM))
+  if (HAS_PERM(PERM_ALLBOARD) || userid_is_BM(cuser.userid, BM))
     currmode |= MODE_MENU;
 }
 
@@ -838,7 +838,7 @@ static void choose_board(int newflag,usint mode)
         c = page_lines - (num%page_lines);
         if(num+c < brdnum && nbrd[num+c].name)
         {
-          move(b_lines-5,69);
+          move(b_lines-5,68);
           prints("[還有下頁唷！]");
         }
       }
@@ -1122,7 +1122,7 @@ static void choose_board(int newflag,usint mode)
                     可是怎麼覺得是在重複 Ben_Perm 做的判斷?
 */
           if((ptr->brdattr & BRD_HIDE && !(ptr->brdattr & BRD_POSTMASK))
-             && (!HAS_PERM(PERM_SYSOP) && !is_BM(ptr->BM)))
+             && (!HAS_PERM(PERM_SYSOP) && !userid_is_BM(cuser.userid, ptr->BM)))
           {
             setbfile(buf, ptr->name, FN_LIST);
             if(!belong_list(buf,cuser.userid))
@@ -1230,21 +1230,28 @@ New()
   return 0;
 }
 
-int
-Favor()
+int Favor()
 {
   int mode0 = currutmp->mode;
   int stat0 = currstat;
   char fpath[80];
   FILE *fp;
+
   boardprefix = NULL;
   currmode |= MODE_FAVORITE;
 
   sethomefile(fpath, cuser.userid, fn_myfavorite);
-  if ((fp = fopen(fpath, "r")) == NULL) return;
-  else fclose(fp);
 
-  choose_board(cuser.habit & HABIT_BOARDLIST,0);
+/*
+  if ((fp = fopen(fpath, "r")) == NULL) 
+    return;
+  else 
+    fclose(fp);
+*/
+  if(!dashf(fpath))
+    pressanykey("您目前並沒有設定任何我的最愛!!");
+  else
+    choose_board(cuser.habit & HABIT_BOARDLIST,0);
 
   currmode &= ~MODE_FAVORITE;
   currutmp->mode = mode0;
