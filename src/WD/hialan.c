@@ -122,9 +122,10 @@ getans2(line, col, prompt, s, many, def)
                                                                                 
   /*預設值*/
   off_set = offset_count(prompt);
-                                                                                
   if(!s) s = choose_yesno;
-                                                                               
+  
+  if(many == 1) return *(s[0]);	/* 只有一個選項選什麼? */
+  
   for(i = 0;i < many;i++)
   {
     p = s[i];
@@ -163,7 +164,6 @@ getans2(line, col, prompt, s, many, def)
   }
                                                                                 
   get_lightbar_color(bar_color);
-                                                                                
   /*清空螢幕*/
   if (prompt)
   {

@@ -19,28 +19,32 @@ extern struct UTMPFILE *utmpshm;
 int cmpuids(int ,user_info *);
 int cmppids(pid_t, user_info *);
 
+
 void
-t_aloha()
+do_aloha(char *hello)
 {
-  int i;
-  user_info *uentp;
-  pid_t pid;
-  char buf[100];
+   int fd;
+   PAL pal;
+   char genbuf[200];
 
-  sprintf(buf + 1, "[1;37;41m¡¸ %s(%s) ¤W¯¸¤F! [0m",
-    cuser.userid, cuser.username);
-  *buf = 0;
-
-  /* Thor: ¯S§Oª`·N, ¦Û¤v¤W¯¸¤£·|³qª¾¦Û¤v... */
-
-  for (i = 0; i < USHM_SIZE; i++) 
-  {
-    uentp = &utmpshm->uinfo[i];
-    if ((pid = uentp->pid) && (kill(pid, 0) != -1) &&
-        uentp->pager && (is_friend(uentp) & 2) &&
-        strcmp(uentp->userid, cuser.userid))
-      my_write(uentp->pid, buf);
-  }
+   setuserfile(genbuf, FN_ALOHA);
+   if ((fd = open(genbuf, O_RDONLY)) > 0)
+   {
+      user_info *uentp;
+      int tuid;   
+      
+      sprintf(genbuf + 1, hello);
+      *genbuf = 1;
+      while (read(fd, &pal, sizeof(pal)) == sizeof(pal)) 
+      {
+         if ( (tuid = searchuser(pal.userid))  && tuid != usernum &&
+             (uentp = (user_info *) search_ulistn(cmpuids, tuid, 1)) &&
+             ((uentp->userlevel & PERM_SYSOP) || ((!currutmp->invisible || 
+           uentp->userlevel & PERM_SEECLOAK) && !(is_rejected(uentp) & 1))))    
+            my_write(uentp->pid, genbuf);
+      }
+      close(fd);
+   }
 }
 
 void
@@ -63,18 +67,15 @@ my_write(pid, hint)
   pid_t pid;
   char *hint;
 {
-  int len;
-  char msg[80];
+  int len, a;
+  int currstat0 = currstat;  
+  char msg[80], genbuf[200];
+  char c0 = currutmp->chatid[0];  
   FILE *fp;
   struct tm *ptime;
   time_t now;
-  char genbuf[200];
   user_info *uin ;
-  extern msgque oldmsg[MAX_REVIEW];
-  int a;
   uschar mode0 = currutmp->mode;
-  char c0 = currutmp->chatid[0];
-  int currstat0 = currstat;
 
   if(watermode > 0)
   {
@@ -101,8 +102,6 @@ my_write(pid, hint)
 
   if (isprint2(*hint))
   {
-    char inputbuf[4];
-    
     if (!(len = getdata(0, 0, hint, msg, 65, DOECHO,0))) {
       pressanykey("ºâ¤F! ©ñ§A¤@°¨...");
       currutmp->chatid[0] = c0;
@@ -113,10 +112,10 @@ my_write(pid, hint)
   }
 /* Ptt */
     if(watermode > 0)
-      {
-       a = (no_oldmsg - watermode + MAX_REVIEW )%MAX_REVIEW;
-       uin = (user_info*)search_ulist(cmppids, oldmsg[a].last_pid);
-      }
+    {
+      a = (no_oldmsg - watermode + MAX_REVIEW )%MAX_REVIEW;
+      uin = (user_info*)search_ulist(cmppids, oldmsg[a].last_pid);
+    }
 
     strip_ansi(msg,msg,0);
     if (!uin  || !*uin->userid) {
@@ -128,18 +127,17 @@ my_write(pid, hint)
        return 0;
     }
 
-    sprintf(genbuf, "¥á%s¤Ñ­µ:%.40s....? ", uin->userid, msg);
-   
-    inputbuf[0] = getans2(0, 0, genbuf, 0, 2, 'y');
-    genbuf[0] = '\0';
     watermode = -1;
-    if (inputbuf[0] == 'n') {
+    sprintf(genbuf, "¥á%s¤Ñ­µ:%.40s....? ", uin->userid, msg);
+    if (getans2(0, 0, genbuf, 0, 2, 'y') == 'n') 
+    {
       currutmp->chatid[0] = c0;
       currutmp->mode = mode0;
       currstat = currstat0;
       return 0;
     }
-    if (!uin || !*uin->userid) {
+    if (!uin || !*uin->userid) 
+    {
        pressanykey("ÁV¿|! ¹ï¤è¤w¸¨¶]¤F(¤£¦b¯¸¤W)! ~>_<~");
        currutmp->chatid[0] = c0;
        currutmp->mode = mode0;
@@ -147,7 +145,8 @@ my_write(pid, hint)
        return 0;
     }
   }
-  else {
+  else 
+  {
      strcpy(msg, hint + 1);
      strip_ansi(msg,msg,0);
      len = strlen(msg);
@@ -191,9 +190,7 @@ my_write(pid, hint)
       }
       
 /* hialan.020713 for ³Ì«á¤@¥y¸Ü¤ô²y¦^ÅU*/
-      sprintf(last_return_msg, "\033[m µ¹ %s \033[1;33;44m", uin->userid);
-      strcat(last_return_msg, msg);
-      strcat(last_return_msg, "\033[m");
+      sprintf(last_return_msg, "\033[m µ¹ %s \033[1;33;44m %s \033[m", uin->userid, msg);
    }
    if (*hint == 2 && uin->msgcount) 
    {
@@ -234,8 +231,7 @@ static char t_display_new_flag =0;
 int
 t_display_new(int b_f_flag)
 {
-   int i;
-   int j;  /*¤w¸g¤U¯¸ªº¨Ï¥ÎªÌ*/
+   int i, j;  /* j:¤w¸g¤U¯¸ªº¨Ï¥ÎªÌ*/
    char buf[256];
    user_info *uin;
 
@@ -298,7 +294,21 @@ t_display_new(int b_f_flag)
   return j;
 }
 
-/* Thor: for ask last call-in message */
+int
+talk_mail2user()
+{
+  char fname[128];
+
+  setuserfile(fname, fn_writelog);
+  mail2user(cuser.userid, "¼ö½u\033[37;41m°O¿ý\033[m", fname, FILE_READ);
+  unlink(fname);
+  
+  /* itoc.011104: delete BMW */
+  sethomefile(fname, cuser.userid, FN_BMW);
+  unlink(fname);
+  
+  return 0;
+}
 
 int
 t_display()

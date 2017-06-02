@@ -793,7 +793,10 @@ show_helplist_line(row, cmd, barcolor)
       break;    
     case KEY_TAB:
       sprintf(key, "Tab");
-      break;    
+      break;
+    case KEY_HOME:
+      sprintf(key, "Home");    
+      break;
   }
     
   sprintf(buf, "    %s %9s \033[m     %s",  barcolor ? barcolor : "" , key, cmd.help);

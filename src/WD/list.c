@@ -192,10 +192,7 @@ list_add()
 	if (pos)
 	  rec_del(fpath, sizeof(PAL), pos, NULL, NULL);
 
-	//getdata(1, 0, "加入上站通知嗎 (Y/N) ? [Y]", ans, 3, DOECHO, 0);
-	ans[0] = getans2(1, 0, "加入上站通知嗎? ", 0, 2, 'y');
-	
-	if (*ans != 'n')
+	if (getans2(1, 0, "加入上站通知嗎? ", 0, 2, 'y') != 'n')
 	{
 	  hdr.filemode |= M_ALOHA;
 	  strcpy(aloha.userid, cuser.userid);
@@ -454,23 +451,6 @@ list_move(ent, fhdr, direct)
   return RC_NEWDIR;
 }
 
-
-static int
-list_help(ent, fhdr, direct)
-  int ent;
-  fileheader *fhdr;
-  char *direct;
-{
-  move(3, 0);
-  clrtobot();
-  move(3, 0);
-  prints("\n施工中.. ^^;");
-  pressanykey(NULL);
-
-  return RC_FULL;
-}
-
-
 struct one_key list_comm[] = {
   'r', list_view, "進入/檢視",
   'c', list_edit, "修改",
@@ -480,7 +460,6 @@ struct one_key list_comm[] = {
   'i', list_merge,"引入其他名單",
   's', list_multi,"群組寄信",
   'm', list_move, "改變位置",
-  'h', list_help, "使用說明",
   '\0', NULL, NULL
 };
 
@@ -501,7 +480,7 @@ listdoent(num, ent, row, bar, bar_color)
 	   ent->filemode & M_BAD ? 'b' : ' ',
 	   ent->filemode & M_ALOHA ? 'a' : ' ',
 	   is_alnum(ent->date[0]) ? ent->date : "      ", 
-	   (bar) ? bar_color : "", ent->filename, ent->title);
+	   (bar_color) ? bar_color : "", ent->filename, ent->title);
   } else
     prints(" %4d %-6s %s%-13s\033[m %-40s\n", 
                 num, ent->date, (bar) ? bar_color : "", ent->filename, ent->title);

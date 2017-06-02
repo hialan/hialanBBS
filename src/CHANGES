@@ -136,3 +136,15 @@
 [2003/02/03]
   1.新增 i_read() 的 help 叫做 i_read_helper()
   2.整理 i_read_key() , 將許多 case 獨立到 bbs.c
+
+[2003/02/18]
+  1.vote.c 修改光棒...以免畫面亂掉
+
+[2003/02/21]
+  1.刪除沒有用的函式 --> 最古老的上站通知
+  2.將 mail2user 增加 filemode 傳值
+  3.完成 talklist 的按鍵一覽表
+  4.do_aloha() 移到 msg.c
+
+[2003/02/22]
+  1.將 talk list 完全模組化

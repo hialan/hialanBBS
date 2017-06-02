@@ -13,11 +13,13 @@ extern int numboards;
 // extern void friend_edit(int type);
 extern cmpfilename();
 
-/* .vch : vote control header, ®M¥Î fileheader, ¥H i_read ¾ã¦X,
+#if 0
+ .vch : vote control header, ®M¥Î fileheader, ¥H i_read ¾ã¦X,
 	  ¦]¦¹¥i¥H¦P¤@®É¶¡Á|¦æ¦h­Ó§ë²¼. :)
 struct fileheader
 {
-  char filename[FNLEN];          V.[closetime].A
+  char filename[FNLEN];          V.[closetime].A  §ë²¼¥Øªº
+  char score;			 hialan: ¥Ø«eµL¥Î
   char savemode;                 ¥i§ëªº³Ì¤j²¼¼Æ
   char owner[IDLEN + 2];         votetime
   char date[6];                  opentime[xx/xx]
@@ -29,13 +31,14 @@ struct fileheader
   				VOTE_SCORE	0x04	¥´¤À
   				VOTE_PAPER	0x08	°Ý¨÷
 };
-*/                           
+
+#endif
 
 #define FHSZ	sizeof(fileheader)
-#define VOTE_NORMAL	0x01
-#define VOTE_PRIVATE	0x02
-#define VOTE_SCORE	0x04
-#define VOTE_PAPER	0x08	/* shakalaca.991126: ¯dµ¹¿ß¤j§a.. :p */
+#define VOTE_NORMAL	0x01	/* ¤@¯ë */
+#define VOTE_PRIVATE	0x02    /* ¨p¤H */
+#define VOTE_SCORE	0x04    /* ¥´¤À */
+#define VOTE_PAPER	0x08	/* °Ý¨÷ */
 
 static char STR_bv_control[] = ".control";	/* §ë²¼¤é´Á ¿ï¶µ */
 static char STR_bv_ballots[] = ".ballots";	/* §ë¹Lªº²¼ */
@@ -43,8 +46,6 @@ static char STR_bv_results[] = ".results";	/* §ë²¼µ²ªG */
 static char STR_bv_flags[] = ".flags";		/* ¦³µL§ë¹L²¼ */
 static char STR_fn_vote_polling[] = ".voting";
 static char STR_bv_comments[] = ".comments";	/* §ë²¼ªÌªº«Ø·N */
-/* static char STR_bv_desc[] = "desc"; */       /* §ë²¼¥Øªº */
-/* ¥H V.[closetime].A ¨ú¥N */
 
 boardheader *bcache;
 
@@ -448,13 +449,9 @@ do_vote(ent, fhdr, direct)
     return RC_DRAW;
   }
 
-  if (cuser.totaltime < 86400/6)
+  if (cuser.totaltime < 86400/6)  /* wildcat : §ï¦¨¥Îtotaltimeºâ§a */
   {
     pressanykey("¹ï¤£°_! ­n¤W¯¸¶W¹L 4 ¤p®É¤~¯à§ë²¼³á!");
-/*  shakalaca.000108: bug ´N¬O¤F. :p
-    wildcat : «ç»ò·|¦³ fclose ¦b open ¤§«e -_-
-    btw,§ï¦¨¥Îtotaltimeºâ§a ...
-    fclose(fp); */
     return RC_FULL;
   }              
 
@@ -467,9 +464,7 @@ do_vote(ent, fhdr, direct)
       return RC_FULL;
     }
     else
-    {
       pressanykey("®¥³ß§A¨üÁÜ¦¹¦¸¨p¤H§ë²¼....");
-    }
   }
 
   if (vote_flag(fhdr, NULL))
@@ -690,7 +685,6 @@ do_vote(ent, fhdr, direct)
   }
 
   fclose(fp);
-//  pressanykey(NULL);
   return RC_FULL;
 }
 
@@ -1009,17 +1003,18 @@ make_vote()
 }
 
 struct one_key vote_comms[] = {
-  'r', do_vote,
-  Ctrl('P'), make_vote,
-  'M', maintain_vote,
-  '\0', NULL
+  'r', do_vote, "§ë²¼",
+  Ctrl('P'), make_vote, "Á|¿ì§ë²¼",
+  'M', maintain_vote, "§ë²¼ºÞ²z",
+  '\0', NULL, NULL
 };
 
 
 void
-votedoent(num, ent)
-  int num;
+votedoent(num, ent, row, bar, bar_color)
+  int num, row, bar;
   fileheader *ent;
+  char *bar_color;
 {
   char closeday[9];
   struct tm *ptime;
@@ -1030,10 +1025,13 @@ votedoent(num, ent)
   sprintf(closeday, "%02d/%02d/%02d",
           ptime->tm_mon + 1, ptime->tm_mday, ptime->tm_year % 100);
 
-  prints("%4d %c %-5s%-4.3s %-11s %s[%s][m  %s\n", 
+  move(row, 0);
+  clrtoeol();
+  prints("%4d %c %-5s%-4.3s %-11s %s[%s] [m%s %s \033[m", 
     num, vote_flag(ent, NULL) ? ' ':'+', ent->date, ent->title + 65, closeday,
     (ent->filemode & VOTE_PRIVATE) ? "[1;31m" : "[1;36m",
-    (ent->filemode & VOTE_PRIVATE) ? "¨p¤H" : "¤@¯ë", ent->title);
+    (ent->filemode & VOTE_PRIVATE) ? "¨p¤H" : "¤@¯ë", 
+    bar_color ? bar_color : "", ent->title);
 }
 
 

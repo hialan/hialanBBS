@@ -147,16 +147,15 @@ set_board ()
   if (brd_title[0] <= ' ')
     brd_title = "¼x¨D¤¤";
 
-  //hialan %.22s Á×§K¦]¬°§@ªÌ¤Óªø³y¦¨µe­±¶Ã±¼...
   sprintf (currBM, "ªO¥D¡G%.22s", brd_title);
   brd_title = (bp->bvote == 1 ? "¥»¬İªO¶i¦æ§ë²¼¤¤" : bp->title + 7);
 
   currmode = (currmode & MODE_DIRTY) | MODE_STARTED;
   if (HAS_PERM (PERM_ALLBOARD) ||
       (HAS_PERM (PERM_BM) && is_BM (currBM + 6)))
-    {
+  {
       currmode |= (MODE_BOARD | MODE_POST);
-    }
+  }
   else if (haspostperm (currboard))
     currmode |= MODE_POST;
 }
@@ -185,7 +184,6 @@ doent (num, ent, row, bar, bar_color)
      fileheader *ent;
      char *bar_color;
 {
-  int tag;
   user_info *checkowner;
   char *mark, *title, color, type[10], buf[255];
   static char *colors[7] =
@@ -205,21 +203,16 @@ doent (num, ent, row, bar, bar_color)
     sprintf(buf , "   %s",
       colors[(unsigned int) (ent->date[4] + ent->date[5]) % 7]);
 
-
   if (currstat != RMAIL)
   {
     sprintf(type,"%c",brc_unread (ent->filename) ? '+' : ' ');
 
-    tag = ' ';
     if ((currmode & MODE_BOARD) && (ent->filemode & FILE_DIGEST))
       sprintf(type ,"[1;35m%c",(type[0] == ' ') ? '*' : '#');
     if (ent->filemode & FILE_MARKED)
       sprintf(type ,"[1;36m%c",(type[0] == ' ') ? 'm' : 'M');
-
-    /* itoc.001203: ¥[±Kªº¤å³¹«e­±¥X²{ X ¦r¼Ë */
-    if (ent->filemode & FILE_REFUSE)
+    if (ent->filemode & FILE_REFUSE)  /* ¥[±Kªº¤å³¹«e­±¥X²{ X ¦r¼Ë */
       sprintf(type ,"[1;31m%c",(type[0] == ' ') ? 'x' : 'X');
-              
   }
   else
   {
@@ -252,15 +245,15 @@ doent (num, ent, row, bar, bar_color)
   move(row, 0);
   clrtoeol();
   if (strncmp (currtitle, title, TTLEN))
-    prints ("%6d %s%c%s%-6s[m%s%s%-12.12s[m %s %s\n", 
-      num, type,tag, buf, ent->date,
+    prints ("%6d %s %s%-6s[m%s%s%-12.12s[m %s %s\n", 
+      num, type, buf, ent->date,
       checkowner ? rcolor[is_friend(checkowner)] : "",
-      (bar) ? bar_color : "", ent->owner,
+      (bar_color) ? bar_color : "", ent->owner,
       mark, title);
   else
-    prints ("%6d %s%c%s%-6s[m%s%s%-12.12s[m [1;3%cm%s %s[m\n",
-      num, type,tag, buf, ent->date,
-      checkowner ? rcolor[is_friend(checkowner)] : "", (bar) ? bar_color : "", ent ->owner,
+    prints ("%6d %s %s%-6s[m%s%s%-12.12s[m [1;3%cm%s %s[m\n",
+      num, type, buf, ent->date,
+      checkowner ? rcolor[is_friend(checkowner)] : "", (bar_color) ? bar_color : "", ent ->owner,
       color, mark, title);
 }
 
@@ -753,7 +746,7 @@ do_post ()
       return RC_FULL;
     }
 
-  setbfile(genbuf, currboard, FN_POST_NOTE );         /* ychia.021212:¦Û­q¤å³¹µoªí­n»â */
+  setbfile(genbuf, currboard, FN_POST_NOTE ); /* ychia.021212:¦Û­q¤å³¹µoªí­n»â */
   more(genbuf, YEA); //hialan:¨S¦³¸ÓÀÉ¦Û°Ê¸õ¹L
 
   if (quote_file[0])
@@ -1229,7 +1222,7 @@ read_post (ent, fhdr, direct)
   brc_addlist (fhdr->filename);
   strncpy (currtitle, str_ttl(fhdr->title), TTLEN);
   strncpy (currowner, str_ttl(fhdr->owner), STRLEN);
-/*  woju  */
+
   switch (more_result)
   {
     case 1:
@@ -1656,7 +1649,6 @@ score_note(prompt, fhdr, direct)	//±ÀÂË¥[¤À!! ¾Ç ptt by hialan
     if(*genbuf == 0) return;
 
     setdirpath (fpath, direct, fhdr->filename);
-
     if((fd = open(fpath, O_RDONLY)) == -1) 
     {
       pressanykey("±ÀÂË¥¢±Ñ!!ÀÉ®×¦³°İÃD©Î¦³¤H¥¿¦b±ÀÂË, ½Ğ­«·s±ÀÂË:)");
@@ -2549,7 +2541,7 @@ struct one_key read_comms[] =
   KEY_TAB, board_digest, "¶i¤J/°h¥X ¤åºK",
   'b', b_notes,          "¬İ¶iª©µe­±",
   'c', cite,             "¦¬¿ıºëµØ",
-  'r', read_post,        "¾\Åª¤å³¹",
+  'r', read_post,        "¾\\Åª¤å³¹",
   'z', man,         	 "¶i¤JºëµØ°Ï",
   'D', del_range,	 "¤j D ¬å«H",
   Ctrl ('S'), save_mail, "¦s¤J«H½c",
@@ -2617,7 +2609,7 @@ Read ()
   currmode = currmode0;
   currutmp->mode = mode0;
   currstat = stat0;
-//  return;
+  return;
 }
 
 

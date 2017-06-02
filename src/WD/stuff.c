@@ -749,8 +749,10 @@ check_personal_note(int newflag, char* userid)
  else
    sethomefile(fpath, userid, fn_note_dat);
 
- if ((fp = fopen(fpath, "r")) != NULL) {
-   while (fread(&myitem, sizeof(myitem), 1, fp) == 1) {
+ if ((fp = fopen(fpath, "r")) != NULL) 
+ {
+   while (fread(&myitem, sizeof(myitem), 1, fp) == 1) 
+   {
      if (newflag)
        if (myitem.buf[0][0] == 0) total++;
      else
@@ -861,112 +863,28 @@ show_help(mode)
   return 0;
 }
 
-/*取消傳呼功能 by hialan
-
-void
-sysop_bbcall(va_alist)
-  va_dcl
-{
-  va_list ap;
-  FILE *fp;
-  char NumMode[10][5],PagerNum[10][10];
-  int i=0,j;
-  char msg[256], *fmt,buf[256];
-
-  msg[0]=0;
-  va_start(ap);
-  fmt = va_arg(ap, char *);
-  if(fmt) vsprintf(msg, fmt, ap);
-  va_end(ap);
-    
-  if(fp=fopen(BBSHOME"/etc/sysop_bbcall","r"))
-  {
-    while(fgets(buf,sizeof(buf),fp))
-    {
-      if(buf[0] == '#') continue; 
-      buf[strlen(buf) - 1] = '\0';   
-      strncpy(NumMode[i],buf+1,3);
-      NumMode[i][3] = '\0';  
-      strncpy(PagerNum[i],buf+4,6);
-      PagerNum[i][6] = '\0';  
-      i++;
-    }
-    fclose(fp);
-  }
-  for(j = 0 ; i > j; j++)
-  {
-    DL_func("SO/bbcall.so:bbcall",atoi(NumMode[j]),1,PagerNum[j],0,msg);
-  }
-}
-
-void
-user_bbcall(va_alist)
-  va_dcl
-{
-  va_list ap;
-  char NumMode[10],PagerNum[10];
-  char msg[256], *fmt;
-
-  msg[0]=0;
-  va_start(ap);
-  fmt = va_arg(ap, char *);
-  if(fmt) vsprintf(msg, fmt, ap);
-  va_end(ap);
-    
-  sprintf(NumMode,"0%d",cuser.pagermode);
-  strncpy(PagerNum,cuser.pagernum,6);
-  PagerNum[6] = '\0';  
-
-  DL_func("SO/bbcall.so:bbcall",atoi(NumMode),1,PagerNum,0,msg);
-}
-
-*/
-
 int
-mail2user(userec muser,char *title,char *fname)
+mail2user(muser, title, fname, filemode)
+  char *muser, *title, *fname;
+  int filemode;
 {
   fileheader mhdr;
   char buf[256], buf1[80];
 
-  sethomepath(buf1, muser.userid);
+  sethomepath(buf1, muser);
   stampfile(buf1, &mhdr);
-  strcpy(mhdr.owner, cuser.userid);
+
+  if(filemode != 0)
+    strcpy(mhdr.owner, "[備.忘.錄]");    
+  else
+    strcpy(mhdr.owner, cuser.userid);
+
   strcpy(mhdr.title, title);
   mhdr.savemode = 0;
-  mhdr.filemode = 0;
-  sethomedir(buf, muser.userid);
+  mhdr.filemode = filemode;
+  sethomedir(buf, muser);
   rec_add(buf, &mhdr, sizeof(mhdr));
   f_cp(fname, buf1, O_TRUNC);
-  return 0;
-}
-
-
-int
-talk_mail2user(void)
-{
-  fileheader mhdr;
-  char buf[256], buf1[80], fname[128];
-  
-  setuserfile(fname, fn_writelog);
-
-  sethomepath(buf1, cuser.userid);
-  stampfile(buf1, &mhdr);
-
-  strcpy(mhdr.owner, "[備.忘.錄]");
-  strcpy(mhdr.title, "熱線\033[37;41m記錄\033[m");
-
-  mhdr.savemode = 'H';  /* hold-mail flag */
-  mhdr.filemode = FILE_READ;
-  sethomedir(buf, cuser.userid);
-  rec_add(buf, &mhdr, sizeof(mhdr));
-  f_cp(fname, buf1, O_TRUNC);
-  
-  unlink(fname);
-  
-  /* itoc.011104: delete BMW */
-  sethomefile(fname, cuser.userid, FN_BMW);
-  unlink(fname);
-  
   return 0;
 }
 

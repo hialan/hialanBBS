@@ -73,13 +73,12 @@ static struct MENU adminlist[] = {
                 PERM_SYSOP,     "CCache Reload  [ 更新狀態 ]",1,
   "SO/admin.so:adm_givegold", 
                 PERM_SYSOP,     "GGive $$       [ 發放獎金 ]",1,
-"SO/xyz.so:x_bbsnet",PERM_SYSOP,"BBBSNet        [ 連線工具 ]",1,
 
 /*
   m_mclean, PERM_BBSADM, "MMail Clean    清理使用者個人信箱",0,
 #endif */
   "SO/admin.so:x_reg",
-                PERM_ACCOUNTS,  "MMerge         [審核修理機]",0,
+                PERM_ACCOUNTS,  "MMerge         [審核修理機]",1,
   
 NULL, 0, NULL,0};
 

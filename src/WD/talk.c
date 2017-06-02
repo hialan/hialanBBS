@@ -664,7 +664,7 @@ do_talk(fd)
      sprintf(buf, "¹ï¸Ü°O¿ý [1;36m(%s)[m", getuserid(currutmp->destuid));
           
      if (getans("²M°£(C) ²¾¦Ü³Æ§Ñ¿ý(M) (C/M)?[C]") == 'm')
-       mail2user(cuser, buf, fpath);
+       mail2user(cuser.userid, buf, fpath, 0);
      unlink(fpath);
      flog = 0;
    }
@@ -1001,8 +1001,7 @@ friend_add(uident)
 #if 1
       if (strcmp(uident, cuser.userid))
       {
-        buf[0] = getans2(2, 0, "¥[¤J¤W¯¸³qª¾¶Ü? ", 0, 2, 'y');
-        if (*buf != 'n')
+        if (getans2(2, 0, "¥[¤J¤W¯¸³qª¾¶Ü? ", 0, 2, 'y')!= 'n')
         {
           PAL aloha;
 
@@ -1123,8 +1122,10 @@ friend_descript(uident)
     return space_buf;
 }
 
-/*Add for LightBar by hialan*/
 
+/*-------------------------------------*/
+/* talk list			       */
+/*-------------------------------------*/
 /*Move From  pickup_user() */
 static int real_name = 0;
 static int show_friend = 0;
@@ -1133,10 +1134,328 @@ static int show_uid = 0;
 static int show_tty = 0;
 static int show_pid = 0;
 
+int t_bmw();
+int m_read();
+int u_cloak();
+
+int 
+change_talk_type()
+{
+  char *prompt[6]={"11.¦n¤Í","22.¥N¸¹","33.°ÊºA","44.µo§b","55.¬G¶m","66.¬ÝªO"};
+  char ans = getans2(b_lines-1, 0,"±Æ§Ç¤è¦¡",prompt, 6, pickup_way + '1');
+  if(!ans) return US_REDRAW;
+
+  pickup_way = ans - '1';
+  if(pickup_way > 5 || pickup_way < 0) pickup_way = 0;
+  return US_PICKUP;
+//  num = 0;
+}
+
+int 
+talk_chusername()
+{
+  if (HAS_PERM(PERM_BASIC)) 
+  {
+    char buf[100];
+    sprintf(buf, "¼ÊºÙ [%s]¡G", currutmp->username);
+    if (!getdata(1, 0, buf, currutmp->username, 17, DOECHO,0))
+       strcpy(currutmp->username, cuser.username);
+  }
+  return US_PICKUP;
+}
+
 int
-pklist_doent(pklist, ch, row, bar, bar_color)
+talk_chmood()
+{
+  if (HAS_PERM(PERM_BASIC)) 
+  {
+    char buf[64];
+    sprintf(buf, "¤ß±¡ [%s]¡G", currutmp->feeling);
+    if (!getdata(1, 0, buf, currutmp->feeling, 5, DOECHO, currutmp->feeling))
+       strcpy(currutmp->feeling, cuser.feeling);
+  }
+  return US_PICKUP;
+}
+
+int
+talk_chhome()
+{
+  char buf[50];
+  if(getans2(1, 0, "½Ð°Ý¬O§_­×§ï¬G¶m? ", 0, 2, 'n') == 'y')
+  {  
+    sprintf(buf, "¬G¶m [%s]¡G", currutmp->from);
+    if (getdata(1, 0, buf, currutmp->from, 17, DOECHO,currutmp->from))
+    {
+      currutmp->from_alias=0;
+      if(!HAS_PERM(PERM_SYSOP) && !HAS_PERM(PERM_FROM))
+      {
+        if(check_money(5,GOLD)) return US_PICKUP;
+        degold(5);
+        pressanykey("­×§ï¬G¶mªá¥hª÷¹ô 5 ¤¸");
+      }      
+    }
+  }
+  return US_PICKUP;
+}
+
+int 
+talk_broadcast(pklist, actor, uentp)
+  pickup *pklist;
+  int actor;
+  user_info *uentp;  
+{
+  char genbuf[200];
+  
+  if(HAS_PERM(PERM_SYSOP) || cuser.uflag & FRIEND_FLAG)
+  {
+    if (!getdata(0, 0, "¼s¼½°T®§:", genbuf + 1, 60, DOECHO,0)) 
+            return US_PICKUP;
+    genbuf[0] = HAS_PERM(PERM_SYSOP) ? 2 : 0;
+    if(getans2(0, 0, "½T©w¼s¼½? ", 0, 2, 'y') == 'n') return US_PICKUP;
+    while (actor)
+    {
+      uentp = pklist[--actor].ui;
+      if (uentp->pid &&
+         currpid != uentp->pid &&
+         kill(uentp->pid, 0) != -1 &&
+         (HAS_PERM(PERM_SYSOP) || (uentp->pager != 3 &&
+         (uentp->pager != 4 || is_friend(uentp) & 4))))
+           my_write(uentp->pid, genbuf);
+    }
+  }
+  return US_PICKUP;
+}
+
+int 
+talk_water(pklist, actor, uentp, num)
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;  
+{
+  if (!HAS_PERM(PERM_PAGE)) return US_PICKUP;
+
+      if ((uentp->pid != currpid) &&
+          (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
+          (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
+      {
+        cursor_show(num + 3, 0);
+        my_write(uentp->pid, "¤Ñ­µ¼ö½u¡G");
+      }
+  return US_PICKUP;
+}
+
+int
+talk_switch()  /* Åã¥Ü¤Á´« */
+{
+  char *choose[6]={"sS.¦n¤Í´y­z",
+  		   "bB.¨Ï¥Î¬ÝªO",
+  		   "rR.¯u¹ê©m¦W",
+  		   "uU.UID", 
+  		   "yY.TTY",
+  		   "iI.PID"};
+  int ch = getans2(b_lines, 0, "¤Á´«", choose, HAS_PERM(PERM_SYSOP) ? 6 : 1, '1');
+  		   
+  if(ch == 's') show_friend ^= 1;
+  else if(HAS_PERM(PERM_SYSOP))
+  {
+    switch(ch)
+    {
+      case 'b':
+        show_board ^= 1;      
+        break;
+
+#ifdef  REALINFO        
+      case 'r': {real_name ^= 1;break;}
+#endif
+#ifdef  SHOWUID        
+      case 'u': {show_uid ^= 1;break;}
+#endif
+#ifdef  SHOWTTY
+      case 'y': {show_tty ^= 1;break;}
+#endif
+#ifdef  SHOWPID
+      case 'i': {show_pid ^= 1;break;}
+#endif
+    }
+  }
+  return US_PICKUP;
+}
+
+int
+talk_sendmail(pklist, actor, uentp, num)
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;  
+{
+  if(!cuser.userlevel) return US_PICKUP;
+  stand_title("±H  «H");
+  prints("¦¬«H¤H¡G%s", uentp->userid);
+  my_send(uentp->userid);
+  return US_PICKUP;
+}
+
+int 
+talk_sysophide()
+{
+  if (HAS_PERM(PERM_SYSOP)) currutmp->userlevel ^= PERM_DENYPOST;
+  return US_PICKUP;
+}
+
+int
+talk_chuser()
+{
+         if (HAS_PERM(PERM_SYSOP)) 
+         {
+            char buf[100];
+            sprintf(buf, "¥N¸¹ [%s]¡G", currutmp->userid);
+            if (!getdata(1, 0, buf, currutmp->userid, IDLEN + 1, DOECHO,0))
+               strcpy(currutmp->userid, cuser.userid);
+         }
+         return US_PICKUP;
+}
+
+int 
+talk_query(pklist, actor, uentp, num)
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;  
+{
+        strcpy(currauthor, uentp->userid);
+        showplans(uentp->userid);
+        return US_PICKUP;
+}
+
+int
+talk_edituser(pklist, actor, uentp, num)
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;  
+{
+          int id;
+          userec muser;
+  
+          if (!HAS_PERM(PERM_ACCOUNTS) || !HAS_PERM(PERM_SYSOP)) return US_PICKUP;
+          strcpy(currauthor, uentp->userid);
+          stand_title("¨Ï¥ÎªÌ³]©w");
+          move(1, 0);
+          if (id = getuser(uentp->userid))
+          {
+            memcpy(&muser, &xuser, sizeof(muser));
+            uinfo_query(&muser, 1, id);
+          }
+          return US_PICKUP;
+}
+
+int 
+talk_chfriend()  //¤Á´«Åã¥Ü¦n¤Í/¤@¯ëª¬ºA
+{
+          cuser.uflag ^= FRIEND_FLAG;
+          return US_PICKUP;
+}
+
+int
+t_pager()
+{
+  if(!HAS_PERM(PERM_BASIC)) return US_PICKUP;
+  currutmp->pager = (currutmp->pager + 1) % 5;
+  return US_PICKUP;
+}
+
+int
+talk_kick(pklist, actor, uentp, num) //½ð¤H
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;  
+{
+        if (!HAS_PERM(PERM_SYSOP)) return US_PICKUP;
+        if (uentp->pid && (kill(uentp->pid, 0) != -1))
+        {
+          clear();
+          move(2, 0);
+          my_kick(uentp);
+        }        
+        return US_PICKUP;
+}
+
+int 
+talk_ask(pklist, actor, uentp, num)  //­n¨D²á¤Ñµ¥³s½u¨Æ©y
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;
+{
+        if (!HAS_PERM(PERM_PAGE)) return US_PICKUP;
+        if (uentp->pid != currpid)
+        {
+          clear();
+          move(3, 0);
+          my_talk(uentp);
+        }
+        return US_PICKUP;
+}
+
+int
+talk_editfriend(pklist, actor, uentp, num)
+  pickup *pklist;
+  int actor, num;
+  user_info *uentp;
+{
+  char *choose[4]={"aA.¥[¤J¦n¤Í","dD.§R°£¦n¤Í","oO.¦n¤Í¦W³æ", "qQ.¨ú®ø"};
+
+  if(!HAS_PERM(PERM_LOGINOK)) return US_PICKUP;
+  switch(getans2(b_lines, 0, "¦n¤Í ", choose, 4, 'a'))  
+  {
+      case 'a':
+        if (!pal_type(cuser.userid, uentp->userid))
+        {
+          friend_add(uentp->userid, FRIEND_OVERRIDE);
+          friend_load();
+        }
+        break;
+
+      case 'd':
+        friend_delete(uentp->userid);
+        friend_load();
+        break;
+
+      case 'o':
+      {
+        char buf[MAXPATHLEN];
+
+        setuserfile(buf, FN_PAL);
+        ListEdit(buf);
+      }
+      break;
+  }
+  return US_PICKUP;
+}
+
+struct one_key talklist_key[]={
+KEY_TAB,  change_talk_type, "¤Á´«±Æ§Ç¤èªk¡C",
+'N',	  talk_chusername,  "­×§ï¼ÊºÙ¡C",
+'M',	  talk_chmood,	    "­×§ï¤ß±¡¡C",
+'F',	  talk_chhome,	    "­×§ï¬G¶m¡C",
+'b',	  talk_broadcast,   "¼s¼½¡C",
+'s',	  talk_switch,	    "Åã¥Ü¦n¤Í´y­z¡C",	/* ¼gµ¹¤@¯ë¨Ï¥ÎªÌ¬Ýªº */
+'t',	  talk_ask, "²á¤Ñµ¥¬ÛÃö¥\\¯à¡C",
+'w',	  talk_water,       "¥á¤ô²y¡C",
+'i',	  u_cloak, "Áô§Î¡C",  // Åv­­ PERM_CLOAK
+'a',	  talk_editfriend, "¥[¤J/§R°£ ¦n¤Í¡C",
+'f',	  talk_chfriend, "¤Á´«Åã¥Ü¦n¤Í/¤@¯ëª¬ºA",
+'q',	  talk_query, "query ¤H",
+'m',	  talk_sendmail, "±H«H",
+'r',	  m_read, "Åª«H",
+'l',	  t_bmw, "¤ô²y¦^ÅU",
+'p',	  t_pager, "¤Á´«áà¾÷ª¬ºA¡C",
+'H',	  talk_sysophide, "¤Á´«¯¸ªøÁô¨­¡C¯¸ªø±M¥Î!!",
+'D',	  talk_chuser, "¼È®É¤Á´«¨Ï¥ÎªÌ¡C¯¸ªø±M¥Î!!",
+'u',	  talk_edituser, "­×§ï¨Ï¥ÎªÌªº¸ê®Æ¡C¯¸ªø±M¥Î!!",
+'K',	  talk_kick,	"¯¸ªø½ð¤H¡C¯¸ªø±M¥Î!!",
+0, NULL, NULL};
+
+int
+pklist_doent(pklist, ch, row, bar_color)
   pickup pklist;
-  int ch, row, bar;
+  int ch, row;
   char *bar_color;
 {
   register user_info *uentp;
@@ -1150,10 +1469,7 @@ pklist_doent(pklist, ch, row, bar, bar_color)
 #endif    
     
       uentp = pklist.ui;
-      if (!uentp->pid)
-      {
-        return US_PICKUP;
-      }
+      if (!uentp->pid) return US_PICKUP;
 
 #ifdef SHOW_IDLE_TIME
       diff = pklist.idle;
@@ -1187,7 +1503,7 @@ pklist_doent(pklist, ch, row, bar, bar_color)
       (uentp->pager == 4) ? 'f' : (uentp->pager == 3) ? 'W' :
       (uentp->pager == 2) ? '-' : pagerchar[(state & 2) | diff],
       (uentp->invisible ? ')' : ' '),
-      (bar && HAVE_HABIT(HABIT_LIGHTBAR)) ? bar_color : (hate & IRH)? fcolor[8] : fcolor[state],
+      (bar_color && HAVE_HABIT(HABIT_LIGHTBAR)) ? bar_color : (hate & IRH)? fcolor[8] : fcolor[state],
       uentp->userid,
       (hate & IRH)? fcolor[8] : fcolor[state],
 #ifdef REALINFO
@@ -1214,30 +1530,12 @@ pklist_doent(pklist, ch, row, bar, bar_color)
   return state;
 }
 
-int
-talk_lightbar_key(pklist, num, row, bar_color)
-  pickup pklist;
-  int num, row;
-  char *bar_color;
-{
-  int ch;
-  
-  pklist_doent(pklist, num, row, 1, bar_color);
-  cursor_show(row, 0);
-  ch = igetkey();
-  pklist_doent(pklist, num, row, 0, 0);
-  
-  return ch;
-}
-    
-
 /*Add End*/
 
 static void
 pickup_user()
 {
   static int num = 0;
-  char genbuf[200];
 
   register user_info *uentp;
   register pid_t pid0=0;  /* Ptt ©w¦ì                */
@@ -1268,9 +1566,7 @@ pickup_user()
 #endif
   while (1)
   {
-    if (state == US_PICKUP)
-      freshtime = 0;
-
+    if (state == US_PICKUP) freshtime = 0;
     if (utmpshm->uptime > freshtime)
     {
       time(&freshtime);
@@ -1285,11 +1581,9 @@ pickup_user()
           if ((uentp->invisible && !(HAS_PERM(PERM_SYSOP) || HAS_PERM(PERM_SEECLOAK)))
             || ((is_rejected(uentp) & HRM) && !HAS_PERM(PERM_SYSOP)))
             continue;           /* Thor: can't see anyone who rejects you. */
+
           if (uentp->userid[0] == 0) continue;  /* Ptt's bug */
-
-          if (!PERM_HIDE(currutmp) && PERM_HIDE(uentp))
-             continue;
-
+          if (!PERM_HIDE(currutmp) && PERM_HIDE(uentp)) continue;
           head = is_friend(uentp) ;
           if ( (cuser.uflag & FRIEND_FLAG) && (!head || is_rejected(uentp)) )
             continue;
@@ -1335,7 +1629,7 @@ pickup_user()
       }
     }
 
-    if (state >= US_RESORT)
+    if (state >= US_RESORT) 
       qsort(pklist, actor, sizeof(pickup), pickup_cmp);
 
     if (state >= US_ACTION)
@@ -1385,6 +1679,7 @@ pickup_user()
     }
 
     if(pid0)
+    {
        for (ch = 0; ch < actor; ch++)
         {
           if(pid0 == (pklist[ch].ui)->pid &&
@@ -1393,6 +1688,7 @@ pickup_user()
                num = ch;
             }
         }
+     }
 
     if (num < 0)
       num = 0;
@@ -1401,9 +1697,7 @@ pickup_user()
 
     head = (num / p_lines) * p_lines;
     foot = head + p_lines;
-    if (foot > actor)
-      foot = actor;
-
+    if (foot > actor) foot = actor;
 
     for (ch = head; ch < foot; ch++)
     {
@@ -1413,12 +1707,10 @@ pickup_user()
          state = US_PICKUP;
          break;
       }
-      /*hialan for LightBar*/
       state = pklist_doent(pklist[ch], ch, ch + 3 - head, 0, 0);
     }
 
-    if (state == US_PICKUP)
-      continue;
+    if (state == US_PICKUP)  continue;
 
     move(b_lines, 0);
     outs(COLOR1"[1;33m (TAB/f)[37m±Æ§Ç/¦n¤Í [33m(t)[37m²á¤Ñ \
@@ -1427,14 +1719,17 @@ pickup_user()
     state = 0;
     while (!state)
     {
-    if(HAVE_HABIT(HABIT_LIGHTBAR))
-      ch = talk_lightbar_key(pklist[num], num, num + 3 - head, bar_color);
-    else
-      ch = cursor_key(num + 3 - head, 0);
+      if(HAVE_HABIT(HABIT_LIGHTBAR))
+      {
+        pklist_doent(pklist[num], num, num + 3 - head, bar_color);
+        cursor_show(num + 3 - head, 0);
+        ch = igetkey();
+        pklist_doent(pklist[num], num, num + 3 - head, 0);
+      }
+      else
+        ch = cursor_key(num + 3 - head, 0);
       
-      if (ch == KEY_RIGHT || ch == '\n' || ch == '\r')
-        ch = 't';
-
+      if (ch == KEY_RIGHT || ch == '\n' || ch == '\r') ch = 't';
       switch (ch)
       {
         case KEY_LEFT:
@@ -1453,26 +1748,6 @@ pickup_user()
           return;
         }
 
-        case KEY_TAB:
-        {
-          char ans;
-          char *prompt[6]={"11.¦n¤Í","22.¥N¸¹","33.°ÊºA","44.µo§b","55.¬G¶m","66.¬ÝªO"};
-          
-          ans = getans2(b_lines-1, 0,"±Æ§Ç¤è¦¡",prompt, 6, pickup_way + '1');
-
-          if(!ans)
-          {
-            state = US_REDRAW;
-            break;
-          }
-
-          pickup_way = ans - '1';
-          if(pickup_way > 5 || pickup_way < 0) pickup_way = 0;
-          state = US_PICKUP;
-          num = 0;
-          break;
-        }
-
       case KEY_DOWN:
       case 'n':
         if (++num < actor)
@@ -1489,70 +1764,6 @@ pickup_user()
           state = US_REDRAW;
         break;
 
-      case 'N':
-         if (HAS_PERM(PERM_BASIC)) 
-         {
-            char buf[100];
-            sprintf(buf, "¼ÊºÙ [%s]¡G", currutmp->username);
-            if (!getdata(1, 0, buf, currutmp->username, 17, DOECHO,0))
-               strcpy(currutmp->username, cuser.username);
-
-            state = US_PICKUP;
-         }
-         break;
-
-      case 'M':
-         if (HAS_PERM(PERM_BASIC)) 
-         {
-            char buf[64];
-            sprintf(buf, "¤ß±¡ [%s]¡G", currutmp->feeling);
-            if (!getdata(1, 0, buf, currutmp->feeling, 5, DOECHO, currutmp->feeling))
-              strcpy(currutmp->feeling, cuser.feeling);
-            state = US_PICKUP;
-         }
-         break;
-
-      case 'H':
-         if (HAS_PERM(PERM_SYSOP)) 
-         {
-            currutmp->userlevel ^= PERM_DENYPOST;
-            state = US_PICKUP;
-         }
-         break;
-
-      case 'D':
-         if (HAS_PERM(PERM_SYSOP)) {
-            char buf[100];
-
-            sprintf(buf, "¥N¸¹ [%s]¡G", currutmp->userid);
-            if (!getdata(1, 0, buf, currutmp->userid, IDLEN + 1, DOECHO,0))
-               strcpy(currutmp->userid, cuser.userid);
-
-            state = US_PICKUP;
-         }
-         break;
-      case 'F':
-        {
-            char buf[100];
-	    
-	  getdata(1, 0, "½Ð°Ý¬O§_­×§ï¬G¶m [N] ",buf,2,DOECHO,0);
-	  if(buf[0] == 'Y' || buf[0] == 'y')
-	  {  
-            if(!HAS_PERM(PERM_SYSOP) && !HAS_PERM(PERM_FROM))
-            {
-              if(check_money(5,GOLD)) break;
-              degold(5);
-              pressanykey("­×§ï¬G¶mªá¥hª÷¹ô 5 ¤¸");
-            }
-            sprintf(buf, "¬G¶m [%s]¡G", currutmp->from);
-            if (getdata(1, 0, buf, currutmp->from, 17, DOECHO,currutmp->from))
-            currutmp->from_alias=0;
-            state = US_PICKUP;
-          }
-          else
-            state = US_PICKUP;
-        }
-         break;
       case ' ':
       case KEY_PGDN:
       case Ctrl('F'):
@@ -1623,125 +1834,10 @@ pickup_user()
         }
         break;
 
-#ifdef  REALINFO
-      case 'R':         /* Åã¥Ü¯u¹ê©m¦W */
-        if (HAS_PERM(PERM_SYSOP))
-          real_name ^= 1;
-        state = US_PICKUP;
-        break;
-#endif
-#ifdef  SHOWUID
-      case 'U':
-        if (HAS_PERM(PERM_SYSOP))
-          show_uid ^= 1;
-        state = US_PICKUP;
-        break;
-#endif
-#ifdef  SHOWTTY
-      case 'Y':
-        if (HAS_PERM(PERM_SYSOP))
-          show_tty ^= 1;
-        state = US_PICKUP;
-        break;
-#endif
-#ifdef  SHOWPID
-      case 'I':
-        if (HAS_PERM(PERM_SYSOP))
-          show_pid ^= 1;
-        state = US_PICKUP;
-        break;
-#endif
-
-      case 'b':         /* broadcast */
-        if(HAS_PERM(PERM_SYSOP) || cuser.uflag & FRIEND_FLAG)
-        {
-          int actor_pos = actor;
-          state = US_PICKUP;
-          if (!getdata(0, 0, "¼s¼½°T®§:", genbuf + 1, 60, DOECHO,0))
-            break;
-          if(getans2(0, 0, "½T©w¼s¼½? ", 0, 2, 'y') == 'n')
-//          if (getdata(0, 0, "½T©w¼s¼½? [Y]", ans, 4, LCECHO,0) && *ans == 'n')
-            break;
-          genbuf[0] = HAS_PERM(PERM_SYSOP) ? 2 : 0;
-          while (actor_pos)
-          {
-            uentp = pklist[--actor_pos].ui;
-            if (uentp->pid &&
-                currpid != uentp->pid &&
-                kill(uentp->pid, 0) != -1 &&
-                (HAS_PERM(PERM_SYSOP) || (uentp->pager != 3 &&
-                 (uentp->pager != 4 || is_friend(uentp) & 4))))
-                my_write(uentp->pid, genbuf);
-        }
-      }
-      break;
-
-      case 's':         /* Åã¥Ü¦n¤Í´y­z */
-        show_friend ^= 1;
-        state = US_PICKUP;
-        break;
-
-      case 'B':         /* Åã¥Ü¥¿¦b¬ÝªºªO */
-        if (!HAS_PERM(PERM_SYSOP))
-          continue;
-        show_board ^= 1;
-        state = US_PICKUP;
-        break;
-
-      case 'u':         /* ½u¤W­×§ï¸ê®Æ */
-        if (!HAS_PERM(PERM_ACCOUNTS) || !HAS_PERM(PERM_SYSOP))
-          continue;
-      case 'K':         /* §âÃa³J½ð¥X¥h */
-        if (!HAS_PERM(PERM_SYSOP))
-          continue;
-        state = US_ACTION;
-        break;
-
-      case 't':
-      case 'w':
-        if (!HAS_PERM(PERM_PAGE))
-          continue;
-        state = US_ACTION;
-        break;
-
-      case 'i':
-        if (!HAS_PERM(PERM_CLOAK))  /* wildcat:Áô§Î */
-          break;
-        state = US_ACTION;
-        break;
-
-      case 'a':
-      case 'd':
-      case 'o':
-      case 'f':
-        if (!HAS_PERM(PERM_LOGINOK))  /* µù¥U¤~¦³ Friend */
-          break;
-        if (ch == 'f')
-        {
-          cuser.uflag ^= FRIEND_FLAG;
-          state = US_PICKUP;
-          break;
-        }
-        state = US_ACTION;
-        break;
-
-      case 'q':
-      case 'm':
-      case 'r':
-      case 'l':
-      case 'L':
-        if (!cuser.userlevel && ch != 'q' && ch != 'l' && ch != 'L') /* guest ¥u¯à query */
-          break;
       case 'h':
-        state = US_ACTION;
+        i_read_helper(talklist_key);
+        state = US_PICKUP;
         break;
-      case 'p':
-         if (HAS_PERM(PERM_BASIC)) 
-         {
-            t_pager();
-            state = US_PICKUP;
-         }
-         break;
       case KEY_ESC:
          if (KEY_ESC_arg == 'c')
             capture_screen();
@@ -1752,130 +1848,28 @@ pickup_user()
          }
          break;
       default:          /* refresh user state */
-        state = US_PICKUP;
-      }
-    }
-
-    if (state != US_ACTION)
-    {
-      pid0 = 0;
-      continue;
-    }
-    uentp = pklist[num].ui;
-    pid0 = uentp->pid;
-    id0  = 256 * uentp->userid[0] + uentp->userid[1];
-
-    if (ch == 'w')
-    {
-      if ((uentp->pid != currpid) &&
-          (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
-          (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
-      {
-        cursor_show(num + 3 - head, 0);
-        my_write(uentp->pid, "¤Ñ­µ¼ö½u¡G");
-      }
-      else
-        state = 0;
-    }
-    else if (ch == 'l')
-    {                           /* Thor: ¬Ý Last call in */
-      t_display();
-      state = US_PICKUP;
-    }
-    else if (ch == 'L')
-    {
-      t_bmw();
-      state = US_PICKUP;
-    }
-    else
-    {
-      switch (ch)
-      {
-      case 'r':
-        m_read();
-        break;
-
-      case 'a':
-        if (!pal_type(cuser.userid, uentp->userid))
         {
-          friend_add(uentp->userid, FRIEND_OVERRIDE);
-          friend_load();
-          state = US_PICKUP;
-        }
-        break;
-
-      case 'd':
-        friend_delete(uentp->userid);
-        friend_load();
-        state = US_PICKUP;
-        break;
-
-      case 'o':
-      {
-        char buf[MAXPATHLEN];
-
-        setuserfile(buf, FN_PAL);
-        ListEdit(buf);
-        state = US_PICKUP;
-      }
-      break;
-
-      case 'K':
-
-        if (uentp->pid && (kill(uentp->pid, 0) != -1))
-        {
-          clear();
-          move(2, 0);
-          my_kick(uentp);
-          state = US_PICKUP;
-        }
-        break;
-
-      case 'm':
-        if(!cuser.userlevel) break;
-        stand_title("±H  «H");
-        prints("¦¬«H¤H¡G%s", uentp->userid);
-        my_send(uentp->userid);
-
-      case 'q':
-        strcpy(currauthor, uentp->userid);
-        showplans(uentp->userid);
-        break;
-
-      case 'i':
-        u_cloak();
-        break;
-
-      case 'u':         /* Thor: ¥i½u¤W¬d¬Ý¤Î­×§ï¨Ï¥ÎªÌ */
-      {
-          int id;
-          userec muser;
-           strcpy(currauthor, uentp->userid);
-          stand_title("¨Ï¥ÎªÌ³]©w");
-          move(1, 0);
-          if (id = getuser(uentp->userid))
+          int tmp = 0;
+          state = 0;
+          for(tmp = 0;talklist_key[tmp].key != NULL;tmp++)
           {
-            memcpy(&muser, &xuser, sizeof(muser));
-            uinfo_query(&muser, 1, id);
+            if(ch == talklist_key[tmp].key && talklist_key[tmp].fptr != NULL)
+              state = (*(talklist_key[tmp].fptr)) (pklist, actor, pklist[num].ui, num-head);
           }
-      }
-      break;
 
-      case 't':
-        if (uentp->pid != currpid)
-        {
-          move(1, 0);
-          clrtobot();
-          move(3, 0);
-          my_talk(uentp);
-          state = US_PICKUP;
+          if(!state) state = US_PICKUP;  //¨S¦³¾A¦Xªºkey
+            
         }
       }
-      state = US_PICKUP;
     }
+
+    pid0 = 0;
     setutmpmode(savemode);
   }
 }
+
+
+/* talk list µ²§ô */
 
 #if 0
 static int
@@ -1911,12 +1905,7 @@ t_users()
 }
 
 
-int
-t_pager()
-{
-  currutmp->pager = (currutmp->pager + 1) % 5;
-  return 0;
-}
+
 
 
 int

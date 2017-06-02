@@ -870,7 +870,7 @@ scan_register_form (regfile)
 	    case 'y':
 
 	      prints ("以下使用者資料已經更新:\n");
-	      mail2user (muser,"[註冊成功\囉]",BBSHOME"/etc/registered");
+	      mail2user (muser.userid,"[註冊成功\囉]",BBSHOME"/etc/registered", 0);
 	      muser.userlevel |= (PERM_LOGINOK | PERM_PAGE | PERM_CHAT);
 	      sprintf (genbuf, "%s:%s:%s", fdata[6], fdata[7], uid);
 	      strncpy (muser.justify, genbuf, REGLEN);

@@ -4,3 +4,6 @@ src/util/.PASSWDS
 src/util/.temp
 .last_mbbsd
 *~
+*.old
+*.new
+*.log

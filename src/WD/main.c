@@ -800,32 +800,6 @@ Ptt
     u_habit();
 }
 
-do_aloha(char *hello)
-{
-   int fd;
-   PAL pal;
-   char genbuf[512];
-
-   setuserfile(genbuf, FN_ALOHA);
-   if ((fd = open(genbuf, O_RDONLY)) > 0)
-   {
-      sprintf(genbuf + 1, hello);
-      *genbuf = 1;
-      while (read(fd, &pal, sizeof(PAL)) == sizeof(PAL)) {
-         user_info *uentp;
-         extern cmpuids();
-         int tuid;
-
-         if ( (tuid = searchuser(pal.userid))  && tuid != usernum &&
-             (uentp = (user_info *) search_ulistn(cmpuids, tuid, 1)) &&
-             ((uentp->userlevel & PERM_SYSOP) || ((!currutmp->invisible || 
-           uentp->userlevel & PERM_SEECLOAK) && !(is_rejected(uentp) & 1))))    
-            my_write(uentp->pid, genbuf);
-      }
-      close(fd);
-   }
-}
-
 void
 check_max_online()
 {

@@ -790,13 +790,13 @@ m_postnotify()
         add_distinct(fname, xuser.userid);
         sethomefile(genbuf, cuser.userid, "postnotify"); 
         del_distinct(genbuf, xuser.userid); 
-        mail2user(xuser,"[新文章通知] 同意加入",BBSHOME"/etc/pn_agree"); 
+        mail2user(xuser.userid, "[新文章通知] 同意加入",BBSHOME"/etc/pn_agree", 0); 
       } 
       if(ans[0] == 'n' || ans[0] == 'N')
       {
         sethomefile(genbuf, cuser.userid, "postnotify"); 
         del_distinct(genbuf, xuser.userid); 
-        mail2user(xuser,"[新文章通知] 拒絕加入",BBSHOME"/etc/pn_dissent"); 
+        mail2user(xuser.userid, "[新文章通知] 拒絕加入",BBSHOME"/etc/pn_dissent", 0); 
 //        sethomefile(genbuf, xuser.userid, "postlist"); 
 //        del_distinct(genbuf, cuser.userid); 
       } 
@@ -883,7 +883,7 @@ u_verify()
       unlink(keyfile);
       pressanykey("恭喜您通過認證, 歡迎加入 :)");
       cuser.userlevel |= (PERM_PAGE | PERM_POST | PERM_CHAT | PERM_LOGINOK);
-      mail2user(cuser, "[註冊成功\囉]", BBSHOME"/etc/registered");
+      mail2user(cuser.userid, "[註冊成功\囉]", BBSHOME"/etc/registered", 0);
       substitute_record (fn_passwd, &cuser, sizeof (cuser), unum);
     }
   }
