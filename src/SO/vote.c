@@ -1003,10 +1003,10 @@ make_vote()
 }
 
 struct one_key vote_comms[] = {
-  'r', do_vote, "щ布",
-  Ctrl('P'), make_vote, "羭快щ布",
-  'M', maintain_vote, "щ布恨瞶",
-  '\0', NULL, NULL
+  'r',         do_vote, 0, "щ布",
+  Ctrl('P'), make_vote, 0, "羭快щ布",
+  'M',   maintain_vote, 0, "щ布恨瞶",
+  '\0', NULL, 0, NULL
 };
 
 

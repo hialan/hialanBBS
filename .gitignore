@@ -7,3 +7,5 @@ src/util/.temp
 *.old
 *.new
 *.log
+*.bak
+

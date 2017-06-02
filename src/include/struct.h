@@ -258,8 +258,10 @@ typedef struct boardheader boardheader;
 struct one_key
 {                               /* Used to pass commands to the readmenu */
   int key;
-  int (*fptr) ();
-  char *help;
+//  int (*fptr) ();
+  void *fptr;
+  usint level;			
+  char *desc;
 };
 
 

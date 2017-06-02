@@ -651,11 +651,6 @@ gem_files(char* dirname, int (*filecheck)())
         ans++;
         setdirpath(genbuf, dirname, fhdr.filename);
 
-/* shakalaca.990705: ³o¬qÂ\¿ùÅo.. :p 
-        sprintf(buf,"cp -f %s %s/%s",genbuf, BBSHOME, paste_path); 
-        system(buf);
-*/
-
         strcpy(copypath, paste_path);
         stampfile(copypath, &item);
         unlink(copypath);

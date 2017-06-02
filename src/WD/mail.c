@@ -1295,25 +1295,25 @@ extern int post_mail();
 extern int post_query();
 
 static struct one_key mail_comms[] = {
-  'z', man,		 "進入私人信件夾",
-  'c', cite,		 "將此信件進入私人信件夾",
-  'C', gem_tag,		 "gem_tag",
-  's', mail_save,	 "mail_save",
-  'd', mail_del,	 "殺掉此信",
-  'D', del_range,	 "殺掉指定範圍的信",
-  'r', mail_read,	 "讀信",
-  'R', mail_reply,	 "回覆信件",
-  'E', edit_post,	 "編輯文件",
-  'm', mark,		 "將信件標記, 以防信件被清除",
-  't', add_tag,		 "標記該信件",
-  'T', edit_title,	 "編輯標題",
-  'x', m_forward,	 "轉達信件",
-  'X', mail_cross_post,	 "轉錄文章到其他看板",
-  Ctrl('D'), del_tag,	 "刪除已標記信件",
-  'y', multi_reply,  	 "群組回信",
-  'F', post_mail,	 "將信傳送回您的電子信箱",
-  Ctrl('Q'), post_query, "q 該信人",
-  '\0', NULL, NULL
+  'z', man,		 0, "進入私人信件夾",
+  'c', cite,		 0, "將此信件進入私人信件夾",
+  'C', gem_tag,		 0, "gem_tag",
+  's', mail_save,	 0, "mail_save",
+  'd', mail_del,	 0, "殺掉此信",
+  'D', del_range,	 0, "殺掉指定範圍的信",
+  'r', mail_read,	 0, "讀信",
+  'R', mail_reply,	 0, "回覆信件",
+  'E', edit_post,	 0, "編輯文件",
+  'm', mark,		 0, "將信件標記, 以防信件被清除",
+  't', add_tag,		 0, "標記該信件",
+  'T', edit_title,	 0, "編輯標題",
+  'x', m_forward,	 0, "轉達信件",
+  'X', mail_cross_post,	 0, "轉錄文章到其他看板",
+  Ctrl('D'), del_tag,	 0, "刪除已標記信件",
+  'y', multi_reply,  	 0, "群組回信",
+  'F', post_mail,	 0, "將信傳送回您的電子信箱",
+  Ctrl('Q'), post_query, 0, "q 該信人",
+  '\0', NULL, 0, NULL
 };
 
 

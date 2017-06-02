@@ -878,7 +878,7 @@ my_talk(uin)
 
 #define US_PICKUP       1234
 #define US_RESORT       1233
-#define US_ACTION       1232
+//#define US_ACTION       1232
 #define US_REDRAW       1231
 
 static int
@@ -997,31 +997,21 @@ friend_add(uident)
     if (getans2(2, 0,"壞人嗎? ", 0, 2, 'n') != 'y')
     {
       pal.ftype |= M_PAL;
-/* shakalaca.000120: 還有上站通知未改.. */
-#if 1
-      if (strcmp(uident, cuser.userid))
-      {
-        if (getans2(2, 0, "加入上站通知嗎? ", 0, 2, 'y')!= 'n')
-        {
-          PAL aloha;
 
-          pal.ftype |= M_ALOHA;
-          strcpy(aloha.userid, cuser.userid);
-          sethomefile(fpath, uident, FN_ALOHA);
-          rec_add(fpath, &aloha, sizeof(aloha));
-        }
+      if (strcmp(uident, cuser.userid) && getans2(2, 0, "加入上站通知嗎? ", 0, 2, 'y')!= 'n')
+      {
+        PAL aloha;
+
+        pal.ftype |= M_ALOHA;
+        strcpy(aloha.userid, cuser.userid);
+        sethomefile(fpath, uident, FN_ALOHA);
+        rec_add(fpath, &aloha, sizeof(aloha));
       }
-#endif
     }
     else
       pal.ftype |= M_BAD;
 
     sprintf(pal.date, "%02d/%02d",  ptime->tm_mon + 1, ptime->tm_mday);
-/*  CityLion 000326, 這裡改到currdirect, 看文章時, 按^u進使用名單名單 */
-/*  增加好友會使文章列表亂掉 */
-/*  if (currstat == LUSERS)
-      sethomefile(currdirect, cuser.userid, FN_PAL);
-    rec_add(currdirect, &pal, sizeof(pal)); */
     sethomefile(fpath, cuser.userid, FN_PAL);
     rec_add(fpath, &pal, sizeof(pal));
   }
@@ -1041,27 +1031,27 @@ static void
 friend_delete(uident)
   char *uident;
 {
-  char fpath[80], ans[4];
+  char fpath[80];
   PAL pal;
   int pos;
 
+  sprintf(fpath, "確定移除好友 %s ?", uident);
+  if(getans2(2, 0, fpath, 0, 2, 'n') == 'n') return ;
+  
   setuserfile(fpath, FN_PAL);
   pos = rec_search(fpath, &pal, sizeof(pal), cmpuname, (int) uident);
 
   if (pos)
   {
-    getdata(1, 0, msg_sure_ny, ans, 3, DOECHO, 0);
-    if (*ans ==  'y')
-      rec_del(fpath, sizeof(PAL), pos, NULL, NULL);
-#if 1
-    sethomefile(fpath, uident, FN_ALOHA);
+    rec_del(fpath, sizeof(PAL), pos, NULL, NULL);
+
+    sethomefile(fpath, uident, FN_ALOHA);  //上站通知
     pos = rec_search(fpath, &pal, sizeof(pal), cmpuname, (int) cuser.userid);
     while (pos)
     {
       rec_del(fpath, sizeof(PAL), pos, NULL, NULL);
       pos = rec_search(fpath, &pal, sizeof(pal), cmpuname, (int) cuser.userid);
     }
-#endif
   }
 }
 
@@ -1148,32 +1138,25 @@ change_talk_type()
   pickup_way = ans - '1';
   if(pickup_way > 5 || pickup_way < 0) pickup_way = 0;
   return US_PICKUP;
-//  num = 0;
 }
 
 int 
 talk_chusername()
 {
-  if (HAS_PERM(PERM_BASIC)) 
-  {
-    char buf[100];
-    sprintf(buf, "暱稱 [%s]：", currutmp->username);
-    if (!getdata(1, 0, buf, currutmp->username, 17, DOECHO,0))
-       strcpy(currutmp->username, cuser.username);
-  }
+  char buf[100];
+  sprintf(buf, "暱稱 [%s]：", currutmp->username);
+  if (!getdata(1, 0, buf, currutmp->username, 17, DOECHO,0))
+     strcpy(currutmp->username, cuser.username);
   return US_PICKUP;
 }
 
 int
 talk_chmood()
 {
-  if (HAS_PERM(PERM_BASIC)) 
-  {
-    char buf[64];
-    sprintf(buf, "心情 [%s]：", currutmp->feeling);
-    if (!getdata(1, 0, buf, currutmp->feeling, 5, DOECHO, currutmp->feeling))
-       strcpy(currutmp->feeling, cuser.feeling);
-  }
+  char buf[64];
+  sprintf(buf, "心情 [%s]：", currutmp->feeling);
+  if (!getdata(1, 0, buf, currutmp->feeling, 5, DOECHO, currutmp->feeling))
+    strcpy(currutmp->feeling, cuser.feeling);
   return US_PICKUP;
 }
 
@@ -1232,15 +1215,13 @@ talk_water(pklist, actor, uentp, num)
   int actor, num;
   user_info *uentp;  
 {
-  if (!HAS_PERM(PERM_PAGE)) return US_PICKUP;
-
-      if ((uentp->pid != currpid) &&
-          (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
-          (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
-      {
-        cursor_show(num + 3, 0);
-        my_write(uentp->pid, "天音熱線：");
-      }
+  if ((uentp->pid != currpid) &&
+      (HAS_PERM(PERM_SYSOP) || uentp->pager < 3 ||
+      (pal_type(uentp->userid, cuser.userid) && uentp->pager == 4) ))
+  {
+    cursor_show(num + 3, 0);
+    my_write(uentp->pid, "天音熱線：");
+  }
   return US_PICKUP;
 }
 
@@ -1287,7 +1268,6 @@ talk_sendmail(pklist, actor, uentp, num)
   int actor, num;
   user_info *uentp;  
 {
-  if(!cuser.userlevel) return US_PICKUP;
   stand_title("寄  信");
   prints("收信人：%s", uentp->userid);
   my_send(uentp->userid);
@@ -1297,21 +1277,18 @@ talk_sendmail(pklist, actor, uentp, num)
 int 
 talk_sysophide()
 {
-  if (HAS_PERM(PERM_SYSOP)) currutmp->userlevel ^= PERM_DENYPOST;
+  currutmp->userlevel ^= PERM_DENYPOST;
   return US_PICKUP;
 }
 
 int
 talk_chuser()
 {
-         if (HAS_PERM(PERM_SYSOP)) 
-         {
-            char buf[100];
-            sprintf(buf, "代號 [%s]：", currutmp->userid);
-            if (!getdata(1, 0, buf, currutmp->userid, IDLEN + 1, DOECHO,0))
-               strcpy(currutmp->userid, cuser.userid);
-         }
-         return US_PICKUP;
+  char buf[100];
+  sprintf(buf, "代號 [%s]：", currutmp->userid);
+  if (!getdata(1, 0, buf, currutmp->userid, IDLEN + 1, DOECHO,0))
+    strcpy(currutmp->userid, cuser.userid);
+  return US_PICKUP;
 }
 
 int 
@@ -1320,9 +1297,9 @@ talk_query(pklist, actor, uentp, num)
   int actor, num;
   user_info *uentp;  
 {
-        strcpy(currauthor, uentp->userid);
-        showplans(uentp->userid);
-        return US_PICKUP;
+  strcpy(currauthor, uentp->userid);
+  showplans(uentp->userid);
+  return US_PICKUP;
 }
 
 int
@@ -1331,32 +1308,30 @@ talk_edituser(pklist, actor, uentp, num)
   int actor, num;
   user_info *uentp;  
 {
-          int id;
-          userec muser;
+  int id;
+  userec muser;
   
-          if (!HAS_PERM(PERM_ACCOUNTS) || !HAS_PERM(PERM_SYSOP)) return US_PICKUP;
-          strcpy(currauthor, uentp->userid);
-          stand_title("使用者設定");
-          move(1, 0);
-          if (id = getuser(uentp->userid))
-          {
-            memcpy(&muser, &xuser, sizeof(muser));
-            uinfo_query(&muser, 1, id);
-          }
-          return US_PICKUP;
+  strcpy(currauthor, uentp->userid);
+  stand_title("使用者設定");
+  move(1, 0);
+  if (id = getuser(uentp->userid))
+  {
+    memcpy(&muser, &xuser, sizeof(muser));
+    uinfo_query(&muser, 1, id);
+  }
+  return US_PICKUP;
 }
 
 int 
 talk_chfriend()  //切換顯示好友/一般狀態
 {
-          cuser.uflag ^= FRIEND_FLAG;
-          return US_PICKUP;
+  cuser.uflag ^= FRIEND_FLAG;
+  return US_PICKUP;
 }
 
 int
 t_pager()
 {
-  if(!HAS_PERM(PERM_BASIC)) return US_PICKUP;
   currutmp->pager = (currutmp->pager + 1) % 5;
   return US_PICKUP;
 }
@@ -1367,14 +1342,13 @@ talk_kick(pklist, actor, uentp, num) //踢人
   int actor, num;
   user_info *uentp;  
 {
-        if (!HAS_PERM(PERM_SYSOP)) return US_PICKUP;
-        if (uentp->pid && (kill(uentp->pid, 0) != -1))
-        {
-          clear();
-          move(2, 0);
-          my_kick(uentp);
-        }        
-        return US_PICKUP;
+  if (uentp->pid && (kill(uentp->pid, 0) != -1))
+  {
+    clear();
+    move(2, 0);
+    my_kick(uentp);
+  }        
+  return US_PICKUP;
 }
 
 int 
@@ -1383,14 +1357,22 @@ talk_ask(pklist, actor, uentp, num)  //要求聊天等連線事宜
   int actor, num;
   user_info *uentp;
 {
-        if (!HAS_PERM(PERM_PAGE)) return US_PICKUP;
-        if (uentp->pid != currpid)
-        {
-          clear();
-          move(3, 0);
-          my_talk(uentp);
-        }
-        return US_PICKUP;
+  if (uentp->pid != currpid)
+  {
+    clear();
+    move(3, 0);
+    my_talk(uentp);
+  }
+  return US_PICKUP;
+}
+
+int
+talk_friendlist()  //編輯好友名單
+{
+  char buf[MAXPATHLEN];
+  setuserfile(buf, FN_PAL);
+  ListEdit(buf);
+  return US_PICKUP;
 }
 
 int
@@ -1399,58 +1381,37 @@ talk_editfriend(pklist, actor, uentp, num)
   int actor, num;
   user_info *uentp;
 {
-  char *choose[4]={"aA.加入好友","dD.刪除好友","oO.好友名單", "qQ.取消"};
-
-  if(!HAS_PERM(PERM_LOGINOK)) return US_PICKUP;
-  switch(getans2(b_lines, 0, "好友 ", choose, 4, 'a'))  
-  {
-      case 'a':
-        if (!pal_type(cuser.userid, uentp->userid))
-        {
-          friend_add(uentp->userid, FRIEND_OVERRIDE);
-          friend_load();
-        }
-        break;
-
-      case 'd':
-        friend_delete(uentp->userid);
-        friend_load();
-        break;
-
-      case 'o':
-      {
-        char buf[MAXPATHLEN];
-
-        setuserfile(buf, FN_PAL);
-        ListEdit(buf);
-      }
-      break;
-  }
+  if (!pal_type(cuser.userid, uentp->userid))
+    friend_add(uentp->userid, FRIEND_OVERRIDE);
+  else
+    friend_delete(uentp->userid);
+  friend_load();
   return US_PICKUP;
 }
 
 struct one_key talklist_key[]={
-KEY_TAB,  change_talk_type, "切換排序方法。",
-'N',	  talk_chusername,  "修改暱稱。",
-'M',	  talk_chmood,	    "修改心情。",
-'F',	  talk_chhome,	    "修改故鄉。",
-'b',	  talk_broadcast,   "廣播。",
-'s',	  talk_switch,	    "顯示好友描述。",	/* 寫給一般使用者看的 */
-'t',	  talk_ask, "聊天等相關功\能。",
-'w',	  talk_water,       "丟水球。",
-'i',	  u_cloak, "隱形。",  // 權限 PERM_CLOAK
-'a',	  talk_editfriend, "加入/刪除 好友。",
-'f',	  talk_chfriend, "切換顯示好友/一般狀態",
-'q',	  talk_query, "query 人",
-'m',	  talk_sendmail, "寄信",
-'r',	  m_read, "讀信",
-'l',	  t_bmw, "水球回顧",
-'p',	  t_pager, "切換摳機狀態。",
-'H',	  talk_sysophide, "切換站長隱身。站長專用!!",
-'D',	  talk_chuser, "暫時切換使用者。站長專用!!",
-'u',	  talk_edituser, "修改使用者的資料。站長專用!!",
-'K',	  talk_kick,	"站長踢人。站長專用!!",
-0, NULL, NULL};
+KEY_TAB, change_talk_type,  0, "切換排序方法。",
+'N',	  talk_chusername,  PERM_BASIC, "修改暱稱。",
+'M',	  talk_chmood,	    PERM_BASIC, "修改心情。",
+'F',	  talk_chhome,	    PERM_BASIC, "修改故鄉。",
+'b',	  talk_broadcast,   PERM_PAGE, "廣播。",
+'s',	  talk_switch,	    PERM_LOGINOK, "顯示好友描述。",
+'t',	  talk_ask, 	    PERM_PAGE, "聊天等相關功\能。",
+'w',	  talk_water,       PERM_PAGE, "丟水球。",
+'i',	  u_cloak, 	    PERM_CLOAK, "隱形。",
+'a',	  talk_editfriend,  PERM_LOGINOK, "加入/刪除 好友。",
+'o',	  talk_friendlist,  PERM_LOGINOK, "編輯好友名單。",
+'f',	  talk_chfriend,    0, "切換顯示好友/一般狀態",
+'q',	  talk_query, 	    0, "query 人",
+'m',	  talk_sendmail,    PERM_BASIC, "寄信",
+'r',	  m_read, 	    PERM_BASIC, "讀信",
+'l',	  t_bmw, 	    PERM_BASIC, "水球回顧",
+'p',	  t_pager,          PERM_BASIC, "切換摳機狀態。",
+'H',	  talk_sysophide,   PERM_SYSOP, "切換站長隱身。站長專用!!",
+'D',	  talk_chuser,      PERM_SYSOP, "暫時切換使用者。站長專用!!",
+'u',	  talk_edituser,    PERM_ACCOUNTS, "修改使用者的資料。站長專用!!",
+'K',	  talk_kick,	    PERM_SYSOP, "站長踢人。站長專用!!",
+0, NULL, 0, NULL};
 
 int
 pklist_doent(pklist, ch, row, bar_color)
@@ -1632,7 +1593,7 @@ pickup_user()
     if (state >= US_RESORT) 
       qsort(pklist, actor, sizeof(pickup), pickup_cmp);
 
-    if (state >= US_ACTION)
+    if (state >= US_REDRAW)
     {
       sprintf(tmpbuf,"%s [線上 %d 人]",BOARDNAME,count_ulist());
       showtitle((cuser.uflag & FRIEND_FLAG)? "好友列表": "休閒聊天", tmpbuf);
@@ -1834,7 +1795,7 @@ pickup_user()
         }
         break;
 
-      case 'h':
+      case 'h': //help
         i_read_helper(talklist_key);
         state = US_PICKUP;
         break;
@@ -1847,18 +1808,17 @@ pickup_user()
             state = US_PICKUP;
          }
          break;
-      default:          /* refresh user state */
+      default:
         {
           int tmp = 0;
-          state = 0;
+          state = US_PICKUP;
           for(tmp = 0;talklist_key[tmp].key != NULL;tmp++)
           {
+            if(talklist_key[tmp].level && !HAS_PERM(talklist_key[tmp].level))
+              continue;
             if(ch == talklist_key[tmp].key && talklist_key[tmp].fptr != NULL)
-              state = (*(talklist_key[tmp].fptr)) (pklist, actor, pklist[num].ui, num-head);
+              state = (*((int (*)())talklist_key[tmp].fptr)) (pklist, actor, pklist[num].ui, num-head);
           }
-
-          if(!state) state = US_PICKUP;  //沒有適合的key
-            
         }
       }
     }
@@ -1903,10 +1863,6 @@ t_users()
   currutmp->destuid = destuid0;
   return 0;
 }
-
-
-
-
 
 int
 t_idle()

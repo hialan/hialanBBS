@@ -37,10 +37,6 @@ show_winline(x, y, win_len, words, bgcolor, barcolor)
   move(b_lines, 0);
 }
 
-#if 0
-  hialan NOTE:
-#endif     
-
 int
 show_winbox(x, y, line, width, title, prompt)
   char *title,*prompt;

@@ -720,32 +720,32 @@ select_read(locmem,sr_mode)
 
 /* 基本指令集 */
 struct one_key basic[]={
-KEY_LEFT, NULL, "離開。        其他相同的按鍵: q, e",
-KEY_UP,   NULL, "游標向上。    其他相同的按鍵: p, k",
-KEY_DOWN, NULL, "游標向下。    其他相同的按鍵: n, j",
-KEY_PGDN, NULL, "下一頁。      其他相同的按鍵: 空白鍵, N, Ctrl+f",
-KEY_PGUP, NULL, "上一頁。      其他相同的按鍵: P, Ctrl+b",
-KEY_END,  NULL, "跳到最後一項。其他相同的按鍵: $",
-KEY_RIGHT,NULL, "執行, 閱\讀。  其他相同的按鍵: Enter",
-'\0', NULL, NULL};
+KEY_LEFT, NULL, 0, "離開。        其他相同的按鍵: q, e",
+KEY_UP,   NULL, 0, "游標向上。    其他相同的按鍵: p, k",
+KEY_DOWN, NULL, 0, "游標向下。    其他相同的按鍵: n, j",
+KEY_PGDN, NULL, 0, "下一頁。      其他相同的按鍵: 空白鍵, N, Ctrl+f",
+KEY_PGUP, NULL, 0, "上一頁。      其他相同的按鍵: P, Ctrl+b",
+KEY_END,  NULL, 0, "跳到最後一項。其他相同的按鍵: $",
+KEY_RIGHT,NULL, 0, "執行, 閱\讀。  其他相同的按鍵: Enter",
+'\0', NULL, 0, NULL};
 
 
 /* 主題式閱讀指令集 */
 struct one_key sub_key[]={
-'/',      NULL, "找尋標題。              其他相同的按鍵: ?",
-'S',      NULL, "循序閱\讀新文章。",
-'L',      NULL, "閱\讀非轉信文章。",
-'u',      NULL, "標題式閱\讀。",
-'=',      NULL, "找尋首篇文章。",
-'\\',     NULL, "找尋游標該處之首篇文章。",
-'[',	  NULL, "向前搜尋相同標題之文章。其他相同的按鍵: +",
-']',	  NULL, "向後搜尋相同標題之文章。其他相同的按鍵: -",
-'<',	  NULL, "向前搜尋其他標題。      其他相同的按鍵: ,",
-'>',	  NULL, "向後搜尋其他標題。      其他相同的按鍵: .",
-'A', 	  NULL, "搜尋作者。              其他相同的按鍵: a",
-'X',	  NULL, "所有被加分過的文章。",
-'G',	  NULL, "所有被 mark 過的文章。",
-'\0', NULL, NULL};
+'/',      NULL, 0, "找尋標題。              其他相同的按鍵: ?",
+'S',      NULL, 0, "循序閱\讀新文章。",
+'L',      NULL, 0, "閱\讀非轉信文章。",
+'u',      NULL, 0, "標題式閱\讀。",
+'=',      NULL, 0, "找尋首篇文章。",
+'\\',     NULL, 0, "找尋游標該處之首篇文章。",
+'[',	  NULL, 0, "向前搜尋相同標題之文章。其他相同的按鍵: +",
+']',	  NULL, 0, "向後搜尋相同標題之文章。其他相同的按鍵: -",
+'<',	  NULL, 0, "向前搜尋其他標題。      其他相同的按鍵: ,",
+'>',	  NULL, 0, "向後搜尋其他標題。      其他相同的按鍵: .",
+'A', 	  NULL, 0, "搜尋作者。              其他相同的按鍵: a",
+'X',	  NULL, 0, "所有被加分過的文章。",
+'G',	  NULL, 0, "所有被 mark 過的文章。",
+'\0', NULL, 0, NULL};
 
 int 
 show_helplist_line(row, cmd, barcolor)
@@ -799,7 +799,7 @@ show_helplist_line(row, cmd, barcolor)
       break;
   }
     
-  sprintf(buf, "    %s %9s \033[m     %s",  barcolor ? barcolor : "" , key, cmd.help);
+  sprintf(buf, "    %s %9s \033[m     %s",  barcolor ? barcolor : "" , key, cmd.desc);
   move(3 + row, 0);
   clrtoeol();
   outs(buf);
@@ -897,7 +897,7 @@ i_read_helper(rcmdlist)
       {
         char buf[80];
         
-        sprintf(buf,"請問你是否要執行 %s ?", rcmdlist[cursor].help);
+        sprintf(buf,"請問你是否要執行 %s ?", rcmdlist[cursor].desc);
         if(getans2(b_lines, 0, buf, 0, 2, 'y') == 'y')
           return (ch = rcmdlist[cursor].key);
         draw = 2;
@@ -1042,9 +1042,9 @@ i_read_key(rcmdlist, locmem, ch)
     ch = 'r';
 
   default:
-    for (i = 0; rcmdlist[i].fptr; i++)
+    for (i = 0; rcmdlist[i].key; i++)
     {
-      if (rcmdlist[i].key == ch)
+      if (rcmdlist[i].key == ch && rcmdlist[i].fptr)
       {
       /* shakalaca.000215: currdirect 為目前所在 root directory,
          如能善加修改, mail, post, anno 就可合而為一了, 這三者所差
@@ -1054,8 +1054,11 @@ i_read_key(rcmdlist, locmem, ch)
                移動 (上下左右鍵), tin-like read (u), 
          限制(not in mail):編修 (E), 發表 (^p)
        */
-        return (*(rcmdlist[i].fptr)) (locmem->crs_ln,
-          &headers[locmem->crs_ln - locmem->top_ln], currdirect);
+        if(rcmdlist[i].level && HAS_PERM(rcmdlist[i].level))
+        {
+          return (*((int (*)())rcmdlist[i].fptr)) (locmem->crs_ln, 
+                    &headers[locmem->crs_ln - locmem->top_ln], currdirect);
+        }         
       }
     }
   }

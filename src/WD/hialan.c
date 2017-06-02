@@ -4,8 +4,6 @@
 
 #include "bbs.h"
 
-//#define HIALAN_DEBUG
-
 int
 change_bp(y, title, desc)
   char desc[3][80];
