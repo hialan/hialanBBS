@@ -37,7 +37,7 @@
 #define FN_GAMEMONEY    "game/money"
 #define FN_MONEYLOG     "log/moneystat"
 #define FN_OVERRIDES    "overrides"
-#define FN_REJECT       "reject"
+//#define FN_REJECT       "reject"
 #define FN_CANVOTE      "can_vote"
 #define FN_WATER        "water"
 #define FN_APPLICATION  "application"
@@ -215,7 +215,7 @@ char *fn_writelog       = "writelog";
 char *fn_talklog        = "talklog";
 char *fn_magickey	= FN_MAGICKEY;
 char *fn_overrides      = FN_OVERRIDES;
-char *fn_reject         = FN_REJECT;
+//char *fn_reject         = FN_REJECT;
 char *fn_canvote        = FN_CANVOTE;
 char *fn_notes          = "notes";
 char *fn_water          = FN_WATER;

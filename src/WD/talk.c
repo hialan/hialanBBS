@@ -154,9 +154,7 @@ is_hidden(char *user)
 /* routines for Talk->Friend             */
 /* ------------------------------------- */
 
-int
-is_friend(ui)
-  user_info *ui;
+int is_friend(user_info *ui)
 {
   register ushort unum, hit, *myfriends;
 
@@ -177,10 +175,10 @@ is_friend(ui)
   /* ¬ÝªO¦n¤Í */
 
   if(currutmp->brc_id && ui->brc_id == currutmp->brc_id)
-    {
-      hit |= 1;
-      bfriends_number++;
-    }
+  {
+    hit |= 1;
+    bfriends_number++;
+  }
 
   /* §PÂ_§Ú¬O§_¬°¹ï¤èªºªB¤Í ? */
 
@@ -195,18 +193,6 @@ is_friend(ui)
     }
   }
   return hit;
-}
-
-
-
-static int
-be_rejected(userid)
-  char *userid;
-{
-  char buf[STRLEN];
-
-  sethomefile(buf, userid, fn_reject);
-  return belong(buf, cuser.userid);
 }
 
   /* ³Q©Úµ´ */
@@ -682,14 +668,11 @@ my_talk(uin)
       || ch == PAGE || ch == MAILALL || ch == FIVE || ch == IDLE   //IDLE by hialan
       || !ch && (uin->chatid[0] == 1 || uin->chatid[0] == 3))
     pressanykey("¤H®a¦b¦£°Õ");
-  else if (!HAS_PERM(PERM_SYSOP) && (be_rejected(uin->userid) ||
-      (!uin->pager && !pal_type(uin->userid, cuser.userid))))
+  else if (!HAS_PERM(PERM_SYSOP) && (!uin->pager && !pal_type(uin->userid, cuser.userid)))
     pressanykey("¹ï¤èÃö±¼©I¥s¾¹¤F");
-  else if (!HAS_PERM(PERM_SYSOP) &&
-           be_rejected(uin->userid) || uin->pager == 2)
+  else if (!HAS_PERM(PERM_SYSOP) && uin->pager == 2)
     pressanykey("¹ï¤è©Þ±¼©I¥s¾¹¤F");
-  else if (!HAS_PERM(PERM_SYSOP) &&
-           !(is_friend(uin) & 2) && uin->pager == 4)
+  else if (!HAS_PERM(PERM_SYSOP) && !(is_friend(uin) & 2) && uin->pager == 4)
     pressanykey("¹ï¤è¥u±µ¨ü¦n¤Íªº©I¥s");
   else if (!(pid = uin->pid) || (kill(pid, 0) == -1))
   {
@@ -1047,8 +1030,7 @@ friend_delete(uident)
 }
 
 
-void
-friend_load()
+void friend_load()
 {
   ushort myfriends[MAX_FRIEND];
   ushort myrejects[MAX_REJECT];
@@ -1577,9 +1559,9 @@ pickup_user()
       sprintf(tmpbuf,"%s [½u¤W %d ¤H]",BOARDNAME,count_ulist());
       showtitle((cuser.uflag & FRIEND_FLAG)? "¦n¤Í¦Cªí": "¥ð¶¢²á¤Ñ", tmpbuf);
       
-      prints(" ¡ö)Â÷¶}  ±Æ§Ç[[1;36;44m%s[0m] ¤W¯¸¤H¼Æ 34  [1;32m§ÚªºªB¤Í %-2d "
+      prints(" ¡ö)Â÷¶}  ±Æ§Ç[[1;36;44m%s[0m] ¤W¯¸¤H¼Æ %d  [1;32m§ÚªºªB¤Í %-2d "
         "[33m»P§Ú¬°¤Í %-2d [36mªO¤Í %-2d [31mÃa¤H %-3d[m\n",
-        msg_pickup_way[pickup_way], 
+        msg_pickup_way[pickup_way], count_ulist(), 
 	(cuser.uflag & FRIEND_FLAG)?friends_number/2:friends_number,
 	(cuser.uflag & FRIEND_FLAG)?override_number/2:override_number,
 	(cuser.uflag & FRIEND_FLAG)?bfriends_number/2:bfriends_number,

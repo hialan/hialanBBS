@@ -15,8 +15,7 @@
 
 extern boardheader *bcache;
 
-void
-do_voteboardreply(fileheader *fhdr)
+void do_voteboardreply(fileheader *fhdr)
 {
    char genbuf[1024];
    char reason[60];
@@ -72,10 +71,6 @@ do_voteboardreply(fileheader *fhdr)
          move(5, 10);
          prints("您已經連署過本篇了");
          opnion[0] = 'n';
-/*
-         getdata(7, 0, "要修改您之前的連署嗎？(Y/N) [N]", opnion, 3,LCECHO,0);
-         if (opnion[0] != 'y')
-*/         
          if (getans2(7, 0, "要修改您之前的連署嗎？", 0, 2, 'n') != 'y')
          {
             fclose(fp);
@@ -104,9 +99,6 @@ do_voteboardreply(fileheader *fhdr)
    if((fo = fopen(fpath, "w")) == NULL)
      return;
 
-/*   if (!fo)
-      return; */
-      
    i = 0;
    while(fo)
    {
@@ -144,11 +136,10 @@ do_voteboardreply(fileheader *fhdr)
 
    do
    {
-      char *choose[3]={"yY.支持","nN.反對","qQ.取消"};
+      char *choose[3]={"yY)支持","nN)反對","qQ)取消"};
       
       clear();
       
-      //if (!getdata(18, 0, "請問您 (Y)支持 (N)反對 這個議題 [C]：", opnion, 3,LCECHO,0))
       if((*opnion = getans2(18, 0, "請問您 ", choose, 3, 'q')) == 'q')
       {
          flock(fd, LOCK_UN);

@@ -1162,8 +1162,7 @@ static void choose_board(int newflag,usint mode)
             prefixtmp = boardprefix;
             tmp1=num; num=0;
             boardprefix = ptr->title+7;
-            //currutmp->brc_id = getbnum(ptr->name);   //wildcat 
-                 				     //讓子看板也有 brc_id
+
             set_menu_BM(ptr->BM);
             log_board2(ptr->name,0);
             if(!strcmp(ptr->name,PERSONAL_ALL_BRD))

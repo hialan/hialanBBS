@@ -11,8 +11,7 @@
 
 int beep = 0;
                                 
-char *
-Ptt_prints(char* str,int mode)
+char *Ptt_prints(char* str,int mode)
 {
   char *po , *px, strbuf[256];
 
@@ -72,17 +71,12 @@ Ptt_prints(char* str,int mode)
         break;
        }
 
-/*	ychia.0721 */
-/* unmark by hialan.020722*/
      case 'z' :
-       {
         *po = 0;
         px = po + 3;
-//        sprintf(strbuf,"%s%d", str, count_ulist());
         sprintf(strbuf,"%s%d", str, guest_count_ulist()); //會扣除所有隱身的人
         break;
-       }
-/**/     
+
      case 'b' :
         *po = 0;
         px = po + 3;
@@ -129,10 +123,58 @@ Ptt_prints(char* str,int mode)
   return str;
 }
 
-static int
-readln(fp, buf)
+int show_file(char *filename, int y, int lines, int mode)
+{
   FILE *fp;
-  char *buf;
+  char buf[512], *str, shift;
+  int num;
+  
+  
+  /* hialan: shift
+     0: no control word
+     1: is control word
+     2: change line word*/
+     
+  clrchyiuan(y, y + lines);
+  move(y, 0);
+  if ((fp = fopen(filename, "r")))
+  {
+    while(fgets(buf,512,fp) && lines--)
+    {
+      Ptt_prints(buf,mode);
+      for(str=buf, shift=num=0;*str;str++)
+      {
+        if(str[0] == '\033' && str[1] == '[') 
+          shift = 1;
+
+        if(*str == '\n' || *str == '\r') 
+          shift = 2;
+
+        outc(*str);
+          
+        if(!shift) 
+          num++;
+
+        if(shift && *str == 'm')
+          shift = 0;
+
+        if(num>=80 || shift == 2)
+        {
+          if(shift != 2)
+            outc('\n');
+          break;
+        }
+      }
+    }
+    fclose(fp);
+  }
+  else 
+    return 0;
+
+  return 1;
+}
+
+static int readln(FILE *fp, char *buf)
 {
   register int ch, i, len, bytes, in_ansi;
 
@@ -141,9 +183,7 @@ readln(fp, buf)
   {
     bytes++;
     if (ch == '\n')
-    {
       break;
-    }
     else if (ch == '\t')
     {
       do
@@ -152,9 +192,7 @@ readln(fp, buf)
       } while ((++len & 7) && len < 80);
     }
     else if (ch == '\a')
-    {
       beep = 1;
-    }
     else if (ch == '\033')
     {
       if (showansi)

@@ -82,8 +82,7 @@ valid_ident(ident)
 /*
 woju
 */
-int
-userid_is_BM(char *userid, char *list)     /* ªO¥D¡GBM list */
+int userid_is_BM(char *userid, char *list)     /* ªO¥D¡GBM list */
 {
   register int ch, len;
 
@@ -417,8 +416,7 @@ stand_title(title)
 
 
 /* opus : cursor position */
-void
-cursor_show(row, column)
+void cursor_show(row, column)
   int row, column;
 {
   int i;
@@ -430,8 +428,7 @@ cursor_show(row, column)
 }
 
 
-void
-cursor_clear(row, column)
+void cursor_clear(row, column)
   int row, column;
 {
   move(row, column);
@@ -554,28 +551,6 @@ update_data()
   if(change==1)
     substitute_record(fn_passwd, &cuser, sizeof(userec), usernum);
 }
-
-
-int
-show_file(char *filename, int y, int lines, int mode)
-{
-  FILE *fp;
-  char buf[256];
-  
-  clrchyiuan(y, y + lines);
-  move(y, 0);
-  if ((fp = fopen(filename, "r")))
-  {
-    while(fgets(buf,256,fp) && lines--)
-      outs(Ptt_prints(buf,mode));
-    fclose(fp);
-  }
-  else 
-    return 0;
-
-  return 1;
-}
-
 
 #if 0
 /*---------------------------------------------------------------------*/

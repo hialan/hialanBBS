@@ -179,7 +179,7 @@
   3.bbs.c --> do_select()  會把板名放到currboard裡 by SugarII
   4.bbs.c --> man()        ctrl-a, ctrl-g 會進到私人板精華區 by SugarII
   5.announce.c --> AnnounceSelect() 會進到私人板精華區 by SugarII
-  6.read.c select_read() 記憶體越吃越多 by spy
+  6.read.c select_read() 記憶體越吃越多 by sby
 
 [2003/07/04]
   1.新增檔案 color.c 專門負責顏色的設定
@@ -225,5 +225,14 @@
 
 [2003/07/26]
   1,將 src/include/perm.h 的 _ADMIN_C_ 改成 _MAIN_C_ 並刪除 admin.c _ADMIN_C_
-  2.將 i_read_help() 加入顯示使用權限的部分 by spy
+  2.將 i_read_help() 加入顯示使用權限的部分 by sby
   3.將 soman.c 取消顯示 程式位置:程式進入點, 增加功能鍵 'Q' 顯示內容
+
+[2003/07/28]
+  1.刪除 talk.c --> be_rejected() 
+  2.刪除 SO/admin.c --> post_in_tin() 
+  3.合併 mbbsd.c 和 login.c
+
+[2003/07/29]  
+  1.合併 term.c screen.c io.c --> visio.c
+  2.合併 menu.c menu.h --> menu.c  //又回來了..||

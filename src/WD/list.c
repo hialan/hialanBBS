@@ -14,8 +14,8 @@ extern char currdirect[];
 extern struct one_key list_comm[];
 extern int last_line;
 extern char msg_cc[];
-void listtitle();
-void listdoent();
+static void listtitle();
+static void listdoent();
 void ListEdit();
 
 

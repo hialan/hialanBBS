@@ -21,25 +21,25 @@ CPROTO	= cproto -E"gcc -pipe -E -I../include"
 # ------------------------------------------------------ #
 
 SRC =	announce.c bbs.c board.c cache.c edit.c \
-	io.c mail.c main.c menu.c more.c name.c read.c record.c\
-	register.c screen.c stuff.c talk.c user.c term.c\
+	mail.c main.c menu.c more.c name.c read.c record.c\
+	register.c stuff.c talk.c user.c\
 	money.c list.c hialan.c votebrd.c\
-	window.c msg.c color.c loginplan.c soman.c\
-	#convcode.c admin.c
+	window.c msg.c color.c loginplan.c soman.c visio.c\
+	#convcode.c admin.c term.c io.c screen.c
 
 OBJ =	announce.o bbs.o board.o cache.o edit.o \
-	io.o mail.o main.o menu.o more.o name.o read.o record.o\
-	register.o screen.o stuff.o talk.o user.o term.o\
+	mail.o main.o menu.o more.o name.o read.o record.o\
+	register.o stuff.o talk.o user.o\
 	money.o list.o hialan.o votebrd.o\
-	window.o msg.o color.o loginplan.o soman.o\
-	#convcode.o admin.o
+	window.o msg.o color.o loginplan.o soman.o visio.o\
+	#convcode.o admin.o term.o screen.o io.o
 
 MOBJ =	announce.o bbs.o board.o cache.o edit.o \
-	io.o mail.o mbbsd.o login.o menu.o more.o name.o read.o record.o\
-	register.o screen.o stuff.o talk.o user.o term.o\
+	mail.o mbbsd.o menu.o more.o name.o read.o record.o\
+	register.o stuff.o talk.o user.o\
 	money.o list.o hialan.o votebrd.o\
-	window.o msg.o color.o loginplan.o soman.o\
-	#convcode.o admin.o
+	window.o msg.o color.o loginplan.o soman.o visio.o\
+	#convcode.o admin.o login.o  term.o screen.o io.o
 
 PRO =	announce.x bbs.x board.x cache.x edit.x \
 	io.x mail.x main.x login.x menu.x more.x name.x read.x record.x\
@@ -65,7 +65,7 @@ ALL =   $(BIN) in.zbbsd
 
 all: $(ALL)
 
-$(EXE): $(OBJ) $(ETC) menu.h
+$(EXE): $(OBJ) $(ETC)
 	$(CC) -o $(EXE) $(CFLAGS) $(OBJ) $(LDFLAGS)
 
 mbbsd: $(MOBJ) $(ETC)
