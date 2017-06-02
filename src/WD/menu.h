@@ -69,8 +69,7 @@ int m_mclean();
 
 int hialan_test()
 {
-  char ch[5];
-  color_selector(ch);
+  win_formchange();
 }
 
 static struct one_key adminlist[] = {

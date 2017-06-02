@@ -179,6 +179,7 @@
   3.bbs.c --> do_select()  會把板名放到currboard裡 by SugarII
   4.bbs.c --> man()        ctrl-a, ctrl-g 會進到私人板精華區 by SugarII
   5.announce.c --> AnnounceSelect() 會進到私人板精華區 by SugarII
+  6.read.c select_read() 記憶體越吃越多 by spy
 
 [2003/07/04]
   1.新增檔案 color.c 專門負責顏色的設定

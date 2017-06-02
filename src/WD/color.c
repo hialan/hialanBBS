@@ -21,7 +21,7 @@
 #define LB_BL 3 //blink 閃爍
 #define LB_UL 4 //underline 底線
 
-static int
+int
 get_color(char *color, char cset[5])
 {
   char buf[40];
@@ -186,7 +186,7 @@ color_selector(char *color)
     color[i] = selector_item(ques[i], i, color[i], lightbar, def[i]);
 
   move(b_lines, 0);
-  prints("\033[1;33;44m  顏色選擇  \033[1;46m%-68.68s\033[m", 
+  prints("\033[1;33;44m  調 色 盤  \033[1;46m%-68.68s\033[m", 
     	 " [q]取消  [Enter]確定修改 [↑↓←→]改變修改選項");    
   
   while(ch !='\n' && ch !='q')
