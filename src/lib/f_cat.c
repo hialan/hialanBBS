@@ -1,5 +1,6 @@
 #include <fcntl.h>
-
+#include <unistd.h>
+#include <string.h>
 
 void
 f_cat(fpath, msg)

@@ -10,16 +10,19 @@
 
 CC	= gcc
 RANLIB	= ranlib
+
 #
 # For FreeBSD / OpenBSD
 #
 CPROTO	= cproto -E"gcc -pipe -E" # -s -v
 CFLAGS	= -O2 -s -pipe -fomit-frame-pointer -Wunused -I../include
 
+UNAME_S := $(shell uname -s)
 # For Linux
 #
-#CPROTO	= cproto -E"gcc -pipe -E" # -s -v
-#CFLAGS	= -O2 -s -pipe -fomit-frame-pointer -Wunused -I../include -DLINUX
+ifeq ($(UNAME_S), Linux)
+	CFLAGS += -DLINUX
+endif
 
 #
 # For SunOS 5.5.1

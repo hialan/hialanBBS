@@ -28,4 +28,4 @@ extern char radix32[32];
 #include "../lib/dao.p"			/* prototype */
 
 
-#endif	_DAO_H_
+#endif //_DAO_H_

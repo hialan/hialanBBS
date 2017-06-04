@@ -1,3 +1,4 @@
+#include <stdlib.h>
 char *
 str_ndup(src, len)
   char *src;

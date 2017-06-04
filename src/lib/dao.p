@@ -1,3 +1,6 @@
+#include <time.h>
+#include <stdio.h>
+#include "hdr.h"
 /* is_alnum.c */
 int is_alnum(int ch);
 /* is_alpha.c */
@@ -68,6 +71,9 @@ int f_cp(char *src, char *dst, int mode);
 char *f_img(char *fpath, int *fsize);
 /* f_ln.c */
 int f_ln(char *src, char *dst);
+/* f_lock.c */
+int f_exlock(int fd);
+int f_unlock(int fd);
 /* f_map.c */
 char *f_map(char *fpath, int *fsize);
 /* f_mode.c */
@@ -114,6 +120,9 @@ int acl_addr(char *acl, char *addr);
 int acl_has(char *acl, char *user, char *host);
 /* shm.c */
 void *shm_new(int shmkey, int shmsize);
+/* sem.c */
+void sem_init(int semkey,int *semid);
+void sem_lock(int op,int semid);
 /* setpf.c */
 void setadir(char *buf, char *path);
 void setapath(char *buf, char *boardname);
@@ -143,7 +152,7 @@ int not_alnum(register char ch);
 /* not_alpha.c */
 int not_alpha(register char ch);
 /* strstr_lower.c */
-int strstr_lower(char *str,char *tag);
+char* strstr_lower(char *str,char *tag);
 /* Link.c */
 int Link(char* src, char* dst);
 /* Rename.c */

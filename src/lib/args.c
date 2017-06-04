@@ -5,6 +5,9 @@
  */
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
 #define newstr(s)    strcpy(malloc(strlen(s) + 1), s)
 
 /*
@@ -47,6 +50,7 @@ initsetproctitle(argc, argv, envp)
                 LastArgv = argv[argc - 1] + strlen(argv[argc - 1]);
 }
 
+void
 setproctitle(const char* cmdline) {
         char buf[256], *p;
         int i;
@@ -63,6 +67,7 @@ setproctitle(const char* cmdline) {
         Argv[1] = NULL;
 }
 
+void
 printpt(const char* format, ...) {
     char buf[256];
     va_list args;

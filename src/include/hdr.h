@@ -95,4 +95,4 @@ typedef struct
 #define	HDR_LINK	0x400		/* link() */
 
 
-#endif	_HDR_H_
+#endif //_HDR_H_

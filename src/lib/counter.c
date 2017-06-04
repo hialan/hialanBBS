@@ -1,8 +1,10 @@
+#include "dao.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <unistd.h>
 
 #define SEM_ENTER      -1      /* enter semaphore */
 #define SEM_LEAVE      1       /* leave semaphore */
@@ -31,7 +33,7 @@ counter(filename,modes,n)
     fclose(fp);
   }
 
-  prints(" [1;44m [33m  ±z¬O%s²Ä[36m %-10ld [33m¦ì %s ªº¨Ï¥ÎªÌ                            [m",
+  printf(" [1;44m [33m  ±z¬O%s²Ä[36m %-10ld [33m¦ì %s ªº¨Ï¥ÎªÌ                            [m",
   n ? "¤µ¤Ñ" : "¦³¥v¥H¨Ó",++visited,modes);
   unlink(filename);
 

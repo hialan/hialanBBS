@@ -1,3 +1,4 @@
+#include <string.h>
 /* 濾控制碼的程式 */
 int
 strip_ansi(buf, str ,mode)
